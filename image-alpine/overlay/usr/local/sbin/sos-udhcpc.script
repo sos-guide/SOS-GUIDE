@@ -1,0 +1,16 @@
+#!/bin/sh
+# Script de configuration d'interface pour busybox udhcpc (client WiFi de test).
+case "$1" in
+  deconfig)
+    ifconfig "$interface" 0.0.0.0 2>/dev/null ;;
+  bound|renew)
+    ifconfig "$interface" "$ip" netmask "${subnet:-255.255.255.0}"
+    if [ -n "$router" ]; then
+      ip route del default 2>/dev/null
+      ip route add default via "${router%% *}" 2>/dev/null
+    fi
+    : > /etc/resolv.conf
+    for d in $dns; do echo "nameserver $d" >> /etc/resolv.conf; done
+    ;;
+esac
+exit 0

@@ -1,0 +1,56 @@
+[Unit]
+Description=SOS-GUIDE — nœud de communication d'urgence
+Documentation=https://sosguide.fr
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+ExecStart=/usr/local/bin/sos-guide
+Environment=RUST_LOG=info
+# Écoute sur le port 80 : l'administration est servie sur http://<ip>/admin
+# (page de login), le portail citoyen sur http://<ip>/.
+# Le nœud tourne en root (pilotage hostapd/iptables) : pas besoin de CAP_NET_BIND.
+Environment=SOS_LISTEN=0.0.0.0:80
+# Cache des tuiles cartographiques OSM (téléchargées à l'install via curl).
+Environment=SOS_TILES_DIR=/var/lib/sos-guide/tiles
+# Réseau local (sos-network) : OFF par défaut. Sur ce Pi, wlan0 est la ligne SSH,
+# donc l'AP réelle reste désactivée tant qu'un accès alternatif (eth0/dongle)
+# n'existe pas. Passer à `live` une fois l'interface AP disponible + hostapd/iptables
+# installés (alors ProtectKernelTunables doit aussi passer à false pour le sysctl IPv6).
+Environment=SOS_NET_MODE=off
+# Fiabilité : redémarrage automatique (remplace les drop-ins Restart=always v2.5).
+Restart=always
+RestartSec=2
+# Durcissement (sandbox) compatible avec les besoins réseau du nœud. Le nœud
+# tourne en root (port 80, pilotage hostapd/iptables/ip en mode `live`), donc
+# `NoNewPrivileges` reste false. Le reste réduit fortement la surface d'attaque.
+NoNewPrivileges=false
+PrivateTmp=true
+ProtectHome=true
+# Système en lecture seule sauf l'état du nœud (base Redb + cache des tuiles).
+ProtectSystem=strict
+# Crée /var/lib/sos-guide (droits corrects) AVANT le démarrage : indispensable sur
+# une installation neuve, sinon ReadWritePaths échoue à monter le namespace (226).
+StateDirectory=sos-guide
+ReadWritePaths=/var/lib/sos-guide
+# En mode `live`, ajouter /etc/hostapd à ReadWritePaths et passer
+# ProtectKernelTunables=false (écriture du sysctl IPv6 par sos-network).
+ProtectKernelTunables=true
+ProtectKernelModules=true
+ProtectControlGroups=true
+ProtectClock=true
+ProtectHostname=true
+RestrictSUIDSGID=true
+RestrictRealtime=true
+LockPersonality=true
+# Familles d'adresses nécessaires : IP (HTTP/DNS/DHCP), UNIX (journald),
+# NETLINK (ip/iptables/hostapd en `live`).
+RestrictAddressFamilies=AF_INET AF_INET6 AF_UNIX AF_NETLINK
+# Logs volatils (conformité nLPD) : pas de fichier, tout part dans journald
+# (journald en Storage=volatile via configs/journald-sosguide.conf → tmpfs/RAM).
+StandardOutput=journal
+StandardError=journal
+
+[Install]
+WantedBy=multi-user.target

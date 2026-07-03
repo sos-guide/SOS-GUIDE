@@ -1,0 +1,9 @@
+# Cible ESP32-C3 (RISC-V). `rust-std` du noyau est préinstallé : pas de build-std.
+[build]
+target = "riscv32imc-unknown-none-elf"
+
+[target.riscv32imc-unknown-none-elf]
+# Script de l'éditeur de liens fourni par esp-hal.
+rustflags = ["-C", "link-arg=-Tlinkall.x"]
+# Flash + moniteur série (nécessite le matériel + `cargo install espflash`).
+runner = "espflash flash --monitor"

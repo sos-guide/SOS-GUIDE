@@ -1,0 +1,135 @@
+//! Mot de passe administrateur : sel aléatoire + renforcement par itérations
+//! de SHA-256, comparaison à temps constant.
+//!
+//! L'administration est locale et hors-Internet (un seul admin sur l'AP du
+//! nœud), mais le mot de passe ne doit jamais être stocké en clair ni comparé
+//! de façon naïve. Pas de KDF dédié (Argon2) pour rester sans dépendance C et
+//! léger sur Pi ; le renforcement par itérations relève le coût d'une attaque
+//! par force brute hors-ligne sur la base Redb.
+
+use rand_core::{OsRng, RngCore};
+use sha2::{Digest, Sha256};
+
+/// Nombre d'itérations de renforcement (coût volontaire à la vérification).
+const ITERATIONS: u32 = 100_000;
+/// Longueur du sel aléatoire, en octets.
+const SALT_LEN: usize = 16;
+
+/// Empreinte d'un mot de passe : sel et empreinte renforcée, en hexadécimal.
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct PasswordHash {
+    /// Sel aléatoire (hex).
+    pub salt_hex: String,
+    /// Empreinte renforcée (hex, 32 octets).
+    pub hash_hex: String,
+}
+
+/// Calcule l'empreinte d'un mot de passe avec un sel neuf.
+#[must_use]
+pub fn hash_password(password: &str) -> PasswordHash {
+    let mut salt = [0u8; SALT_LEN];
+    OsRng.fill_bytes(&mut salt);
+    let digest = stretch(password.as_bytes(), &salt);
+    PasswordHash {
+        salt_hex: to_hex(&salt),
+        hash_hex: to_hex(&digest),
+    }
+}
+
+/// Vérifie un mot de passe contre un sel et une empreinte stockés (hex).
+/// Comparaison à temps constant ; toute entrée malformée renvoie `false`.
+#[must_use]
+pub fn verify_password(password: &str, salt_hex: &str, hash_hex: &str) -> bool {
+    let Some(salt) = from_hex(salt_hex) else {
+        return false;
+    };
+    let Some(expected) = from_hex(hash_hex) else {
+        return false;
+    };
+    let digest = stretch(password.as_bytes(), &salt);
+    constant_time_eq(&digest, &expected)
+}
+
+/// Renforcement : `SHA-256(salt || password)` puis `ITERATIONS` re-hachages.
+fn stretch(password: &[u8], salt: &[u8]) -> [u8; 32] {
+    let mut hasher = Sha256::new();
+    hasher.update(salt);
+    hasher.update(password);
+    let mut digest: [u8; 32] = hasher.finalize().into();
+    for _ in 1..ITERATIONS {
+        digest = Sha256::digest(digest).into();
+    }
+    digest
+}
+
+/// Comparaison à temps constant (indépendante de la position du 1er octet
+/// divergent) pour ne pas fuiter d'information par timing.
+fn constant_time_eq(a: &[u8], b: &[u8]) -> bool {
+    if a.len() != b.len() {
+        return false;
+    }
+    let mut diff = 0u8;
+    for (x, y) in a.iter().zip(b.iter()) {
+        diff |= x ^ y;
+    }
+    diff == 0
+}
+
+fn to_hex(bytes: &[u8]) -> String {
+    let mut out = String::with_capacity(bytes.len() * 2);
+    for byte in bytes {
+        out.push(char::from_digit(u32::from(byte >> 4), 16).unwrap_or('0'));
+        out.push(char::from_digit(u32::from(byte & 0x0f), 16).unwrap_or('0'));
+    }
+    out
+}
+
+fn from_hex(hex: &str) -> Option<Vec<u8>> {
+    if hex.len() % 2 != 0 {
+        return None;
+    }
+    let bytes = hex.as_bytes();
+    let mut out = Vec::with_capacity(hex.len() / 2);
+    for pair in bytes.chunks_exact(2) {
+        let hi = (*pair.first()? as char).to_digit(16)?;
+        let lo = (*pair.get(1)? as char).to_digit(16)?;
+        out.push(u8::try_from((hi << 4) | lo).ok()?);
+    }
+    Some(out)
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn hash_then_verify_roundtrip() {
+        let h = hash_password("correct horse battery staple");
+        assert!(verify_password(
+            "correct horse battery staple",
+            &h.salt_hex,
+            &h.hash_hex
+        ));
+        assert!(!verify_password("mauvais", &h.salt_hex, &h.hash_hex));
+    }
+
+    #[test]
+    fn distinct_salts_give_distinct_hashes() {
+        let a = hash_password("même mot de passe");
+        let b = hash_password("même mot de passe");
+        assert_ne!(a.salt_hex, b.salt_hex);
+        assert_ne!(a.hash_hex, b.hash_hex);
+    }
+
+    #[test]
+    fn malformed_hex_is_rejected() {
+        assert!(!verify_password("x", "zz", "00"));
+        assert!(!verify_password("x", "00", "abc")); // longueur impaire
+    }
+
+    #[test]
+    fn hex_roundtrip() {
+        let bytes = [0u8, 15, 16, 255, 128];
+        assert_eq!(from_hex(&to_hex(&bytes)), Some(bytes.to_vec()));
+    }
+}

@@ -1,0 +1,13 @@
+# Base de TRAVAIL : tmpfs (RAM) — aucune usure SD, SOSDATA reste ro.
+export SOS_DB=/run/sosguide/sos-guide.redb
+# Instantané DURABLE sur SOSDATA (restauré au boot, source de vérité).
+export SOS_DB_DURABLE=/var/lib/sosguide/state/sos-guide.redb
+# Commit privilégié : remonte SOSDATA rw, copie atomique, re-verrouille ro.
+export SOS_COMMIT_CMD=/usr/local/sbin/sos-commit-db
+export SOS_RW_CMD=/usr/local/sbin/sos-rw
+export SOS_TILES_DIR=/var/lib/sosguide/tiles
+export SOS_WEBROOT=/usr/local/share/sosguide/web
+export SOS_LISTEN=0.0.0.0:80
+export SOS_NET_MODE=off
+export SOS_RADIO_MODE=off
+export SOS_GW_MODE=off

@@ -1,0 +1,259 @@
+# SOS-GUIDE — orchestration build, déploiement & erreurs (le seul "script").
+#
+# Modèle DEV-SUR-PI : on ÉDITE sur le PC (x86_64 Manjaro, dépôt git = source de
+# vérité), on SYNCHRONISE les sources vers le Raspberry Pi par rsync, puis on
+# BUILD/RUN nativement sur le Pi (aarch64-unknown-linux-gnu, glibc). Plus de
+# cross-compile musl. `check` (fmt/clippy/tests) reste local pour un feedback
+# rapide. Toute commande qui échoue dépose une capture dans ERRORS.md (gratuit,
+# sans token) ; l'agent `error-curator` la trie ensuite. `just errors` lance le tri.
+#
+#   just            → liste les recettes
+#   just check      → fmt + clippy + test (local, hôte PC)
+#   just sync       → rsync des sources PC → Pi
+#   just build      → sync + build natif debug sur le Pi
+#   just pi         → sync + build natif release sur le Pi
+#   just run        → sync + build debug + lance le nœud sur le Pi (port 18080)
+#   just net-sim    → comme `run` + réseau en mode simulate (DNS/DHCP, sans risque)
+#   just wifi-on    → bascule AP réelle (live) — DIFFÉRÉE (lockout SSH sur ce Pi)
+#   just wifi-off   → coupe l'AP réelle — DIFFÉRÉE (idem)
+#   just install    → sync + build release + binaire + webroot + service systemd
+#   just update     → MAJ binaire ATOMIQUE avec rollback (santé /api/status)
+#   just os-update  → MAJ du système (apt) hors-bande (Ethernet/Tor)
+#   just logs       → journal systemd du nœud (via SSH)
+#   just journal    → capture les erreurs runtime journald → inbox ERRORS.md
+#   just vitals     → vitaux du nœud en JSON via `sos-cli health` (sonde Rust)
+#   just errors     → l'agent error-curator trie/curate ERRORS.md
+#   just audit      → (re)génère et ouvre la page d'audit locale (PC Arch)
+
+set shell := ["bash", "-uc"]
+
+ctrl   := justfile_directory()
+root   := ctrl / ".."
+box    := root / "sosguide"
+docs   := root / "docs"
+errors := ctrl / "ERRORS.md"
+host   := "pi@192.168.1.133"
+bin    := "sos-guide"
+# Répertoire des sources sur le Pi (copie de travail, recréée par `just sync`).
+pidir  := "sosguide-v1"
+# Charge l'environnement cargo dans le shell SSH non-login du Pi.
+cargoenv := "source $HOME/.cargo/env"
+webdst := "/var/www/sos-guide"
+# Image Alpine diskless (slot OTA, clé de publication épinglée).
+imgdir := root / "image-alpine"
+mtarget := "aarch64-unknown-linux-musl"
+
+_default:
+    @just --list --unsorted
+
+# Exclut artefacts de build et réglages cross-compile (inutiles au build natif).
+# Synchronise les sources PC → Pi (miroir rsync).
+sync:
+    rsync -az --delete \
+        --exclude 'target/' --exclude '.git/' --exclude '.cargo/' \
+        --exclude 'rust-toolchain.toml' --exclude 'firmware/' \
+        "{{box}}/" {{host}}:{{pidir}}/
+
+# Qualité (local, hôte PC) : format, lints stricts, tests. Capture les erreurs.
+check:
+    #!/usr/bin/env bash
+    set -uo pipefail
+    cd "{{box}}"
+    cargo fmt --all
+    cargo clippy --workspace --all-targets -- -D warnings 2> >(tee /tmp/sg.err >&2) \
+        || { just --justfile "{{justfile()}}" _capture "cargo clippy" /tmp/sg.err; exit 1; }
+    cargo test --workspace 2> >(tee /tmp/sg.err >&2) \
+        || { just --justfile "{{justfile()}}" _capture "cargo test" /tmp/sg.err; exit 1; }
+
+# Build natif DEBUG sur le Pi (après sync). Capture les erreurs.
+build: sync
+    #!/usr/bin/env bash
+    set -uo pipefail
+    ssh {{host}} '{{cargoenv}} && cd {{pidir}} && cargo build -p {{bin}}' 2> >(tee /tmp/sg.err >&2) \
+        || { just --justfile "{{justfile()}}" _capture "cargo build (Pi)" /tmp/sg.err; exit 1; }
+
+# Build natif RELEASE sur le Pi (après sync). Capture les erreurs.
+pi: sync
+    #!/usr/bin/env bash
+    set -uo pipefail
+    ssh {{host}} '{{cargoenv}} && cd {{pidir}} && cargo build --release -p {{bin}}' 2> >(tee /tmp/sg.err >&2) \
+        || { just --justfile "{{justfile()}}" _capture "cargo build --release (Pi)" /tmp/sg.err; exit 1; }
+
+# Webroot synchronisé, écoute 0.0.0.0:18080 → http://192.168.1.133:18080/
+# Lance le nœud (debug) sur le Pi en avant-plan (Ctrl-C pour arrêter).
+run: build
+    ssh -t {{host}} '{{cargoenv}} && cd {{pidir}} && \
+        RUST_LOG=info SOS_LISTEN=0.0.0.0:18080 SOS_WEBROOT=$PWD/web \
+        SOS_DB=$HOME/sos-guide-dev.redb SOS_TILES_DIR=$HOME/sos-tiles \
+        ./target/debug/{{bin}}'
+
+# Réseau en mode simulate : DNS (127.0.0.1:15353) + DHCP (127.0.0.1:16767), AUCUNE
+# mutation système (ni hostapd, ni iptables, ni iface). Sans aucun risque pour le SSH.
+# Test : `dig @127.0.0.1 -p 15353 nimporte.test` → IP du nœud (10.0.0.1) ; les
+# transitions Open↔Wpa apparaissent dans le journal aux POST/DELETE /api/admin/alert.
+net-sim: build
+    ssh -t {{host}} '{{cargoenv}} && cd {{pidir}} && \
+        RUST_LOG=info,sos_network=debug SOS_NET_MODE=simulate \
+        SOS_LISTEN=0.0.0.0:18080 SOS_WEBROOT=$PWD/web \
+        SOS_DB=$HOME/sos-guide-dev.redb SOS_TILES_DIR=$HOME/sos-tiles \
+        ./target/debug/{{bin}}'
+
+# DIFFÉRÉE (item ROADMAP go-live). Active l'AP RÉELLE (SOS_NET_MODE=live). Sur ce
+# Pi, wlan0 EST la ligne SSH → activer l'AP = lockout immédiat. Prérequis avant
+# de lever le garde-fou : accès SSH alternatif (eth0 câblé OU dongle WiFi USB) +
+# `sudo apt install hostapd iptables`. Le garde-fou exige SOSGUIDE_GO_LIVE=oui.
+wifi-on:
+    #!/usr/bin/env bash
+    set -uo pipefail
+    if [[ "${SOSGUIDE_GO_LIVE:-}" != "oui" ]]; then
+      echo "REFUS : go-live différé. wlan0 = ligne SSH sur ce Pi → lockout."
+      echo "Prérequis : eth0/dongle pour un accès SSH alternatif + hostapd/iptables."
+      echo "Quand c'est prêt : SOSGUIDE_GO_LIVE=oui just wifi-on"
+      exit 1
+    fi
+    ssh -t {{host}} 'sudo systemctl set-environment SOS_NET_MODE=live && \
+        sudo systemctl restart sos-guide && systemctl status sos-guide --no-pager'
+
+# DIFFÉRÉE. Coupe l'AP réelle : repasse le service en SOS_NET_MODE=off.
+wifi-off:
+    ssh -t {{host}} 'sudo systemctl set-environment SOS_NET_MODE=off && \
+        sudo systemctl restart sos-guide && systemctl status sos-guide --no-pager'
+
+# Build release déjà fait par `pi`. Webroot → /var/www, service systemd activé.
+# Installe le binaire release en /usr/local/bin + service systemd sur le Pi.
+install: pi
+    ssh -t {{host}} '{{cargoenv}} && cd {{pidir}} && \
+        sudo install -m755 target/release/{{bin}} /usr/local/bin/{{bin}} && \
+        sudo install -m644 configs/sos-guide.service /etc/systemd/system/ && \
+        sudo install -d /etc/systemd/journald.conf.d && \
+        sudo install -m644 configs/journald-sosguide.conf /etc/systemd/journald.conf.d/sosguide.conf && \
+        sudo systemctl restart systemd-journald && \
+        sudo rm -rf {{webdst}} && sudo mkdir -p /var/www && sudo cp -r web {{webdst}} && \
+        sudo systemctl daemon-reload && sudo systemctl enable sos-guide && \
+        sudo systemctl restart sos-guide && \
+        sleep 1 && systemctl status sos-guide --no-pager'
+
+# Sauvegarde l'actuel (.prev), installe le neuf par rename atomique (le process en
+# cours garde son inode), redémarre, vérifie /api/status, restaure si échec.
+# Demande le sudo du Pi (TTY) ; à lancer après un `just install` initial.
+# MAJ binaire ATOMIQUE avec rollback (santé /api/status).
+update: pi
+    ssh -t {{host}} '{{cargoenv}} && cd {{pidir}} && B=/usr/local/bin/{{bin}} && \
+        sudo install -m755 target/release/{{bin}} "$B.new" && \
+        { [ -f "$B" ] && sudo cp -a "$B" "$B.prev" || true; } && \
+        sudo mv -f "$B.new" "$B" && \
+        sudo systemctl restart sos-guide && \
+        ok=0; for i in $(seq 1 6); do sleep 1; curl -fs -o /dev/null http://127.0.0.1/api/status && { ok=1; break; }; done; \
+        if [ "$ok" = 1 ]; then echo "✅ MAJ atomique OK — santé /api/status vérifiée"; \
+        else echo "❌ santé KO — rollback vers la version précédente"; \
+          { [ -f "$B.prev" ] && sudo mv -f "$B.prev" "$B" && sudo systemctl restart sos-guide; }; exit 1; fi'
+
+# Vérifie l'intégrité + l'authenticité du binaire release contre un manifeste
+# signé et la clé publique de publication (à lancer avant `just update`).
+# `just verify-release <manifeste.json> <clé-publique.pem>` (chemins sur le Pi).
+verify-release manifest pubkey: pi
+    ssh {{host}} '{{cargoenv}} && cd {{pidir}} && cargo build -q -p sos-cli && \
+        ./target/debug/sos-cli verify-update "{{manifest}}" target/release/{{bin}} "{{pubkey}}"'
+
+# ─── Mises à jour OTA de la flotte (image Alpine diskless, modèle « pull » signé) ───
+# Génère UNE fois la paire de clés de publication Ed25519 : la privée
+# `release.key` reste LOCALE (jamais committée, cf. .gitignore) ; la publique est
+# épinglée dans l'image (`overlay/etc/sosguide/release.pub`).
+release-keygen:
+    @test ! -f "{{root}}/release.key" || { echo "❌ {{root}}/release.key existe déjà — refus d'écraser"; exit 1; }
+    openssl genpkey -algorithm ed25519 -out "{{root}}/release.key"
+    chmod 600 "{{root}}/release.key"
+    openssl pkey -in "{{root}}/release.key" -pubout -out "{{imgdir}}/overlay/etc/sosguide/release.pub"
+    @echo "✅ release.key (PRIVÉE — hors-ligne) + overlay/etc/sosguide/release.pub (épinglée dans l'image)."
+
+# Construit le binaire musl de release, le SIGNE (sos-cli natif) et stage le
+# bundle OTA (`publish/{manifest.json,sos-guide.bin}`) à servir sur ton serveur.
+# Rafraîchit aussi les binaires + le manifeste d'usine de l'image Alpine.
+# `just publish-release <version>` (ex. 0.3.0).
+publish-release version:
+    @test -f "{{root}}/release.key" || { echo "❌ release.key manquante — lance d'abord: just release-keygen"; exit 1; }
+    # 1. Binaires statiques aarch64-musl (artefact à distribuer + verif embarqué)
+    cd "{{box}}" && RUSTLLD=$(find ~/.rustup/toolchains -name rust-lld | head -1) && \
+      CARGO_TARGET_AARCH64_UNKNOWN_LINUX_MUSL_LINKER="$RUSTLLD" \
+      RUSTFLAGS="-C linker-flavor=ld.lld -C link-self-contained=yes" \
+      cargo build --release --target {{mtarget}} -p sos-guide -p sos-cli
+    # 2. sos-cli NATIF (hôte) pour signer les octets du binaire musl
+    cd "{{box}}" && cargo build --release -p sos-cli
+    mkdir -p "{{root}}/publish"
+    cp "{{box}}/target/{{mtarget}}/release/{{bin}}" "{{root}}/publish/sos-guide.bin"
+    "{{box}}/target/release/sos-cli" sign-update \
+      "{{root}}/publish/sos-guide.bin" "{{version}}" "{{root}}/release.key" \
+      "$(date -u +%Y-%m-%dT%H:%M:%SZ)" > "{{root}}/publish/manifest.json"
+    # 3. Rafraîchir l'image : binaires d'usine + manifeste d'usine (anti-downgrade)
+    cp "{{box}}/target/{{mtarget}}/release/{{bin}}" "{{imgdir}}/overlay/usr/local/bin/{{bin}}"
+    cp "{{box}}/target/{{mtarget}}/release/sos-cli" "{{imgdir}}/overlay/usr/local/bin/sos-cli"
+    cp "{{root}}/publish/manifest.json" "{{imgdir}}/overlay/etc/sosguide/manifest.json"
+    @echo "✅ publish/{manifest.json,sos-guide.bin} à servir sous l'URL d'update.conf."
+    @echo "   Image rafraîchie (binaires + manifeste d'usine v{{version}}). Reconstruis l'.img si besoin."
+
+# MAJ du système (apt) par le canal de maintenance **hors-bande** (Ethernet/Tor,
+# jamais l'AP citoyen). Met à jour l'index, applique les mises à niveau, purge.
+# Demande le sudo du Pi (TTY) ; à déclencher hors période d'alerte (peut nécessiter
+# un redémarrage si le noyau est mis à jour).
+os-update:
+    ssh -t {{host}} 'set -e; sudo apt-get update; \
+        echo "== paquets à mettre à niveau =="; apt list --upgradable 2>/dev/null | tail -n +2; \
+        sudo DEBIAN_FRONTEND=noninteractive apt-get -y full-upgrade; \
+        sudo apt-get -y autoremove --purge; sudo apt-get clean; \
+        echo "✅ MAJ OS terminée"; [ -f /var/run/reboot-required ] && echo "⚠️ redémarrage requis (noyau)" || true'
+
+# NB : la fabrication de l'image PRODUIT se fait dans image-alpine/ (Alpine Linux
+# diskless — le produit décidé, cf. CLAUDE.md). L'ancien outillage d'image
+# Raspberry Pi OS Lite (sosguide/image/) a été retiré.
+
+# Journal systemd du nœud (erreurs runtime → à curer dans ERRORS.md).
+logs:
+    ssh {{host}} 'journalctl -u sos-guide -n 80 --no-pager'
+
+# Capture les avertissements/erreurs runtime du service depuis journald dans
+# l'inbox d'ERRORS.md (curation ensuite par `just errors`).
+# Supervision : erreurs runtime journald → inbox ERRORS.md.
+journal:
+    #!/usr/bin/env bash
+    set -uo pipefail
+    ssh {{host}} 'journalctl -u sos-guide -p warning -n 50 --no-pager --quiet' > /tmp/sg.err 2>/dev/null || true
+    if [ -s /tmp/sg.err ]; then
+      just --justfile "{{justfile()}}" _capture "journald sos-guide (runtime)" /tmp/sg.err
+    else
+      echo "journald : aucun avertissement/erreur récent pour sos-guide"
+    fi
+
+# Monitoring : vitaux du Pi (température, RAM, charge, disque, état du service).
+health:
+    ssh {{host}} 'echo "== uptime =="; uptime; \
+        echo "== temp =="; (vcgencmd measure_temp 2>/dev/null || awk "{printf \"%.1f°C\\n\", \$1/1000}" /sys/class/thermal/thermal_zone0/temp); \
+        echo "== mem =="; free -h; \
+        echo "== disk =="; df -h /; \
+        echo "== sos-guide =="; systemctl is-active sos-guide 2>/dev/null || echo inactif'
+
+# Vitaux natifs du nœud en JSON via `sos-cli health` (sonde Rust, remplace le
+# shell `health`). Build à la volée sur le Pi.
+vitals: sync
+    ssh {{host}} '{{cargoenv}} && cd {{pidir}} && cargo build -q -p sos-cli && ./target/debug/sos-cli health'
+
+# Lance l'agent error-curator (headless) pour trier/curate ERRORS.md.
+errors:
+    cd "{{ctrl}}" && claude -p "Utilise l'agent error-curator : trie l'inbox de ERRORS.md, déduplique, classe Actives/Résolues, et intègre les erreurs runtime via 'just logs'."
+
+# (Re)génère la page d'audit locale et l'ouvre dans le navigateur (PC Arch).
+audit:
+    @python3 "{{ctrl}}/audit-gen.py" >/dev/null
+    @xdg-open "{{ctrl}}/audit.html" >/dev/null 2>&1 || echo "Ouvrez {{ctrl}}/audit.html"
+    @echo "Audit ouvert : {{ctrl}}/audit.html"
+
+# (privé) Ajoute une capture brute dans l'inbox de ERRORS.md — gratuit, sans token.
+_capture cmd logfile:
+    #!/usr/bin/env bash
+    {
+      echo ""
+      echo "- \`$(date -Iseconds)\` — échec \`{{cmd}}\`"
+      echo '  ```'
+      tail -n 30 "{{logfile}}" 2>/dev/null | sed 's/^/  /'
+      echo '  ```'
+    } >> "{{errors}}"
+    echo "↳ capture ajoutée à ERRORS.md (inbox)"

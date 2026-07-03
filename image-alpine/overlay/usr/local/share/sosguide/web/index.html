@@ -1,0 +1,1189 @@
+<!DOCTYPE html>
+<html lang=fr dir=ltr>
+<head>
+<meta charset=UTF-8>
+<meta name=viewport content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name=theme-color content="#060a12">
+<meta name=color-scheme content="dark light">
+<meta name=description content="Guide de survie d'urgence — fonctionne sans Internet">
+<meta http-equiv=Content-Security-Policy content="default-src 'self';script-src 'self' 'unsafe-inline';style-src 'self' 'unsafe-inline';img-src 'self' data:;connect-src 'self'">
+<meta name=apple-mobile-web-app-capable content=yes>
+<meta name=apple-mobile-web-app-status-bar-style content=black-translucent>
+<title>SOS-GUIDE</title>
+<link rel=icon type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' font-size='80'%3E⛑️%3C/text%3E%3C/svg%3E">
+<link rel=stylesheet href=/lib/sos-theme.css>
+<script src=/lib/sos-i18n.js></script>
+<style>*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}html{scroll-behavior:smooth}body{background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,'Segoe UI',sans-serif;line-height:1.6;-webkit-font-smoothing:antialiased;min-height:100vh;min-height:100dvh;transition:background .3s , color .3s}button{font-family:inherit;cursor:pointer;border:none;background:none}a{color:inherit;text-decoration:none}::-webkit-scrollbar{width:4px}::-webkit-scrollbar-thumb{background:var(--bg2);border-radius:4px}#nav{position:fixed;top:0;left:0;right:0;z-index:800;height:var(--nav-h);display:flex;align-items:center;background:rgba(6,10,18,.95);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-bottom:1px solid var(--border);padding:0 1.25rem;gap:.75rem;transition:background .3s , border-color .3s}body.light-mode #nav{background:rgba(240,244,251,.95)}.nav-logo{flex:1;display:flex;align-items:center;gap:.6rem;font-weight:700;font-size:.95rem;letter-spacing:.02em;cursor:pointer;user-select:none}.nav-logo-badge{width:28px;height:28px;background:var(--card);border-radius:8px;border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:1.15rem;flex-shrink:0}.nav-right{display:flex;align-items:center;gap:.4rem}.nav-btn{width:34px;height:34px;border-radius:9px;border:1px solid var(--border);background:var(--card);color:var(--sub);display:flex;align-items:center;justify-content:center;font-size:1rem;transition:all .15s}.nav-btn:hover{background:var(--card-h);color:var(--text);border-color:var(--border-h)}.nav-btn:active{transform:scale(.92)}.hamburger{width:36px;height:36px;display:flex;flex-direction:column;justify-content:center;align-items:center;gap:5px;border-radius:9px;background:transparent;transition:background .15s}.hamburger:hover{background:rgba(255,255,255,.07)}body.light-mode .hamburger:hover{background:rgba(0,0,0,.06)}.hamburger span{display:block;width:20px;height:1.5px;background:var(--text);border-radius:2px}.drawer-overlay{position:fixed;inset:0;z-index:900;background:rgba(0,0,0,.65);backdrop-filter:blur(4px);visibility:hidden;opacity:0;transition:visibility .2s , opacity .2s}.drawer-overlay.active{visibility:visible;opacity:1}.drawer{position:fixed;top:0;left:0;width:280px;height:100%;background:var(--bg1);border-right:1px solid var(--border);transform:translateX(-100%);z-index:1000;display:flex;flex-direction:column;padding:1.25rem 1rem;transition:background .3s , border-color .3s , transform .25s cubic-bezier(.4,0,.2,1)}.drawer-overlay.active .drawer{transform:translateX(0)}.drawer-header{display:flex;justify-content:space-between;align-items:center;padding-bottom:1rem;margin-bottom:1rem;border-bottom:1px solid var(--border)}.drawer-title{font-weight:700;font-size:.95rem}.drawer-close{width:30px;height:30px;border-radius:8px;background:var(--bg2);color:var(--sub);font-size:1rem;display:flex;align-items:center;justify-content:center;cursor:pointer}.drawer-close:hover{background:rgba(239,68,68,.15);color:var(--red)}.drawer-nav{display:flex;flex-direction:column;gap:.5rem}.drawer-nav a{display:block;padding:.7rem 1rem;border-radius:var(--r);background:var(--card);border:1px solid var(--border);font-weight:500;font-size:.9rem;color:var(--text);transition:all .15s}.drawer-nav a:hover{background:var(--card-h);border-color:var(--border-h);color:var(--accent)}.drawer-footer{margin-top:auto;padding-top:1.5rem;text-align:center;font-size:.7rem;color:var(--sub);border-top:1px solid var(--border)}.lang-modal-overlay{position:fixed;inset:0;z-index:10001;background:rgba(0,0,0,.8);backdrop-filter:blur(8px);display:flex;align-items:center;justify-content:center;visibility:hidden;opacity:0;transition:visibility .2s , opacity .2s;padding:1rem}.lang-modal-overlay.active{visibility:visible;opacity:1}.lang-modal-container{background:var(--bg1);border-radius:20px;width:100%;max-width:720px;max-height:82vh;overflow-y:auto;border:1px solid var(--border);box-shadow:0 32px 64px rgba(0,0,0,.6)}.lang-modal-header{display:flex;justify-content:flex-end;align-items:center;padding:1.1rem 1.5rem;border-bottom:1px solid var(--border);position:sticky;top:0;background:var(--bg1)}.lang-modal-close{width:30px;height:30px;border-radius:8px;background:var(--bg2);color:var(--sub);font-size:1rem;display:flex;align-items:center;justify-content:center;cursor:pointer}.lang-modal-close:hover{background:rgba(239,68,68,.15);color:var(--red);transform:rotate(90deg)}.lang-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:.6rem;padding:1.25rem}.lang-card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:.65rem 1rem;display:flex;align-items:center;gap:.65rem;cursor:pointer;transition:all .15s}.lang-card:hover{background:var(--card-h);border-color:var(--accent)}.lang-card:active{transform:scale(.96)}.lang-flag{font-size:1.5rem}.lang-name{font-size:.9rem;font-weight:500;color:var(--text)}#splashScreen{min-height:100vh;min-height:100dvh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:calc(var(--nav-h) + 2rem) 1.25rem 2.5rem}#splashScreen.hide{display:none}.splash-header{text-align:center;margin-bottom:2rem;width:100%;max-width:460px}.splash-emoji{font-size:clamp(3rem,10vw,4.5rem);margin-bottom:1rem;display:block;filter:drop-shadow(0 4px 20px rgba(0,0,0,.35))}.splash-title{font-size:clamp(1.6rem,5vw,2.2rem);font-weight:800;letter-spacing:-.03em;line-height:1.15;color:var(--text);margin-bottom:.6rem}.splash-sub{font-size:.88rem;color:var(--sub);max-width:380px;margin:0 auto;line-height:1.6}.splash-sub strong{color:var(--text)}.urgence-grid>li{display:contents}.urgence-grid{list-style:none;padding:0;display:grid;grid-template-columns:1fr 1fr;gap:.9rem;width:100%;max-width:500px;margin:0 auto 1rem}.urgence-card{position:relative;overflow:hidden;display:flex;flex-direction:row;align-items:center;gap:.85rem;padding:1rem 1rem;border-radius:18px;min-height:95px;color:#fff;border:1px solid transparent;transition:transform .15s , box-shadow .15s;cursor:pointer}.urgence-card::after{content:attr(data-num);position:absolute;right:-.05em;top:-.1em;font-size:4.8rem;font-weight:900;letter-spacing:-.04em;line-height:1;opacity:.13;pointer-events:none;color:#fff}.urgence-card:active{transform:scale(.96)}.urgence-phone-icon{flex-shrink:0;width:38px;height:38px;background:rgba(255,255,255,.2);border-radius:50%;display:flex;align-items:center;justify-content:center}.urgence-phone-icon svg{width:19px;height:19px;stroke:#fff;fill:none;stroke-width:2}.urgence-info{display:flex;flex-direction:column;gap:.1rem}.urgence-number{font-size:1.8rem;font-weight:900;letter-spacing:-.02em;line-height:1;color:#fff}.urgence-name{font-size:.7rem;font-weight:700;color:rgba(255,255,255,.8);letter-spacing:.07em;text-transform:uppercase}.uc-samu{background:linear-gradient(135deg,#7f1d1d 0%,#991b1b 100%)}.uc-police{background:linear-gradient(135deg,#1e3a8a 0%,#1d4ed8 100%)}.uc-pompiers{background:linear-gradient(135deg,#7c2d12 0%,#c2410c 100%)}.uc-europe{background:linear-gradient(135deg,#3730a3 0%,#5b21b6 100%)}.uc-ssourd{background:linear-gradient(135deg,#0f172a 0%,#1e293b 100%);grid-column: 1 / -1;max-width:none;width:100%;margin:0}.uc-local{background:linear-gradient(135deg,#065f46 0%,#047857 100%);grid-column:span 2;max-width:300px;margin:0 auto;width:100%}@media (min-width:500px){.uc-local{grid-column:span 2;justify-self:center;width:auto;min-width:240px}}@media (hover:hover){.urgence-card:hover{transform:translateY(-3px)}.uc-samu:hover{box-shadow:0 12px 36px rgba(239,68,68,.35)}.uc-police:hover{box-shadow:0 12px 36px rgba(59,130,246,.35)}.uc-pompiers:hover{box-shadow:0 12px 36px rgba(234,88,12,.35)}.uc-europe:hover{box-shadow:0 12px 36px rgba(124,58,237,.35)}.uc-ssourd:hover{box-shadow:0 12px 36px rgba(148,163,184,.35)}.uc-local:hover{box-shadow:0 12px 36px rgba(16,185,129,.35)}}.btn-enter{display:flex;align-items:center;justify-content:center;gap:.6rem;width:100%;max-width:460px;padding:.95rem 1.5rem;background:var(--card);border:1px solid var(--border-h);border-radius:var(--r-lg);font-weight:600;font-size:.92rem;color:var(--sub);cursor:pointer;transition:all .15s}.btn-enter svg{width:17px;height:17px;stroke:currentColor;fill:none;stroke-width:1.75}.btn-enter:hover{background:var(--card-h);border-color:var(--accent);color:var(--accent)}.btn-enter:hover svg{transform:translateX(3px)}.btn-enter:active{transform:scale(.97)}#mainContent{display:none}.main{padding-top:calc(var(--nav-h) + 2rem);padding-bottom:4rem;max-width:780px;margin:0 auto;padding-left:1.25rem;padding-right:1.25rem}.main-welcome{background:var(--card);border:1px solid var(--border);border-radius:var(--r-lg);padding:2rem 1.5rem;text-align:center;margin-bottom:2rem}.main-welcome h1{font-size:clamp(1.4rem,4vw,1.8rem);font-weight:800;margin-bottom:.6rem}.main-welcome p{font-size:.9rem;color:var(--sub);line-height:1.7;max-width:500px;margin:0 auto}.local-info{display:flex;flex-direction:column;gap:1rem;margin-top:1.5rem;padding-top:1rem;border-top:1px solid var(--border)}.local-map{position:relative;width:100%;overflow:hidden;border-radius:12px;margin-top:.5rem;border:1px solid var(--border);background:var(--bg2)}.local-map-pin{position:absolute;left:50%;top:50%;transform:translate(-50%,-100%);font-size:1.8rem;line-height:1;pointer-events:none;filter:drop-shadow(0 1px 3px rgba(0,0,0,.6))}.local-map-attr{position:absolute;right:0;bottom:0;background:rgba(255,255,255,.75);color:#0b1220;font-size:.6rem;padding:0 .3rem;border-top-left-radius:4px;pointer-events:none}.local-contacts{display:flex;flex-wrap:wrap;gap:.5rem;justify-content:center;margin-top:.5rem}.section-title{margin:1rem 0 1rem 0;font-size:.85rem;font-weight:600;text-transform:uppercase;letter-spacing:.1em;color:var(--sub);border-left:3px solid var(--accent);padding-left:.8rem}.grid-3,.grid-2,.grid-urgences,.grid-situations,.grid-assos{display:grid;gap:.9rem;margin-bottom:2rem}.grid-3{grid-template-columns:repeat(3,1fr)}.grid-2{grid-template-columns:repeat(2,1fr)}.grid-urgences{grid-template-columns:repeat(auto-fill,minmax(280px,1fr))}.grid-situations{grid-template-columns:repeat(2,1fr)}.grid-assos{grid-template-columns:repeat(2,1fr)}.card{position:relative;overflow:hidden;display:flex;flex-direction:column;align-items:flex-start;justify-content:flex-end;padding:1.2rem 1rem 1rem;border-radius:18px;min-height:115px;background:var(--card);border:1px solid var(--border);transition:transform .15s , background .2s , border-color .2s;cursor:pointer}.card::after{content:attr(data-icon);position:absolute;right:.2rem;top:.05rem;font-size:4rem;font-weight:400;opacity:.12;pointer-events:none;line-height:1}.card:hover{background:var(--card-h);border-color:var(--border-h);transform:translateY(-2px)}.card:active{transform:scale(.96)}.card-icon{font-size:1.8rem;margin-bottom:.4rem;position:relative;z-index:1}.card-titre{font-weight:700;font-size:.95rem;margin-bottom:.15rem;position:relative;z-index:1;color:var(--text)}.card-desc{font-size:.7rem;color:var(--sub);position:relative;z-index:1;line-height:1.3}.card-emergency{color:#fff;border-color:transparent}.card-emergency .card-titre,.card-emergency .card-desc{color:#fff}.card-emergency::after{filter:brightness(0) invert(1)}.card-bleu{background:linear-gradient(135deg,#0a2b5e,#1e3a8a)}.card-rouge{background:linear-gradient(135deg,#7f1d1d,#b91c1c)}.card-orange{background:linear-gradient(135deg,#7c2d12,#c2410c)}.card-violet{background:linear-gradient(135deg,#3730a3,#5b21b6)}.card-vert{background:linear-gradient(135deg,#065f46,#047857)}.card-rose{background:linear-gradient(135deg,#881337,#e11d48)}.card-cyan{background:linear-gradient(135deg,#0e7490,#06b6d4)}.card-slate{background:linear-gradient(135deg,#1e293b,#334155)}.card-blanc{background:linear-gradient(135deg,#f8fafc,#e2e8f0);color:#0f172a}.card-blanc .card-titre,.card-blanc .card-desc{color:#0f172a;transition:color .15s}.card-blanc:hover .card-titre,.card-blanc:hover .card-desc{color:#fff}@media (max-width:600px){.grid-3,.grid-2,.grid-situations,.grid-assos{grid-template-columns:1fr}.grid-urgences{grid-template-columns:1fr}}.modal-overlay,.tool-modal-overlay{position:fixed;inset:0;z-index:11000;background:rgba(0,0,0,.92);backdrop-filter:blur(12px);display:flex;align-items:center;justify-content:center;visibility:hidden;opacity:0;transition:visibility .2s , opacity .2s}.modal-overlay.active,.tool-modal-overlay.active{visibility:visible;opacity:1}.modal-container,.tool-modal-container{background:var(--bg1);border-radius:28px;width:90%;max-width:500px;border:1px solid var(--border);box-shadow:0 32px 64px rgba(0,0,0,.5);overflow:hidden}.modal-header,.tool-modal-header{display:flex;justify-content:space-between;align-items:center;padding:1rem 1.5rem;border-bottom:1px solid var(--border);background:var(--bg1)}.modal-header h2,.tool-modal-header h2{font-size:1.1rem;font-weight:700}.modal-close,.tool-modal-close{width:32px;height:32px;border-radius:40px;background:var(--bg2);color:var(--sub);font-size:1.2rem;display:flex;align-items:center;justify-content:center;cursor:pointer}.modal-close:hover,.tool-modal-close:hover{background:rgba(239,68,68,.2);color:var(--red);transform:rotate(90deg)}.modal-body{padding:1.8rem 1.5rem;font-size:.95rem;line-height:1.6;color:var(--text)}.modal-body ul{margin-left:1.5rem;margin-top:.5rem}.modal-body li{margin:.5rem 0}.modal-body strong{color:var(--accent)}.modal-media{max-width:100%;width:100%;border-radius:12px;margin:.7rem 0;display:block;border:1px solid var(--border)}.tts-btn{width:32px;height:32px;border-radius:40px;background:var(--bg2);color:var(--accent);font-size:1rem;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:background .15s,color .15s}.tts-btn:hover,.tts-btn.speaking{background:var(--accent-strong);color:#fff}.phone-badge{display:inline-block;background:var(--accent-strong);color:#fff;padding:.2rem .6rem;border-radius:40px;font-weight:600;font-size:.85rem;margin:0 .1rem;text-decoration:none;transition:background .15s}.phone-badge:hover{background:var(--green);color:#fff}.modal-body a:not(.phone-badge){color:var(--accent);text-decoration:underline}.tool-modal-body{padding:2rem 1.5rem 1.8rem;display:flex;flex-direction:column;align-items:center;gap:1.5rem}.tool-status{font-size:1.8rem;font-weight:800;color:var(--accent)}.tool-button{background:var(--accent-strong);color:#fff;border:none;padding:.8rem 2rem;border-radius:40px;font-weight:600;font-size:1rem;width:100%;max-width:220px;transition:transform .1s , background .2s}.tool-button:active{transform:scale(.96)}.tool-button.stop{background:var(--red)}.fullscreen-tool{position:fixed;inset:0;z-index:11000;background:#fff;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;padding:2rem;visibility:hidden;opacity:0;transition:visibility .1s , opacity .1s}.fullscreen-tool.active{visibility:visible;opacity:1}.fullscreen-btn{background:rgba(0,0,0,.7);backdrop-filter:blur(12px);color:#fff;border:none;padding:.8rem 2rem;border-radius:60px;font-weight:600;font-size:1rem;margin-bottom:3rem;cursor:pointer}.fullscreen-btn:active{transform:scale(.96)}.flash-white{background:#fff}.flash-black{background:#000}#degradedBanner{display:none;position:fixed;top:var(--nav-h);left:0;right:0;z-index:798;background:#1f1503;border-bottom:1px solid #e07b0a;padding:.55rem 1rem;text-align:center;font-size:.82rem;color:#e07b0a}#loraBanner{display:none;position:fixed;top:var(--nav-h);left:0;right:0;z-index:799;background:rgba(127,29,29,.97);backdrop-filter:blur(8px);border-bottom:2px solid var(--red);padding:.7rem 1rem;color:#fff}#loraBannerInner{max-width:780px;margin:0 auto;display:flex;align-items:center;gap:.75rem;flex-wrap:wrap}#loraBannerIcon{font-size:1.3rem;flex-shrink:0}#loraBannerText{flex:1;font-size:.88rem;font-weight:600}#loraBannerTime{font-size:.72rem;opacity:.75}.lora-pulse{animation:loraPulse 1.2s ease-in-out infinite}@keyframes loraPulse{0%,100%{opacity:1}50%{opacity:.4}}#loraSection{display:none;margin-bottom:2rem}.lora-alert-card{background:var(--card);border:1px solid rgba(239,68,68,.4);border-left:4px solid var(--red);border-radius:var(--r);padding:.8rem 1rem;margin-bottom:.6rem}.lora-alert-card.unverified{border-color:rgba(224,123,10,.4);border-left-color:#e07b0a}.lora-alert-type{font-weight:700;font-size:.9rem;color:var(--text)}.lora-alert-meta{font-size:.72rem;color:var(--sub);margin:.2rem 0}.lora-alert-msg{font-size:.85rem;color:var(--text)}.lora-link{display:inline-block;margin-top:.3rem;font-size:.8rem;color:var(--accent)}.card:focus-visible,.urgence-card:focus-visible,.nav-btn:focus-visible,.lang-card:focus-visible,.btn-enter:focus-visible,.drawer-nav a:focus-visible{outline:2px solid var(--accent);outline-offset:2px}[dir=rtl] .section-title{border-left:none;border-right:3px solid var(--accent);padding-left:0;padding-right:.8rem}[dir=rtl] .card{align-items:flex-end;text-align:right}[dir=rtl] .card::after{right:auto;left:.2rem}[dir=rtl] .urgence-card::after{right:auto;left:-.05em}[dir=rtl] .drawer{left:auto;right:0;border-right:none;border-left:1px solid var(--border);transform:translateX(100%)}#carteSection{margin-bottom:2rem}.carte-wrap{background:var(--card);border:1px solid var(--border);border-radius:var(--r-lg);padding:.8rem;overflow:hidden}.carte-map{position:relative;width:100%;height:300px;border-radius:12px;overflow:hidden;background:var(--bg2);touch-action:manipulation}.carte-tiles{position:absolute;inset:0;transform-origin:50% 50%}.carte-tiles>div{position:absolute;left:0;top:0}.carte-tiles img{position:absolute;width:256px;height:256px}#carteCanvas{position:absolute;inset:0;width:100%;height:100%;display:block;z-index:2}.carte-full{position:absolute;top:8px;right:8px;width:34px;height:34px;border-radius:9px;border:1px solid rgba(255,255,255,.25);background:rgba(0,0,0,.55);color:#fff;font-size:1.05rem;display:flex;align-items:center;justify-content:center;z-index:4;cursor:pointer}.carte-attr{position:absolute;right:0;bottom:0;background:rgba(255,255,255,.78);color:#0b1220;font-size:.6rem;padding:0 .3rem;border-top-left-radius:4px;pointer-events:none;z-index:3}.carte-map:fullscreen{width:100vw;height:100vh;border-radius:0}.carte-map.carte-fs{position:fixed;inset:0;width:100vw;height:100vh;border-radius:0;z-index:25000}.carte-tools{display:flex;gap:.5rem;align-items:center;margin-top:.7rem}.carte-btn{width:44px;height:40px;border-radius:10px;border:1px solid var(--border);background:var(--bg2);color:var(--text);font-size:1.1rem;flex:none}.carte-btn:active{transform:scale(.94)}.carte-ping{flex:1;height:40px;border-radius:10px;border:none;background:linear-gradient(135deg,#b91c1c,#ef4444);color:#fff;font-weight:700;font-size:.9rem}.carte-ping:active{transform:scale(.97)}.carte-hint{font-size:.74rem;color:var(--sub);margin-top:.6rem;line-height:1.45}#sosOverlay{position:fixed;inset:0;z-index:20000;display:none;background:#fff;color:#0b1220;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:2rem 1.25rem calc(2.5rem + env(safe-area-inset-bottom))}#sosOverlay.active{display:block}.sos-inner{max-width:640px;margin:0 auto;text-align:center;padding-top:2.5rem}.sos-mark{font-size:4rem;line-height:1;margin-bottom:1rem}.sos-cause{font-size:clamp(1.6rem,6vw,2.4rem);font-weight:800;color:#b91c1c;margin-bottom:1.2rem;letter-spacing:-.02em}.sos-instr{font-size:clamp(1.05rem,3.4vw,1.3rem);line-height:1.6;white-space:pre-wrap;background:#f8fafc;border:1px solid #e2e8f0;border-radius:14px;padding:1.1rem 1.2rem;text-align:left;margin-bottom:1.4rem;color:#0b1220}.sos-tips{list-style:none;text-align:left;display:flex;flex-direction:column;gap:.5rem;margin:0 0 1.6rem;padding:0}.sos-tips li{padding:.7rem 1rem;background:#fef2f2;border-left:4px solid #b91c1c;border-radius:8px;font-size:.95rem;color:#0b1220}.sos-since{font-size:.8rem;color:#64748b}.sos-official{display:none;text-align:left;margin:0 0 1.4rem}.sos-official.show{display:block}.sos-official-title{font-size:.78rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:#475569;margin:0 0 .6rem;display:flex;align-items:center;gap:.4rem}.sos-bulletin{background:#fff;border:1px solid #e2e8f0;border-left:4px solid #2563eb;border-radius:10px;padding:.7rem .85rem;margin-bottom:.6rem}.sos-bulletin-head{display:flex;align-items:baseline;justify-content:space-between;gap:.5rem;flex-wrap:wrap}.sos-bulletin-src{font-size:.74rem;font-weight:700;color:#2563eb}.sos-bulletin-date{font-size:.7rem;color:#94a3b8}.sos-bulletin-title{font-weight:700;font-size:.95rem;color:#0b1220;margin:.15rem 0}.sos-bulletin-body{font-size:.88rem;color:#334155;white-space:pre-wrap;line-height:1.5}.sos-bulletin-link{display:inline-block;margin-top:.3rem;font-size:.78rem;color:#2563eb;word-break:break-all}.morse-io{display:flex;flex-direction:column;gap:.6rem}.morse-io input{width:100%;padding:.6rem .7rem;background:var(--bg2);border:1px solid var(--border);border-radius:10px;color:var(--text);font-size:.95rem}.morse-tools{display:flex;gap:.5rem}.morse-btn{flex:1;height:42px;border-radius:10px;border:none;background:linear-gradient(135deg,#0e7490,#06b6d4);color:#fff;font-weight:700;font-size:.9rem}.morse-btn.stop{background:var(--bg2);color:var(--text);border:1px solid var(--border)}.morse-out{font-family:ui-monospace,monospace;font-size:1.3rem;letter-spacing:.1em;word-break:break-all;min-height:1.6rem;color:var(--accent)}.morse-table{display:grid;grid-template-columns:repeat(auto-fill,minmax(64px,1fr));gap:.3rem;margin-top:.6rem}.morse-cell{background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:.3rem;text-align:center;font-size:.78rem}.morse-cell b{display:block;font-size:.95rem;color:var(--text)}.morse-cell span{font-family:ui-monospace,monospace;color:var(--sub)}#morseBeacon{position:fixed;inset:0;z-index:21000;background:#000;display:none}#morseBeacon.show{display:block}#morseBeacon.lit{background:#fff}#morseBeacon .morse-beacon-close{position:fixed;top:1rem;right:1rem;z-index:1;background:rgba(0,0,0,.6);color:#fff;border:none;padding:.6rem 1.2rem;border-radius:40px;font-weight:700}</style>
+<style>
+/* Barre du bas (accès rapide) — repris du prototype : zones tactiles larges,
+   safe-area (viewport-fit=cover), masquée hors page principale et sous overlays. */
+#bottomBar{position:fixed;left:0;right:0;bottom:0;z-index:801;display:none;
+  grid-template-columns:repeat(4,1fr);
+  background:rgba(6,10,18,.96);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
+  border-top:1px solid var(--border);
+  padding-bottom:env(safe-area-inset-bottom)}
+body.light-mode #bottomBar{background:rgba(240,244,251,.96)}
+#bottomBar.show{display:grid}
+/* Stabilité d'affichage sur mobile (évite le « fantôme » de la barre fixe). */
+#bottomBar{transform:translateZ(0);will-change:transform}
+/* Zoom de texte : masqué sur le splash, remonté au-dessus de la barre en page
+   principale (sinon caché derrière). */
+body:not(.bb-on) #a11yZoom{display:none}
+body.bb-on #a11yZoom{bottom:calc(78px + env(safe-area-inset-bottom) + .5rem);z-index:802}
+/* Bouton de lecture vocale de l'alerte (page SOS, fond clair). */
+.sos-tts{display:inline-flex;align-items:center;gap:.5rem;margin:0 auto 1.3rem;padding:.7rem 1.3rem;border-radius:40px;border:none;background:#2563eb;color:#fff;font-weight:700;font-size:.95rem;cursor:pointer}
+.sos-tts:active{transform:scale(.97)}
+.sos-tts.speaking{background:#b91c1c}
+.bb-tab{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;
+  min-height:60px;padding:.45rem .15rem;color:var(--sub);background:transparent;
+  font-size:.62rem;font-weight:700;letter-spacing:.02em;cursor:pointer;
+  transition:color .15s,background .15s;touch-action:manipulation}
+.bb-tab .bb-ic{font-size:1.35rem;line-height:1}
+.bb-tab:hover{color:var(--text)}
+.bb-tab:active{color:var(--accent);background:var(--card-h)}
+/* Laisse la place à la barre pour ne pas masquer le bas de page. */
+body.bb-on .main{padding-bottom:calc(78px + env(safe-area-inset-bottom))}
+[dir=rtl] #bottomBar{direction:rtl}
+</style>
+<style>
+/* ───────── Ajustements d'affichage (overrides, demande produit) ───────── */
+/* Carte OSM masquée sur l'accueil (servie/édit. à l'install seulement). */
+#carteSection{display:none}
+/* Outils : cartes CARRÉES, icône + titre centrés (desc masquée). */
+#outilsGrid{grid-template-columns:repeat(auto-fill,minmax(118px,1fr))}
+#outilsGrid .card{aspect-ratio:1;min-height:0;align-items:center;justify-content:center;text-align:center;padding:.9rem .5rem}
+#outilsGrid .card::after{font-size:3.2rem;right:.1rem;top:.1rem}
+#outilsGrid .card-icon{margin-bottom:.5rem}
+#outilsGrid .card-desc{display:none}
+@media (max-width:600px){#outilsGrid{grid-template-columns:repeat(3,1fr)}}
+/* Sections en TABLEAU : urgences médicales, situations, associations. */
+.info-table{width:100%;border-collapse:collapse;margin-bottom:2rem;background:var(--card);
+  border:1px solid var(--border);border-radius:var(--r);overflow:hidden}
+.info-table tr{border-top:1px solid var(--border);cursor:pointer;transition:background .15s}
+.info-table tr:first-child{border-top:none}
+.info-table tr:hover{background:var(--card-h)}
+.info-table tr:focus-visible{outline:2px solid var(--accent);outline-offset:-2px}
+.info-table td{padding:.7rem .7rem;vertical-align:middle}
+.it-ic{font-size:1.45rem;width:1.8rem;text-align:center}
+.it-main{width:100%}
+.it-titre{font-weight:700;font-size:.92rem;color:var(--text);line-height:1.25}
+.it-desc{font-size:.74rem;color:var(--sub);line-height:1.3;margin-top:.1rem}
+.it-num{white-space:nowrap;text-align:right}
+.it-num a{display:inline-block;background:var(--accent-strong);color:#fff;padding:.28rem .6rem;
+  border-radius:40px;font-weight:700;font-size:.82rem}
+.it-chev{color:var(--sub);font-size:1.1rem;text-align:right;width:1rem;padding-left:0}
+[dir=rtl] .it-num,[dir=rtl] .it-chev{text-align:left}
+[dir=rtl] .it-chev{transform:scaleX(-1)}
+/* ───────── Formulaire de ping citoyen (splash) ───────── */
+#pingForm{width:100%;max-width:460px;background:var(--card);border:1px solid var(--border-h);border-radius:var(--r-lg);padding:1.25rem 1.25rem 1rem;margin:0 auto 1.5rem;text-align:left}
+#pingForm .ping-title{font-size:.78rem;font-weight:700;text-transform:uppercase;letter-spacing:.09em;color:var(--sub);margin-bottom:.85rem;display:flex;align-items:center;gap:.4rem}
+#pingForm .ping-field{margin-bottom:.75rem}
+#pingForm label{display:block;font-size:.78rem;font-weight:600;color:var(--sub);margin-bottom:.3rem}
+#pingForm input{width:100%;padding:.65rem .85rem;border:1px solid var(--border);border-radius:10px;background:var(--bg2);color:var(--text);font-size:.95rem;font-family:inherit}
+#pingForm input:focus{outline:2px solid var(--accent);border-color:var(--accent)}
+#pingSubmit{width:100%;padding:.9rem;border-radius:12px;background:linear-gradient(135deg,#b91c1c,#ef4444);color:#fff;font-weight:800;font-size:1rem;border:none;cursor:pointer;letter-spacing:.02em}
+#pingSubmit:active{transform:scale(.97)}
+#pingSubmit:disabled{opacity:.6;cursor:default}
+#pingFeedback{margin-top:.7rem;font-size:.85rem;font-weight:600;text-align:center;min-height:1.4em}
+#pingFeedback.ok{color:var(--green,#10b981)}
+#pingFeedback.err{color:var(--red)}
+/* Barre du bas : HAUTEUR FIXE (ne grandit plus au scroll), 4 onglets. */
+#bottomBar{height:calc(62px + env(safe-area-inset-bottom));align-items:start}
+.bb-tab{height:62px;min-height:62px}
+body.bb-on .main{padding-bottom:calc(62px + env(safe-area-inset-bottom) + 1rem)}
+</style>
+</head>
+<body>
+<script src="/lib/sos-theme.js"></script>
+<div id=sosOverlay role=alertdialog aria-modal=true aria-live=assertive aria-label="Alerte d'urgence"><div class=sos-inner><div class=sos-mark>⚠️</div><div class=sos-cause id=sosCause></div><button type=button id=sosTtsBtn class=sos-tts aria-label="Lire l'alerte à voix haute" style="display:none">🔊 Lire l'alerte</button><div class=sos-instr id=sosInstr></div><div class=sos-official id=sosOfficial></div><ul class=sos-tips><li id=sosTip1>Restez calme et mettez-vous à l'abri.</li><li id=sosTip2>Suivez les consignes officielles ci-dessus.</li><li id=sosTip3>Économisez la batterie de votre téléphone.</li></ul><div class=sos-since id=sosSince></div></div></div>
+<div id=degradedBanner>⚠️ Mode dégradé — fonctions dynamiques indisponibles, contenus du guide accessibles</div>
+<div id=loraBanner><div id=loraBannerInner><span id=loraBannerIcon class=lora-pulse>📡</span><span id=loraBannerText></span><span id=loraBannerTime></span></div></div>
+<nav id=nav aria-label="Barre principale"><button class=hamburger id=hamburgerBtn aria-label="Ouvrir le menu de navigation"><span></span><span></span><span></span></button><div class=nav-logo id=navLogo><div class=nav-logo-badge>⛑️</div><strong id=appTitle>SOS-GUIDE</strong></div><div class=nav-right><button class=nav-btn id=a11yMinus aria-label="Réduire la taille du texte">A−</button><button class=nav-btn id=a11yPlus aria-label="Augmenter la taille du texte">A+</button><button class=nav-btn id=langBtn aria-label="Choisir la langue">🌐</button><button class=nav-btn id=themeToggle aria-label="Basculer le thème clair/sombre">🌙</button></div></nav>
+<div id=drawerOverlay class=drawer-overlay><div class=drawer><div class=drawer-header><span class=drawer-title id=drawerTitle>Navigation</span><button class=drawer-close id=drawerCloseBtn aria-label="Fermer le menu">✕</button></div><nav class=drawer-nav id=drawerNav aria-label="Menu"></nav><div class=drawer-footer id=drawerFooter><div class=drawer-privacy>🔒 Aucune donnée personnelle collectée<br><a href="/privacy.html" style="color:var(--accent)">Politique de confidentialité</a></div><div id=drawerFooterText style="margin-top:.5rem">SOS-GUIDE · version 1.0</div></div></div></div>
+<nav id=bottomBar aria-label="Accès rapide">
+  <button class=bb-tab type=button id=bbAlerter><span class=bb-ic>🆘</span>Alerter</button>
+  <button class=bb-tab type=button data-bb="#urgencesSection"><span class=bb-ic>☎️</span>Urgences</button>
+  <button class=bb-tab type=button data-bb="#situationsSection"><span class=bb-ic>📖</span>Guide</button>
+  <button class=bb-tab type=button data-bb="#outilsSection"><span class=bb-ic>🧰</span>Outils</button>
+</nav>
+<div id=languageModal class=lang-modal-overlay role=dialog aria-modal=true aria-label="Choix de la langue"><div class=lang-modal-container><div class=lang-modal-header><button class=lang-modal-close id=closeModalBtn aria-label="Fermer">✕</button></div><div class=lang-grid id=flagGrid></div></div></div>
+<div id=splashScreen><div class=splash-header><span class=splash-emoji>⛑️</span><h1 class=splash-title>SOS-GUIDE</h1><p class=splash-sub></p></div><form id=pingForm novalidate><div class="ping-title">🆘 Envoyer une alerte privée</div><div class=ping-field><label for=pingSender>Votre nom</label><input id=pingSender type=text maxlength=80 placeholder="Prénom ou nom" autocomplete=name></div><div class=ping-field><label for=pingKey>Clé du groupe (donnée par votre responsable)</label><input id=pingKey type=text maxlength=32 placeholder="Ex. : ROUGE" autocomplete=off spellcheck=false></div><button type=submit id=pingSubmit>🆘 ENVOYER L'ALERTE</button><div id=pingFeedback></div></form><ul class=urgence-grid id=urgenceGrid aria-label="Numéros d'urgence"></ul><button class=btn-enter id=enterBtn><svg viewBox="0 0 24 24"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg><span id=enterBtnText>Accéder au guide</span></button></div>
+<div id=mainContent><main class=main><div class=main-welcome><h1 id=welcomeTitle>SOS-GUIDE</h1><p id=welcomeText></p><div id=carteSection><div class=carte-wrap><div class=carte-map id=carteMap><div class=carte-tiles id=carteTiles></div><canvas id=carteCanvas></canvas><button class=carte-full id=carteFull type=button aria-label="Plein écran" title="Plein écran">⛶</button><div class=carte-attr id=carteAttr></div></div><div class=carte-tools><button class=carte-btn id=carteZoomOut type=button aria-label="Dézoomer">➖</button><button class=carte-ping id=cartePing type=button>📍 Envoyer un ping de détresse</button><button class=carte-btn id=carteZoomIn type=button aria-label="Zoomer">➕</button></div></div></div><div id=localInfoContainer class=local-info></div></div><div id=principesSection></div><div id=outilsSection></div><div id=urgencesSection></div><div id=situationsSection></div><div id=loraSection><div class=section-title>📡 LoRa</div><div id=loraAlertsList></div><a class=lora-link href="/lora">📨 Messagerie LoRa →</a></div><div id=assosSection></div></main></div>
+<div id=genericModal class=modal-overlay role=dialog aria-modal=true><div class=modal-container><div class=modal-header><h2 id=genericModalTitle>Information</h2><div style="display:flex;gap:.45rem;align-items:center"><button class=tts-btn id=ttsBtn aria-label="Écouter à voix haute" title="Écouter">🔊</button><button class=modal-close id=closeGenericModal aria-label="Fermer">✕</button></div></div><div class=modal-body id=genericModalBody></div></div></div>
+<div id=metronomeModal class=tool-modal-overlay><div class=tool-modal-container><div class=tool-modal-header><h2 id=metroTitle>❤️ Métronome 110 BPM</h2><button class="tool-modal-close close-metronome">✕</button></div><div class=tool-modal-body><div class=tool-status id=metroBpmDisplay>110 BPM</div><button id=metroStartStop class=tool-button>Démarrer</button></div></div></div>
+<div id=flashFullscreen class="fullscreen-tool flash-white"><button id=flashStopBtn class=fullscreen-btn>Arrêter</button></div>
+<div id=torcheFullscreen class=fullscreen-tool><button id=torcheStopBtn class=fullscreen-btn>Arrêter</button></div>
+<div id=alerteModal class=tool-modal-overlay><div class=tool-modal-container><div class=tool-modal-header><h2 id=alerteTitle>🚨 Alerte sonore</h2><button class="tool-modal-close close-alerte">✕</button></div><div class=tool-modal-body><div class=tool-status id=sirenStatus></div><button id=sirenStartStop class=tool-button>Démarrer</button></div></div></div>
+<div id=respirationModal class=tool-modal-overlay><div class=tool-modal-container><div class=tool-modal-header><h2 id=respTitle>🌬️ Respiration guidée</h2><button class="tool-modal-close close-respiration">✕</button></div><div class=tool-modal-body style=text-align:center><div id=respirationGuide style="font-size:1.4rem; margin-bottom:1rem"></div><div id=respirationTimer style="font-size:2rem; font-weight:800">4</div><button id=respirationStartStop class=tool-button>Démarrer</button></div></div></div>
+<div id=siffletModal class=tool-modal-overlay><div class=tool-modal-container><div class=tool-modal-header><h2 id=whistleTitle>🔊 Sifflet d'urgence</h2><button class="tool-modal-close close-sifflet">✕</button></div><div class=tool-modal-body><div class=tool-status id=whistleStatus></div><button id=whistleStartStop class=tool-button>Démarrer</button></div></div></div>
+<div id=timerModal class=tool-modal-overlay><div class=tool-modal-container><div class=tool-modal-header><h2 id=timerTitle>⏱️ Minuterie</h2><button class="tool-modal-close close-timer">✕</button></div><div class=tool-modal-body><div class=tool-status id=timerDisplay>02:00</div><div id=timerPresets style="display:flex;gap:.5rem;flex-wrap:wrap;justify-content:center"></div><button id=timerStartStop class=tool-button>Démarrer</button></div></div></div>
+<div id=morseModal class=tool-modal-overlay><div class=tool-modal-container><div class=tool-modal-header><h2 id=morseTitle>·− Morse SOS</h2><button class="tool-modal-close close-morse">✕</button></div><div class=tool-modal-body style="align-items:stretch"><div class=morse-io><input id=morseInput maxlength=200 placeholder="Tapez un message (ex. SOS)"><div class=morse-tools><button type=button id=morseEmit class=morse-btn>📡 Émettre (lumière + son)</button><button type=button id=morseStop class="morse-btn stop">Arrêter</button></div><div id=morseOut class=morse-out aria-live=polite></div></div><details style="margin-top:.7rem;width:100%"><summary style="cursor:pointer;font-size:.82rem;color:var(--sub)">Tableau Morse international</summary><div id=morseTable class=morse-table></div></details></div></div></div>
+<script>
+// ======================= GESTION DES DONNÉES =======================
+let langData = null;
+let configData = null;
+let currentLang = 'fr';
+const languages = [
+  {code:'fr', flag:'🇫🇷', label:'Français'},{code:'en', flag:'🇬🇧', label:'English'},{code:'es', flag:'🇪🇸', label:'Español'},
+  {code:'de', flag:'🇩🇪', label:'Deutsch'},{code:'it', flag:'🇮🇹', label:'Italiano'},{code:'pt', flag:'🇵🇹', label:'Português'},
+  {code:'nl', flag:'🇳🇱', label:'Nederlands'},{code:'pl', flag:'🇵🇱', label:'Polski'},{code:'ru', flag:'🇷🇺', label:'Русский'},
+  {code:'ar', flag:'🇸🇦', label:'العربية'},{code:'zh', flag:'🇨🇳', label:'中文'},{code:'ja', flag:'🇯🇵', label:'日本語'},
+  {code:'tr', flag:'🇹🇷', label:'Türkçe'},{code:'el', flag:'🇬🇷', label:'Ελληνικά'},{code:'sv', flag:'🇸🇪', label:'Svenska'},
+  {code:'da', flag:'🇩🇰', label:'Dansk'},{code:'no', flag:'🇳🇴', label:'Norsk'},{code:'fi', flag:'🇫🇮', label:'Suomi'},
+  {code:'cs', flag:'🇨🇿', label:'Čeština'},{code:'hu', flag:'🇭🇺', label:'Magyar'},{code:'ro', flag:'🇷🇴', label:'Română'},
+  {code:'uk', flag:'🇺🇦', label:'Українська'},{code:'he', flag:'🇮🇱', label:'עברית'},{code:'th', flag:'🇹🇭', label:'ไทย'},
+  {code:'vi', flag:'🇻🇳', label:'Tiếng Việt'},{code:'ko', flag:'🇰🇷', label:'한국어'},{code:'hi', flag:'🇮🇳', label:'हिन्दी'},
+  {code:'rm', flag:'🇨🇭', label:'Rumantsch'},{code:'fa', flag:'🇮🇷', label:'فارسی'}
+];
+const RTL_LANGS = new Set(['ar','he','fa']);
+function esc(s){return String(s??'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');}
+
+async function loadConfig() {
+  try {
+    const res = await fetch('data/config.json');
+    if (res.ok) configData = await res.json();
+    else configData = { establishment: {} };
+  } catch(e) { configData = { establishment: {} }; }
+}
+
+async function loadLanguage(lang) {
+  try {
+    const res = await fetch(`data/${lang}.json`);
+    if (!res.ok) throw new Error();
+    langData = await res.json();
+    currentLang = lang;
+    localStorage.setItem('sos_lang', lang);
+    document.documentElement.lang = lang;
+    document.documentElement.dir = RTL_LANGS.has(lang) ? 'rtl' : 'ltr';
+    if (configData) applyAll();
+    else {
+      await loadConfig();
+      applyAll();
+    }
+  } catch(e) {
+    if(lang !== 'fr') loadLanguage('fr');
+    else console.error('Impossible de charger fr.json');
+  }
+}
+
+function formatPhoneNumbersToBadges(html) {
+  const div = document.createElement('div');
+  div.innerHTML = html;
+  const links = div.querySelectorAll('a[href^="tel:"]');
+  links.forEach(link => {
+    const badge = document.createElement('a');
+    badge.href = link.href;
+    badge.className = 'phone-badge';
+    badge.textContent = link.textContent;
+    link.parentNode.replaceChild(badge, link);
+  });
+  return div.innerHTML;
+}
+
+
+// A11y : rend un élément actionnable au clavier (Enter / Espace)
+function a11yButton(el, label) {
+  el.setAttribute('role', 'button');
+  el.setAttribute('tabindex', '0');
+  if (label) el.setAttribute('aria-label', label);
+  el.addEventListener('keydown', e => {
+    if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); el.click(); }
+  });
+}
+// Table pays = source UNIQUE des numéros d'urgence (miroir de la table du wizard
+// /install). RÈGLE DE SÉCURITÉ : les numéros suivent le PAYS, jamais la langue —
+// changer de langue ne doit JAMAIS changer un numéro. Seuls les libellés (depuis
+// langData) se traduisent. Numéro introuvable ⇒ la carte n'est pas affichée
+// (on n'affiche jamais un numéro potentiellement faux).
+const COUNTRY_EMERGENCY = {
+  FR:{samu:'15',police:'17',pompiers:'18',europe:'112',ssourd:'114'},
+  CH:{samu:'144',police:'117',pompiers:'118',europe:'112'},
+  BE:{samu:'112',police:'101',pompiers:'112',europe:'112'},
+  LU:{samu:'112',police:'113',pompiers:'112',europe:'112'},
+  DE:{samu:'112',police:'110',pompiers:'112',europe:'112'},
+  AT:{samu:'144',police:'133',pompiers:'122',europe:'112'},
+  IT:{samu:'118',police:'113',pompiers:'115',europe:'112'},
+  CA:{samu:'911',police:'911',pompiers:'911'},
+  GB:{samu:'999',police:'999',pompiers:'999',europe:'112'},
+  OT:{europe:'112'}
+};
+function buildUrgences() {
+  const est = configData?.establishment || {};
+  const cc = String(est.countryCode || '').toUpperCase();
+  const C = COUNTRY_EMERGENCY[cc] || {};
+  const pick = (cfgVal, fallback) => (String(cfgVal||'').trim() || fallback || '');
+  // Numéro par service : config du nœud (autoritaire, fixée au pays à l'install)
+  // > table pays. Jamais depuis la langue.
+  const num = {
+    samu: pick(est.localSamuNumber, C.samu),
+    police: pick(est.localPoliceNumber, C.police),
+    pompiers: pick(est.localPompiersNumber, C.pompiers),
+    europe: pick(est.localEuropeNumber, C.europe),
+    ssourd: pick(est.localDeafNumber, C.ssourd)
+  };
+  // Libellés/ordre/couleur depuis la langue ; numéro imposé par le pays.
+  return [...(langData?.urgences || [])]
+    .map(u => ({ ...u, number: num[u.class] || '' }))
+    .filter(u => u.number);
+}
+
+// Position fractionnaire de tuile (lat/lon → x,y flottants) au zoom z, même
+// projection Web Mercator que le nœud — sert à centrer la mosaïque sur la borne.
+function ll2tilef(lat, lon, z){
+  const n = Math.pow(2, z), latRad = lat * Math.PI / 180;
+  return { x: (lon + 180) / 360 * n,
+           y: (1 - Math.log(Math.tan(latRad) + 1 / Math.cos(latRad)) / Math.PI) / 2 * n };
+}
+
+// (La mosaïque de tuiles est désormais rendue comme fond de la carte de
+// détresse — voir le module #carteCanvas plus bas. `ll2tilef` y est réutilisé.)
+
+function applyAll() {
+  if(!langData) return;
+  
+  // Mise à jour des textes statiques
+  if (langData.app?.title) document.getElementById('appTitle').textContent = langData.app.title;
+  if (langData.drawer?.title) document.getElementById('drawerTitle').textContent = langData.drawer.title;
+  if (langData.drawer?.footer) document.getElementById('drawerFooterText').textContent = langData.drawer.footer;
+  
+  // Drawer
+  const drawerNav = document.getElementById('drawerNav');
+  drawerNav.innerHTML = '';
+  langData.drawer.links.forEach(link => {
+    const a = document.createElement('a');
+    a.href = link.href;
+    a.innerHTML = link.icon + ' ' + link.label;
+    if(link.href.startsWith('#')) {
+      a.addEventListener('click', (e) => {
+        e.preventDefault();
+        closeDrawer();
+        const target = document.querySelector(link.href);
+        if(target) target.scrollIntoView({ behavior: 'smooth' });
+      });
+    } else {
+      a.addEventListener('click', (e) => { closeDrawer(); });
+    }
+    drawerNav.appendChild(a);
+  });
+  // Splash
+  document.querySelector('.splash-title').textContent = langData.splash.title;
+  document.querySelector('.splash-sub').innerHTML = langData.splash.subtitle;
+  document.getElementById('enterBtnText').textContent = langData.splash.enterButton;
+  // Welcome main
+  document.getElementById('welcomeTitle').textContent = langData.main.welcome.title;
+  document.getElementById('welcomeText').textContent = langData.main.welcome.text;
+  
+  // Section locale (construite à partir de config.json et des traductions)
+  const localContainer = document.getElementById('localInfoContainer');
+  const est = configData.establishment || {};
+  const locStrings = langData.local || {};
+  
+  let localHtml = '';
+  // Type de lieu : adapte l'icône et affiche un badge (commerce, mairie, école…).
+  const VENUE_TYPES={mairie:{i:'🏛️',l:'Mairie'},ecole:{i:'🏫',l:'École'},commerce:{i:'🏪',l:'Commerce'},tabac:{i:'🚬',l:'Tabac / Presse'},dispensaire:{i:'🏥',l:'Dispensaire / Santé'},public:{i:'📍',l:'Lieu public'},autre:{i:'📍',l:'Lieu'}};
+  const vt = VENUE_TYPES[configData.venueType] || null;
+  const nameIcon = vt ? vt.i : '📍';
+  const vtBadge = vt ? ` <span style="font-size:.7rem;font-weight:700;background:var(--bg2);color:var(--sub);padding:.1rem .5rem;border-radius:40px;white-space:nowrap;">${esc(vt.l)}</span>` : '';
+  const estLoc = [est.address, est.country].filter(Boolean).map(esc).join(', ');
+  if (est.name && estLoc) {
+    localHtml += `<div style="text-align:left; margin-bottom:0.5rem;"><strong>${nameIcon} ${esc(est.name)}</strong>${vtBadge}<br><span style="font-size:0.9rem; color:var(--sub);">${estLoc}</span></div>`;
+  } else if (est.name) {
+    localHtml += `<div><strong>${nameIcon} ${esc(est.name)}</strong>${vtBadge}</div>`;
+  }
+  
+  // Badges contacts locaux
+  const contacts = [];
+  if (est.localCrisisNumber) contacts.push({ label: locStrings.crisis || '📞 Crise', number: est.localCrisisNumber });
+  if (est.localSamuNumber) contacts.push({ label: locStrings.samu || '🚑 SAMU local', number: est.localSamuNumber });
+  if (est.localPompiersNumber) contacts.push({ label: locStrings.fire || '🚒 Pompiers', number: est.localPompiersNumber });
+  if (est.localMairieNumber) contacts.push({ label: locStrings.townhall || '🏛️ Mairie', number: est.localMairieNumber });
+  if (est.localPrefecture) contacts.push({ label: locStrings.prefecture || '🏛️ Préfecture', number: est.localPrefecture });
+  if (est.localCroixRouge) contacts.push({ label: locStrings.redcross || '🔴 Croix-Rouge', number: est.localCroixRouge });
+  if (est.localRadioFreq) contacts.push({ label: locStrings.radio || '📻 Radio', number: est.localRadioFreq }); // radio frequency not a tel but can be displayed
+  
+  if (contacts.length > 0) {
+    localHtml += `<div class="local-contacts">`;
+    contacts.forEach(c => {
+      if (c.number) {
+        // Si c'est une fréquence radio, on peut ne pas en faire un tel:
+        if (c.label.includes('Radio')) {
+          localHtml += `<span class="phone-badge" style="background:var(--bg2); color:var(--text); pointer-events:none;">${c.label}: ${esc(c.number)}</span>`;
+        } else {
+          localHtml += `<a href="tel:${esc(c.number)}" class="phone-badge">${c.label}: ${esc(c.number)}</a>`;
+        }
+      }
+    });
+    localHtml += `</div>`;
+  }
+  
+  // Message de réassurance
+  if (configData.reassurance && configData.reassurance.message) {
+    localHtml += `<div style="margin-top:0.75rem; padding:0.5rem; background:rgba(59,130,246,0.1); border-radius:12px; font-size:0.9rem; color:var(--accent);">🕊️ ${esc(configData.reassurance.message)}</div>`;
+  }
+
+  // Crédit sponsor optionnel (commerce/lieu qui héberge la borne).
+  if (configData.sponsor) {
+    localHtml += `<div style="margin-top:0.5rem; font-size:0.78rem; color:var(--sub); text-align:center;">🤝 Borne mise à disposition par <strong>${esc(configData.sponsor)}</strong></div>`;
+  }
+
+  // (La carte OSM du lieu est fusionnée dans la carte de détresse ci-dessous :
+  // tuiles en fond + cercle de portée 30 m + pings.)
+
+  // Informations complémentaires (point de rassemblement, plan d'évacuation)
+  if (est.localMeetingPoint) {
+    localHtml += `<div style="margin-top:0.5rem; font-size:0.85rem;"><span style="opacity:0.7;">🚶 Point de rassemblement :</span> ${esc(est.localMeetingPoint)}</div>`;
+  }
+  if (est.localEvacuationPlan) {
+    localHtml += `<div style="margin-top:0.25rem; font-size:0.85rem;"><span style="opacity:0.7;">🗺️ Plan d'évacuation :</span> ${esc(est.localEvacuationPlan)}</div>`;
+  }
+  
+  localContainer.innerHTML = localHtml;
+
+  // Urgence grid (inchangé)
+  const grid = document.getElementById('urgenceGrid');
+  grid.innerHTML = '';
+  const urgs = buildUrgences();
+  urgs.slice(0,4).forEach(urg => {
+    const a = document.createElement('a');
+    a.href = `tel:${urg.number}`;
+    a.className = `urgence-card uc-${urg.class}`;
+    a.setAttribute('data-num', urg.number);
+    a.setAttribute('aria-label', `${urg.name} : ${urg.number}`);
+    a.innerHTML = `<div class="urgence-phone-icon"><svg viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.61 3.45A2 2 0 0 1 3.59 1h3a2 2 0 0 1 2 1.72c.128.96.347 1.902.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.4a16 16 0 0 0 6 6l.92-.92a2 2 0 0 1 2.11-.45c.907.353 1.85.572 2.81.7A2 2 0 0 1 22 16z"/></svg></div><div class="urgence-info"><div class="urgence-number">${urg.number}</div><div class="urgence-name">${urg.name}</div></div>`;
+    const li=document.createElement('li');
+    li.appendChild(a);
+    grid.appendChild(li);
+  });
+  const fifth = urgs[4];
+  if(fifth) {
+    const a = document.createElement('a');
+    a.href = `tel:${fifth.number}`;
+    a.className = `urgence-card uc-${fifth.class}`;
+    a.setAttribute('data-num', fifth.number);
+    a.setAttribute('aria-label', `${fifth.name} : ${fifth.number}`);
+    a.innerHTML = `<div class="urgence-phone-icon"><svg viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.61 3.45A2 2 0 0 1 3.59 1h3a2 2 0 0 1 2 1.72c.128.96.347 1.902.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.4a16 16 0 0 0 6 6l.92-.92a2 2 0 0 1 2.11-.45c.907.353 1.85.572 2.81.7A2 2 0 0 1 22 16z"/></svg></div><div class="urgence-info"><div class="urgence-number">${fifth.number}</div><div class="urgence-name">${fifth.name}</div></div>`;
+    const li=document.createElement('li');
+    li.appendChild(a);
+    grid.appendChild(li);
+  }
+  const crisisNum = (configData?.establishment?.localCrisisNumber || '').trim();
+  if (crisisNum) {
+    const a = document.createElement('a');
+    a.href = `tel:${crisisNum}`;
+    a.className = 'urgence-card uc-local';
+    a.setAttribute('data-num', crisisNum);
+    a.setAttribute('aria-label', `${(langData.local&&langData.local.crisis)||'Crise'} : ${crisisNum}`);
+    a.innerHTML = `<div class="urgence-phone-icon"><svg viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.61 3.45A2 2 0 0 1 3.59 1h3a2 2 0 0 1 2 1.72c.128.96.347 1.902.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.4a16 16 0 0 0 6 6l.92-.92a2 2 0 0 1 2.11-.45c.907.353 1.85.572 2.81.7A2 2 0 0 1 22 16z"/></svg></div><div class="urgence-info"><div class="urgence-number">${esc(crisisNum)}</div><div class="urgence-name">${esc((langData.local&&langData.local.crisis)||'📞 Crise')}</div></div>`;
+    const li=document.createElement('li');
+    li.appendChild(a);
+    grid.appendChild(li);
+  }
+  
+  // Sections principales (inchangé)
+  document.getElementById('principesSection').innerHTML = `<div class="section-title" id="section-principes">${langData.sections.principes}</div><div class="grid-3" id="principesGrid"></div>`;
+  const principesGrid = document.getElementById('principesGrid');
+  principesGrid.innerHTML = '';
+  langData.principes.forEach(p => {
+    const card = document.createElement('div');
+    card.className = `card ${p.colorClass}`;
+    card.setAttribute('data-icon', p.icon);
+    card.innerHTML = `<div class="card-icon">${p.icon}</div><div class="card-titre">${p.titre}</div><div class="card-desc">${p.desc}</div>`;
+    card.addEventListener('click', () => openModal(p.titre, formatContent(p.contenu)));
+    a11yButton(card, p.titre);
+    principesGrid.appendChild(card);
+  });
+  document.getElementById('outilsSection').innerHTML = `<div class="section-title" id="section-outils">${langData.sections.outils}</div><div class="grid-2" id="outilsGrid"></div>`;
+  const outilsGrid = document.getElementById('outilsGrid');
+  outilsGrid.innerHTML = '';
+  langData.outils.forEach(outil => {
+    const card = document.createElement('div');
+    card.className = 'card';
+    card.setAttribute('data-icon', outil.icon);
+    card.innerHTML = `<div class="card-icon">${outil.icon}</div><div class="card-titre">${outil.titre}</div><div class="card-desc">${outil.desc}</div>`;
+    card.addEventListener('click', () => { if(outil.action) window[outil.action](); });
+    a11yButton(card, outil.titre);
+    outilsGrid.appendChild(card);
+  });
+  // Morse : outil hors-ligne ajouté pour TOUTES les langues (repli FR), comme
+  // les autres outils mais indépendant des données traduites (était autrefois
+  // une section figée de l'accueil).
+  {
+    const mt = (langData.tools && langData.tools.morse) || {};
+    const mTitre = mt.titre || '·− Morse SOS';
+    const mDesc = mt.desc || 'Émettre un message en morse (lumière + son).';
+    const mCard = document.createElement('div');
+    mCard.className = 'card';
+    mCard.setAttribute('data-icon', '📡');
+    mCard.innerHTML = `<div class="card-icon">📡</div><div class="card-titre">${mTitre}</div><div class="card-desc">${mDesc}</div>`;
+    mCard.addEventListener('click', () => window.openMorse());
+    a11yButton(mCard, mTitre);
+    outilsGrid.appendChild(mCard);
+  }
+  // Sections en TABLEAU (remplacent les anciennes grilles de cartes) : chaque
+  // ligne ouvre la fiche détaillée ; les associations affichent un numéro.
+  function buildInfoTable(section, titleId, titleText, items, withNumero){
+    section.innerHTML = `<div class="section-title" id="${titleId}">${titleText}</div>`;
+    const tbl = document.createElement('table');
+    tbl.className = 'info-table';
+    items.forEach(it => {
+      const tr = document.createElement('tr');
+      tr.setAttribute('role','button');
+      tr.tabIndex = 0;
+      tr.setAttribute('aria-label', it.titre);
+      const numCell = (withNumero && it.numero)
+        ? `<td class=it-num><a href="tel:${String(it.numero).replace(/[^+0-9]/g,'')}">${it.numero}</a></td>`
+        : '';
+      const descLine = it.desc ? `<div class=it-desc>${it.desc}</div>` : '';
+      tr.innerHTML = `<td class=it-ic>${it.icon||''}</td><td class=it-main><div class=it-titre>${it.titre}</div>${descLine}</td>${numCell}<td class=it-chev>›</td>`;
+      const open = () => openModal(it.titre, formatContent(it.contenu));
+      tr.addEventListener('click', open);
+      tr.addEventListener('keydown', e => { if(e.key==='Enter'||e.key===' '){ e.preventDefault(); open(); } });
+      const tel = tr.querySelector('a[href^="tel:"]');
+      if(tel) tel.addEventListener('click', e => e.stopPropagation());
+      tbl.appendChild(tr);
+    });
+    section.appendChild(tbl);
+  }
+  buildInfoTable(document.getElementById('urgencesSection'), 'section-urgences', langData.sections.urgencesMedicales, langData.urgences_medicales, false);
+  buildInfoTable(document.getElementById('situationsSection'), 'section-situations', langData.sections.situationsCollectives, langData.situations_collectives, false);
+  // Associations & numéros d'aide : SOURCE = configuration du nœud (saisie par
+  // l'admin à l'install / dans /admin), qui suit le PAYS du déploiement — pas la
+  // langue. Repli sur la liste de la langue UNIQUEMENT si rien n'a été configuré
+  // (rétro-compatibilité : un nœud FR sans saisie garde ses numéros nationaux).
+  const cfgAssos = (configData && Array.isArray(configData.associations)) ? configData.associations : null;
+  const assosItems = (cfgAssos && cfgAssos.length)
+    ? cfgAssos
+        .map(a => ({
+          icon: a.icon || '📞',
+          titre: a.name || a.titre || '',
+          numero: a.number || a.numero || '',
+          contenu: { steps: [a.desc || a.description || (a.number || a.numero ? ((langData.local&&langData.local.numberLabel)||'Numéro') + ' : ' + (a.number || a.numero) : '')].filter(Boolean) }
+        }))
+        .filter(a => a.titre || a.numero)
+    : (langData.associations || []);
+  buildInfoTable(document.getElementById('assosSection'), 'section-assos', langData.sections.associations, assosItems, true);
+  
+  // Traductions des modales outils
+  document.getElementById('metroTitle').innerHTML = langData.tools.metronome.title;
+  document.getElementById('metroStartStop').textContent = langData.tools.metronome.start;
+  document.getElementById('flashStopBtn').textContent = langData.tools.flash.stop;
+  document.getElementById('torcheStopBtn').textContent = langData.tools.torch.stop;
+  document.getElementById('alerteTitle').innerHTML = langData.tools.alarm.title;
+  document.getElementById('sirenStartStop').textContent = langData.tools.alarm.start;
+  document.getElementById('respTitle').innerHTML = langData.tools.respiration.title;
+  document.getElementById('respirationStartStop').textContent = langData.tools.respiration.start;
+  document.getElementById('whistleTitle').innerHTML = langData.tools.whistle.title;
+  document.getElementById('whistleStartStop').textContent = langData.tools.whistle.start;
+  if (langData.tools.timer) {
+    document.getElementById('timerTitle').innerHTML = langData.tools.timer.title || '⏱️ Minuterie';
+    if (!timerRunning) document.getElementById('timerStartStop').textContent = langData.tools.timer.start || 'Démarrer';
+  }
+  if (langData.tools.morse && langData.tools.morse.title) {
+    document.getElementById('morseTitle').textContent = langData.tools.morse.title;
+  }
+}
+
+// N'autorise que des chemins médias locaux (anti javascript:/data: et anti-traversée)
+function safeMedia(path) {
+  const v = String(path || '');
+  return /^(media|img)\/[\w./-]+$/.test(v) && !v.includes('..') ? v : '';
+}
+function formatContent(content) {
+  if(typeof content === 'string') content = { steps: [content] };
+  let html = '';
+  if(content.warning) html += `<p style="background:rgba(239,68,68,.2); padding:.5rem; border-radius:12px;">⚠️ ${content.warning}</p>`;
+  const _img = safeMedia(content.image);
+  if(_img) html += `<img src="${esc(_img)}" alt="" class="modal-media" loading="lazy">`;
+  const _vid = safeMedia(content.video);
+  if(_vid) html += `<video class="modal-media" controls preload="none" playsinline src="${esc(_vid)}"></video>`;
+  const _aud = safeMedia(content.audio);
+  if(_aud) html += `<audio class="modal-media" controls preload="none" src="${esc(_aud)}"></audio>`;
+  if(content.steps && content.steps.length) {
+    html += '<ul>';
+    content.steps.forEach(step => html += `<li>${step}</li>`);
+    html += '</ul>';
+  }
+  if(content.extra) html += `<p>${content.extra}</p>`;
+  return formatPhoneNumbersToBadges(html);
+}
+
+// Modal générique
+const genericModal = document.getElementById('genericModal');
+const genericModalTitle = document.getElementById('genericModalTitle');
+const genericModalBody = document.getElementById('genericModalBody');
+const closeGenericModal = document.getElementById('closeGenericModal');
+function openModal(title, contentHtml) {
+  genericModalTitle.innerHTML = title;
+  genericModalBody.innerHTML = contentHtml;
+  genericModal.classList.add('active');
+  document.body.style.overflow = 'hidden';
+}
+function closeModal() {
+  genericModal.classList.remove('active');
+  document.body.style.overflow = '';
+  stopTTS();
+}
+closeGenericModal.addEventListener('click', closeModal);
+genericModal.addEventListener('click', e => { if(e.target === genericModal) closeModal(); });
+
+/// ======================= OUTILS =======================
+let audioCtx = null, metActive = false, timeoutId = null, nextBeepTime = 0;
+function getAudioCtx() { if(!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)(); return audioCtx; }
+function playBeep() {
+  const ctx = getAudioCtx(); if(ctx.state === 'suspended') ctx.resume();
+  const osc = ctx.createOscillator(); const gain = ctx.createGain();
+  osc.connect(gain); gain.connect(ctx.destination);
+  osc.frequency.value = 880; gain.gain.value = 0.15;
+  osc.start(); gain.gain.exponentialRampToValueAtTime(0.00001, ctx.currentTime + 0.2);
+  osc.stop(ctx.currentTime + 0.2);
+}
+function scheduleBeep() {
+  if(!metActive) return;
+  const ctx = getAudioCtx(); const now = ctx.currentTime;
+  nextBeepTime += 60/110;
+  const delay = Math.max(0, nextBeepTime - now);
+  timeoutId = setTimeout(() => { playBeep(); scheduleBeep(); }, delay * 1000);
+}
+function startMetro() {
+  if(metActive) return;
+  metActive = true; const ctx = getAudioCtx(); ctx.resume();
+  nextBeepTime = ctx.currentTime; scheduleBeep();
+  const btn = document.getElementById('metroStartStop');
+  if(langData) btn.textContent = langData.tools.metronome.stop;
+  btn.classList.add('stop');
+}
+function stopMetro() {
+  metActive = false; if(timeoutId) clearTimeout(timeoutId);
+  const btn = document.getElementById('metroStartStop');
+  if(langData) btn.textContent = langData.tools.metronome.start;
+  btn.classList.remove('stop');
+}
+document.getElementById('metroStartStop').addEventListener('click', () => { metActive ? stopMetro() : startMetro(); });
+document.querySelector('.close-metronome').addEventListener('click', () => { document.getElementById('metronomeModal').classList.remove('active'); document.body.style.overflow = ''; if(metActive) stopMetro(); });
+document.getElementById('metronomeModal').addEventListener('click', e => { if(e.target === document.getElementById('metronomeModal')) { document.getElementById('metronomeModal').classList.remove('active'); document.body.style.overflow = ''; if(metActive) stopMetro(); } });
+// Flash SOS
+let flashActive = false, flashStep = 0;
+function applyFlashColor(isWhite) { document.getElementById('flashFullscreen').style.background = isWhite ? '#fff' : '#000'; }
+function runFlashStep() {
+  if(!flashActive) return;
+  const pattern = ['short','short','short','long','long','long','short','short','short'];
+  if(flashStep >= pattern.length) { setTimeout(() => { if(flashActive) { flashStep = 0; runFlashStep(); } }, 1000); return; }
+  const duration = pattern[flashStep] === 'short' ? 200 : 600;
+  applyFlashColor(true); setTimeout(() => { if(flashActive) applyFlashColor(false); setTimeout(() => { if(flashActive) { flashStep++; runFlashStep(); } }, 50); }, duration);
+}
+function startFlash() { if(flashActive) return; flashActive = true; flashStep = 0; document.getElementById('flashFullscreen').classList.add('active'); document.body.style.overflow = 'hidden'; runFlashStep(); }
+function stopFlash() { flashActive = false; document.getElementById('flashFullscreen').classList.remove('active'); document.body.style.overflow = ''; applyFlashColor(true); }
+document.getElementById('flashStopBtn').addEventListener('click', stopFlash);
+document.getElementById('flashFullscreen').addEventListener('click', e => { if(e.target === document.getElementById('flashFullscreen')) stopFlash(); });
+// Lampe torche
+function openTorche() { document.getElementById('torcheFullscreen').classList.add('active'); document.body.style.overflow = 'hidden'; }
+function closeTorche() { document.getElementById('torcheFullscreen').classList.remove('active'); document.body.style.overflow = ''; }
+document.getElementById('torcheStopBtn').addEventListener('click', closeTorche);
+document.getElementById('torcheFullscreen').addEventListener('click', e => { if(e.target === document.getElementById('torcheFullscreen')) closeTorche(); });
+// Alerte sonore linéaire
+let sirenActive = false, sirenOsc = null, sirenGain = null;
+function startSiren() {
+  const ctx = getAudioCtx(); ctx.resume();
+  if(sirenOsc) { sirenOsc.stop(); sirenOsc.disconnect(); }
+  sirenOsc = ctx.createOscillator(); sirenGain = ctx.createGain();
+  sirenOsc.connect(sirenGain); sirenGain.connect(ctx.destination);
+  sirenOsc.type = 'sine'; sirenOsc.frequency.value = 880;
+  sirenGain.gain.value = 0.25;
+  sirenOsc.start();
+  sirenActive = true;
+  const statusDiv = document.getElementById('sirenStatus');
+  const btn = document.getElementById('sirenStartStop');
+  if(langData) {
+    statusDiv.innerHTML = langData.tools.alarm.active;
+    btn.textContent = langData.tools.alarm.stop;
+  }
+  btn.classList.add('stop');
+}
+function stopSiren() {
+  if(sirenOsc) { sirenOsc.stop(); sirenOsc.disconnect(); sirenOsc = null; }
+  if(sirenGain) { sirenGain.disconnect(); sirenGain = null; }
+  sirenActive = false;
+  const statusDiv = document.getElementById('sirenStatus');
+  const btn = document.getElementById('sirenStartStop');
+  if(langData) {
+    statusDiv.innerHTML = langData.tools.alarm.inactive;
+    btn.textContent = langData.tools.alarm.start;
+  }
+  btn.classList.remove('stop');
+}
+document.getElementById('sirenStartStop').addEventListener('click', () => { sirenActive ? stopSiren() : startSiren(); });
+document.querySelector('.close-alerte').addEventListener('click', () => { document.getElementById('alerteModal').classList.remove('active'); document.body.style.overflow = ''; if(sirenActive) stopSiren(); });
+document.getElementById('alerteModal').addEventListener('click', e => { if(e.target === document.getElementById('alerteModal')) { document.getElementById('alerteModal').classList.remove('active'); document.body.style.overflow = ''; if(sirenActive) stopSiren(); } });
+// Respiration
+let respActive = false, respInterval = null, respPhase = 'inspire', respCount = 4;
+function updateRespirationUI() {
+  const inspireText = langData ? langData.tools.respiration.inhale : 'Inspirez';
+  const expireText = langData ? langData.tools.respiration.exhale : 'Expirez';
+  document.getElementById('respirationGuide').textContent = respPhase === 'inspire' ? `🌬️ ${inspireText}` : `🌬️ ${expireText}`;
+  document.getElementById('respirationTimer').textContent = respCount;
+}
+function respirationCycle() {
+  if(!respActive) return;
+  if(respCount === 1) {
+    respPhase = respPhase === 'inspire' ? 'expire' : 'inspire';
+    respCount = 4;
+    updateRespirationUI();
+  } else {
+    respCount--;
+    updateRespirationUI();
+  }
+}
+function startRespiration() {
+  if(respActive) return;
+  respActive = true; respPhase = 'inspire'; respCount = 4;
+  updateRespirationUI();
+  if(respInterval) clearInterval(respInterval);
+  respInterval = setInterval(respirationCycle, 1000);
+  const btn = document.getElementById('respirationStartStop');
+  if(langData) btn.textContent = langData.tools.respiration.stop;
+}
+function stopRespiration() {
+  respActive = false; if(respInterval) clearInterval(respInterval); respInterval = null;
+  const btn = document.getElementById('respirationStartStop');
+  if(langData) btn.textContent = langData.tools.respiration.start;
+}
+document.getElementById('respirationStartStop').addEventListener('click', () => { respActive ? stopRespiration() : startRespiration(); });
+document.querySelector('.close-respiration').addEventListener('click', () => { document.getElementById('respirationModal').classList.remove('active'); document.body.style.overflow = ''; if(respActive) stopRespiration(); });
+document.getElementById('respirationModal').addEventListener('click', e => { if(e.target === document.getElementById('respirationModal')) { document.getElementById('respirationModal').classList.remove('active'); document.body.style.overflow = ''; if(respActive) stopRespiration(); } });
+// Sifflet
+let whistleActive = false;
+function playWhistle() {
+  const ctx = getAudioCtx(); if(ctx.state === 'suspended') ctx.resume();
+  const osc = ctx.createOscillator(); const gain = ctx.createGain();
+  osc.connect(gain); gain.connect(ctx.destination);
+  osc.type = 'triangle'; osc.frequency.value = 2500; gain.gain.value = 0.2;
+  osc.start(); gain.gain.exponentialRampToValueAtTime(0.00001, ctx.currentTime + 0.8);
+  osc.stop(ctx.currentTime + 0.8);
+}
+function startWhistle() {
+  if(whistleActive) return;
+  whistleActive = true;
+  let count = 0;
+  function playSequence() {
+    if(!whistleActive) return;
+    playWhistle();
+    count++;
+    if(count < 3) setTimeout(playSequence, 400);
+    else { 
+      whistleActive = false; 
+      const statusDiv = document.getElementById('whistleStatus');
+      const btn = document.getElementById('whistleStartStop');
+      if(langData) {
+        statusDiv.innerHTML = langData.tools.whistle.inactive;
+        btn.textContent = langData.tools.whistle.start;
+      }
+    }
+  }
+  playSequence();
+  const statusDiv = document.getElementById('whistleStatus');
+  const btn = document.getElementById('whistleStartStop');
+  if(langData) {
+    statusDiv.innerHTML = langData.tools.whistle.active;
+    btn.textContent = langData.tools.whistle.stop;
+  }
+}
+function stopWhistle() { 
+  whistleActive = false; 
+  const statusDiv = document.getElementById('whistleStatus');
+  const btn = document.getElementById('whistleStartStop');
+  if(langData) {
+    statusDiv.innerHTML = langData.tools.whistle.inactive;
+    btn.textContent = langData.tools.whistle.start;
+  }
+}
+document.getElementById('whistleStartStop').addEventListener('click', () => { whistleActive ? stopWhistle() : startWhistle(); });
+document.querySelector('.close-sifflet').addEventListener('click', () => { document.getElementById('siffletModal').classList.remove('active'); document.body.style.overflow = ''; if(whistleActive) stopWhistle(); });
+document.getElementById('siffletModal').addEventListener('click', e => { if(e.target === document.getElementById('siffletModal')) { document.getElementById('siffletModal').classList.remove('active'); document.body.style.overflow = ''; if(whistleActive) stopWhistle(); } });
+
+// ======================= SYNTHÈSE VOCALE (TTS multilingue, hors-Internet) =======================
+const TTS_OK = ('speechSynthesis' in window) && ('SpeechSynthesisUtterance' in window);
+function ttsLangTag(code) {
+  const map = {fr:'fr-FR',en:'en-GB',es:'es-ES',de:'de-DE',it:'it-IT',pt:'pt-PT',nl:'nl-NL',pl:'pl-PL',ru:'ru-RU',ar:'ar-SA',zh:'zh-CN',ja:'ja-JP',tr:'tr-TR',el:'el-GR',sv:'sv-SE',da:'da-DK',no:'nb-NO',fi:'fi-FI',cs:'cs-CZ',hu:'hu-HU',ro:'ro-RO',uk:'uk-UA',he:'he-IL',th:'th-TH',vi:'vi-VN',ko:'ko-KR',hi:'hi-IN',rm:'rm-CH',fa:'fa-IR'};
+  return map[code] || code;
+}
+function stopTTS() {
+  if(!TTS_OK) return;
+  try { window.speechSynthesis.cancel(); } catch(e) {}
+  const b = document.getElementById('ttsBtn'); if(b) b.classList.remove('speaking');
+}
+function speakModal() {
+  if(!TTS_OK) return;
+  const btn = document.getElementById('ttsBtn');
+  if(window.speechSynthesis.speaking) { stopTTS(); return; }
+  const text = (genericModalTitle.textContent + '. ' + genericModalBody.textContent).replace(/\s+/g,' ').trim();
+  if(!text) return;
+  const u = new SpeechSynthesisUtterance(text);
+  u.lang = ttsLangTag(currentLang);
+  const voices = window.speechSynthesis.getVoices();
+  const v = voices.find(x => x.lang && x.lang.toLowerCase().startsWith(currentLang));
+  if(v) u.voice = v;
+  u.onend = () => { if(btn) btn.classList.remove('speaking'); };
+  u.onerror = () => { if(btn) btn.classList.remove('speaking'); };
+  if(btn) btn.classList.add('speaking');
+  window.speechSynthesis.speak(u);
+}
+// Lecture vocale de l'alerte en cours (cause + consignes), page SOS.
+function speakSos() {
+  if(!TTS_OK) return;
+  const btn = document.getElementById('sosTtsBtn');
+  if(window.speechSynthesis.speaking) { stopTTS(); if(btn) btn.classList.remove('speaking'); return; }
+  const cause = document.getElementById('sosCause').textContent;
+  const instr = document.getElementById('sosInstr').textContent;
+  const text = (cause + '. ' + instr).replace(/\s+/g,' ').trim();
+  if(!text) return;
+  const u = new SpeechSynthesisUtterance(text);
+  u.lang = ttsLangTag(currentLang);
+  const voices = window.speechSynthesis.getVoices();
+  const v = voices.find(x => x.lang && x.lang.toLowerCase().startsWith(currentLang));
+  if(v) u.voice = v;
+  u.onend = () => { if(btn) btn.classList.remove('speaking'); };
+  u.onerror = () => { if(btn) btn.classList.remove('speaking'); };
+  if(btn) btn.classList.add('speaking');
+  window.speechSynthesis.speak(u);
+}
+(function(){
+  // Affiche le bouton de lecture de l'alerte si la synthèse vocale est dispo.
+  const b = document.getElementById('sosTtsBtn');
+  if(b && TTS_OK){ b.style.display = 'inline-flex'; b.addEventListener('click', speakSos); }
+})();
+(function initTTS(){
+  const btn = document.getElementById('ttsBtn');
+  if(!btn) return;
+  if(!TTS_OK) { btn.style.display = 'none'; return; }
+  btn.addEventListener('click', speakModal);
+})();
+
+// ======================= OUTIL MINUTERIE (Brûlure 20 min · RCP 2 min) =======================
+let timerRemaining = 120, timerInt = null, timerRunning = false;
+function fmtTimer(s){ const m=Math.floor(s/60), x=s%60; return String(m).padStart(2,'0')+':'+String(x).padStart(2,'0'); }
+function renderTimer(){ const d=document.getElementById('timerDisplay'); if(d) d.textContent=fmtTimer(timerRemaining); }
+function setTimerSeconds(sec){ stopTimerRun(); timerRemaining=sec; renderTimer(); }
+function tickTimer(){
+  if(!timerRunning) return;
+  if(timerRemaining<=0){ stopTimerRun(); playBeep(); setTimeout(playBeep,300); setTimeout(playBeep,600); return; }
+  timerRemaining--; renderTimer();
+}
+function startTimerRun(){
+  if(timerRunning || timerRemaining<=0) return;
+  timerRunning=true; if(timerInt) clearInterval(timerInt); timerInt=setInterval(tickTimer,1000);
+  const b=document.getElementById('timerStartStop'); if(b){ b.textContent=(langData&&langData.tools&&langData.tools.timer&&langData.tools.timer.stop)||'⏸ Pause'; b.classList.add('stop'); }
+}
+function stopTimerRun(){
+  timerRunning=false; if(timerInt) clearInterval(timerInt); timerInt=null;
+  const b=document.getElementById('timerStartStop'); if(b){ b.textContent=(langData&&langData.tools&&langData.tools.timer&&langData.tools.timer.start)||'Démarrer'; b.classList.remove('stop'); }
+}
+window.openTimer = () => {
+  const pc=document.getElementById('timerPresets'); pc.innerHTML='';
+  [{l:'20:00',s:1200},{l:'10:00',s:600},{l:'02:00',s:120}].forEach(p=>{
+    const b=document.createElement('button'); b.className='phone-badge'; b.style.cursor='pointer';
+    b.textContent=p.l; b.addEventListener('click',()=>setTimerSeconds(p.s)); pc.appendChild(b);
+  });
+  renderTimer();
+  document.getElementById('timerModal').classList.add('active'); document.body.style.overflow='hidden';
+  if(audioCtx && audioCtx.state==='suspended') audioCtx.resume();
+};
+document.getElementById('timerStartStop').addEventListener('click', () => { timerRunning ? stopTimerRun() : startTimerRun(); });
+document.querySelector('.close-timer').addEventListener('click', () => { document.getElementById('timerModal').classList.remove('active'); document.body.style.overflow=''; stopTimerRun(); });
+document.getElementById('timerModal').addEventListener('click', e => { if(e.target===document.getElementById('timerModal')){ document.getElementById('timerModal').classList.remove('active'); document.body.style.overflow=''; stopTimerRun(); } });
+
+// Exposer les actions globales
+window.openMetronome = () => { document.getElementById('metronomeModal').classList.add('active'); document.body.style.overflow = 'hidden'; if(audioCtx && audioCtx.state === 'suspended') audioCtx.resume(); };
+window.openFlashSOS = startFlash;
+window.openTorche = openTorche;
+window.openAlerte = () => { document.getElementById('alerteModal').classList.add('active'); document.body.style.overflow = 'hidden'; if(audioCtx && audioCtx.state === 'suspended') audioCtx.resume(); };
+window.openRespiration = () => { document.getElementById('respirationModal').classList.add('active'); document.body.style.overflow = 'hidden'; };
+window.openSifflet = () => { document.getElementById('siffletModal').classList.add('active'); document.body.style.overflow = 'hidden'; };
+window.openMorse = () => { document.getElementById('morseModal').classList.add('active'); document.body.style.overflow = 'hidden'; };
+// Fermeture de la modale Morse (l'arrêt d'émission/beacon est géré par l'IIFE Morse).
+(function(){
+  const m = document.getElementById('morseModal');
+  const close = () => { m.classList.remove('active'); document.body.style.overflow = ''; const s=document.getElementById('morseStop'); if(s) s.click(); };
+  document.querySelector('.close-morse').addEventListener('click', close);
+  m.addEventListener('click', e => { if(e.target === m) close(); });
+})();
+
+// ======================= NAVIGATION, DRAWER, LANGUE =======================
+// Le thème (clair/sombre, persistant) est géré par /lib/sos-theme.js, partagé
+// par toutes les pages : il câble automatiquement le bouton #themeToggle.
+
+const splashScreen = document.getElementById('splashScreen'), mainContent = document.getElementById('mainContent');
+const bottomBar = document.getElementById('bottomBar');
+function setBottomBar(on) { if(bottomBar) bottomBar.classList.toggle('show', on); document.body.classList.toggle('bb-on', on); }
+function goToSplash() { splashScreen.classList.remove('hide'); mainContent.style.display = 'none'; setBottomBar(false); window.scrollTo(0,0); }
+function goToMain() { splashScreen.classList.add('hide'); mainContent.style.display = 'block'; setBottomBar(true); }
+document.getElementById('enterBtn').addEventListener('click', () => { try{ localStorage.setItem('sos_guide_entered','1'); }catch(e){} goToMain(); });
+document.getElementById('navLogo').addEventListener('click', goToSplash);
+
+const hamburgerBtn = document.getElementById('hamburgerBtn'), drawerOverlay = document.getElementById('drawerOverlay'), drawerCloseBtn = document.getElementById('drawerCloseBtn');
+function openDrawer() { drawerOverlay.classList.add('active'); document.body.style.overflow = 'hidden'; }
+function closeDrawer() { drawerOverlay.classList.remove('active'); document.body.style.overflow = ''; }
+hamburgerBtn.addEventListener('click', openDrawer); drawerCloseBtn.addEventListener('click', closeDrawer);
+drawerOverlay.addEventListener('click', e => { if(e.target === drawerOverlay) closeDrawer(); });
+// Barre du bas : onglets d'accès rapide (défilement vers la section) + Menu.
+document.querySelectorAll('#bottomBar .bb-tab[data-bb]').forEach(tab => {
+  tab.addEventListener('click', () => {
+    const target = document.querySelector(tab.getAttribute('data-bb'));
+    if(target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  });
+});
+
+const langBtn = document.getElementById('langBtn'), modalLang = document.getElementById('languageModal'), closeModalBtn = document.getElementById('closeModalBtn');
+function openModalLang() { modalLang.classList.add('active'); document.body.style.overflow = 'hidden'; buildFlagGrid(); }
+function closeModalLang() { modalLang.classList.remove('active'); document.body.style.overflow = ''; }
+langBtn.addEventListener('click', openModalLang); closeModalBtn.addEventListener('click', closeModalLang);
+modalLang.addEventListener('click', e => { if(e.target === modalLang) closeModalLang(); });
+
+function buildFlagGrid() {
+  const flagGrid = document.getElementById('flagGrid');
+  flagGrid.innerHTML = '';
+  languages.forEach(lang => {
+    const card = document.createElement('div');
+    card.className = 'lang-card';
+    card.innerHTML = `<div class="lang-flag">${lang.flag}</div><div class="lang-name">${lang.label}</div>`;
+    card.addEventListener('click', () => {
+      loadLanguage(lang.code);
+      closeModalLang();
+    });
+    a11yButton(card, lang.label);
+    flagGrid.appendChild(card);
+  });
+}
+
+
+
+// A11y : Échap ferme les surcouches ouvertes
+document.addEventListener('keydown', e => {
+  if (e.key !== 'Escape') return;
+  if (genericModal.classList.contains('active')) closeModal();
+  if (modalLang.classList.contains('active')) closeModalLang();
+  if (drawerOverlay.classList.contains('active')) closeDrawer();
+  document.querySelectorAll('.tool-modal-overlay.active').forEach(m => {
+    m.classList.remove('active'); document.body.style.overflow = '';
+  });
+  if (typeof sirenActive !== 'undefined' && sirenActive) stopSiren();
+  if (typeof metActive !== 'undefined' && metActive) stopMetro();
+  if (typeof respActive !== 'undefined' && respActive) stopRespiration();
+  if (typeof timerRunning !== 'undefined' && timerRunning) stopTimerRun();
+  stopTTS();
+});
+// ======================= LORA MESH =======================
+let lastLoraAlertId = null;
+async function pollLora() {
+  if (!configData?.enableLoRa) { setTimeout(pollLora, 60000); return; }
+  try {
+    const r = await fetch(`data/lora_inbox.json?t=${Date.now()}`);
+    if (!r.ok) { setTimeout(pollLora, 15000); return; }
+    const data = await r.json();
+    const alerts = data.alerts || [];
+    if (alerts.length > 0) {
+      const latest = alerts[0];
+      if (latest.id !== lastLoraAlertId) {
+        lastLoraAlertId = latest.id;
+        showLoraAlert(latest);
+      }
+      renderLoraAlerts(alerts.slice(0, 5));
+    }
+  } catch(e) {}
+  setTimeout(pollLora, 10000);
+}
+function showLoraAlert(alert) {
+  document.getElementById('loraBannerText').textContent = `${alert.type_label || alert.type} — ${alert.node_id || 'nœud inconnu'} ${alert.message ? '· ' + alert.message : ''}`;
+  document.getElementById('loraBannerTime').textContent = alert.datetime || '';
+  document.getElementById('loraBanner').style.display = 'block';
+}
+function renderLoraAlerts(alerts) {
+  const section = document.getElementById('loraSection');
+  const list = document.getElementById('loraAlertsList');
+  section.style.display = 'block';
+  list.innerHTML = '';
+  alerts.forEach(a => {
+    const card = document.createElement('div');
+    card.className = `lora-alert-card ${a.verified ? '' : 'unverified'}`;
+    card.innerHTML = `
+      <div class="lora-alert-type">${esc(a.type_label || a.type)}</div>
+      <div class="lora-alert-meta">${esc(a.datetime || '')} · ${esc(a.node_id || '')} · ${esc(a.hop)} saut(s) · ${a.verified ? '✔ Vérifié' : '⚠ Non vérifié'}</div>
+      ${a.message ? `<div class="lora-alert-msg">${esc(a.message)}</div>` : ''}`;
+    list.appendChild(card);
+  });
+}
+
+// ======================= MODE DÉGRADÉ =======================
+if (document.cookie.includes('sos_degraded=1') || window.location.search.includes('degraded=1')) {
+  document.getElementById('degradedBanner').style.display = 'block';
+}
+
+// Chargement initial — priorité : choix utilisateur > defaultLang du nœud (starter) > fr
+loadConfig().then(() => {
+  const savedLang = localStorage.getItem('sos_lang') || configData?.defaultLang || 'fr';
+  loadLanguage(savedLang);
+  pollLora();
+  // Mode survie : si le citoyen est déjà « entré » une fois, on l'amène
+  // directement au contenu (accès rapide guide/carte). Le splash (avec les
+  // numéros d'urgence) reste accessible à tout moment via le logo.
+  try { if (localStorage.getItem('sos_guide_entered') === '1') goToMain(); } catch(e) {}
+});
+
+// ======================= FORMULAIRE DE PING =======================
+(function(){
+  const form = document.getElementById('pingForm');
+  const senderInput = document.getElementById('pingSender');
+  const keyInput = document.getElementById('pingKey');
+  const submitBtn = document.getElementById('pingSubmit');
+  const feedback = document.getElementById('pingFeedback');
+  if (!form) return;
+
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const sender = (senderInput.value || '').trim();
+    const key = (keyInput.value || '').trim();
+    if (!sender) { feedback.textContent = '⚠️ Entrez votre nom.'; feedback.className='err'; return; }
+    if (!key) { feedback.textContent = '⚠️ Entrez la clé du groupe.'; feedback.className='err'; return; }
+    submitBtn.disabled = true;
+    feedback.textContent = '⏳ Envoi en cours…';
+    feedback.className = '';
+    try {
+      const res = await fetch('/api/ping', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ key, sender }),
+      });
+      if (res.status === 201) {
+        feedback.textContent = '✅ Alerte envoyée — votre responsable a été notifié.';
+        feedback.className = 'ok';
+        senderInput.value = '';
+        keyInput.value = '';
+      } else if (res.status === 401) {
+        feedback.textContent = '❌ Clé non reconnue — vérifiez avec votre responsable.';
+        feedback.className = 'err';
+      } else if (res.status === 429) {
+        feedback.textContent = '⏳ Merci d\'attendre quelques secondes avant de réessayer.';
+        feedback.className = 'err';
+      } else {
+        feedback.textContent = '❌ Erreur — réessayez dans un moment.';
+        feedback.className = 'err';
+      }
+    } catch(_) {
+      feedback.textContent = '❌ Connexion impossible — assurez-vous d\'être connecté à SOS-GUIDE.';
+      feedback.className = 'err';
+    }
+    submitBtn.disabled = false;
+  });
+
+  const bbAlerter = document.getElementById('bbAlerter');
+  if (bbAlerter) {
+    bbAlerter.addEventListener('click', () => {
+      if (document.getElementById('splashScreen').classList.contains('hide')) {
+        goToSplash();
+      }
+      setTimeout(() => { form.scrollIntoView({ behavior: 'smooth', block: 'center' }); }, 100);
+    });
+  }
+})();
+</script>
+<script>
+// ======================= ALERTE — PAGE SOS PLEIN ÉCRAN =======================
+// Bascule la page en mode SOS quand l'admin (ou une source officielle) a émis
+// une alerte. Hors-ligne / erreur : on conserve l'état affiché (jamais d'effet
+// de bord destructif sur un nœud en urgence).
+(function(){
+  const overlay=document.getElementById('sosOverlay');
+  if(!overlay) return;
+  const elCause=document.getElementById('sosCause'),elInstr=document.getElementById('sosInstr'),elSince=document.getElementById('sosSince'),elOfficial=document.getElementById('sosOfficial');
+  function escSos(s){return String(s==null?'':s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));}
+  // Bulletins officiels mis en cache (récupérés/importés hors-ligne) : affichés
+  // sous les consignes locales. Aucune traduction du contenu (texte officiel).
+  async function renderOfficial(L){
+    if(!elOfficial) return;
+    try{
+      const r=await fetch('/api/official?t='+Date.now(),{cache:'no-store'});
+      if(!r.ok){elOfficial.classList.remove('show');return;}
+      const d=await r.json();
+      const list=(d&&d.bulletins)||[];
+      if(!list.length){elOfficial.innerHTML='';elOfficial.classList.remove('show');return;}
+      const heading=window.SOSI18N?SOSI18N.t('official',L):'Sources officielles';
+      let html='<div class=sos-official-title>📡 '+escSos(heading)+'</div>';
+      for(const b of list){
+        const date=b.published?new Date(b.published*1000).toLocaleString(L||undefined):'';
+        html+='<div class=sos-bulletin><div class=sos-bulletin-head><span class=sos-bulletin-src>'+escSos(b.categoryLabel||'')+' · '+escSos(b.source||'')+'</span><span class=sos-bulletin-date>'+escSos(date)+'</span></div>';
+        if(b.title)html+='<div class=sos-bulletin-title>'+escSos(b.title)+'</div>';
+        if(b.body)html+='<div class=sos-bulletin-body>'+escSos(b.body)+'</div>';
+        if(b.link)html+='<span class=sos-bulletin-link>'+escSos(b.link)+'</span>';
+        html+='</div>';
+      }
+      elOfficial.innerHTML=html;elOfficial.classList.add('show');
+    }catch(e){/* hors-ligne : conserver l'état courant */}
+  }
+  async function poll(){
+    try{
+      const r=await fetch('/api/alert?t='+Date.now(),{cache:'no-store'});
+      if(!r.ok) return;
+      const a=await r.json();
+      if(a&&a.active){
+        // Langue du citoyen (choix explicite > defaultLang du nœud > navigateur),
+        // repli français pour toute langue non encore traduite.
+        const L=window.SOSI18N?SOSI18N.resolveLang(window.configData&&configData.defaultLang):null;
+        elCause.textContent=(window.SOSI18N&&a.cause)?SOSI18N.causeLabel(a.cause,L):(a.label||"Alerte");
+        if(window.SOSI18N){
+          const t1=document.getElementById('sosTip1');if(t1)t1.textContent=SOSI18N.t('tip1',L);
+          const t2=document.getElementById('sosTip2');if(t2)t2.textContent=SOSI18N.t('tip2',L);
+          const t3=document.getElementById('sosTip3');if(t3)t3.textContent=SOSI18N.t('tip3',L);
+        }
+        // Consignes locales : texte tel que saisi par l'admin (non traduit).
+        if(a.instructions){elInstr.textContent=a.instructions;elInstr.style.display='block';}else{elInstr.style.display='none';}
+        renderOfficial(L);
+        const sinceTxt=window.SOSI18N?SOSI18N.t('since',L):'Depuis';
+        elSince.textContent=a.since?(sinceTxt+' '+new Date(a.since*1000).toLocaleString(L||undefined)):'';
+        overlay.classList.add('active');document.documentElement.style.overflow='hidden';
+      }else{
+        overlay.classList.remove('active');document.documentElement.style.overflow='';
+        if(elOfficial)elOfficial.classList.remove('show');
+        stopTTS();
+      }
+    }catch(e){/* hors-ligne : conserver l'état courant */}
+  }
+  poll();setInterval(poll,10000);
+})();
+</script>
+<script>
+// ======================= CARTE DE DÉTRESSE (données réelles) =======================
+// Carte de détresse UNIFIÉE : fond = tuiles OSM servies par le nœud (hors-ligne,
+// /tiles), surcouche canvas = cercle de portée WiFi ~30 m (géo-référencé via la
+// latitude + le zoom des tuiles), nœud central et pings de détresse ANONYMES
+// RÉELS (aucune donnée personnelle, aucun nœud simulé). Plein écran natif.
+(function(){
+  const map=document.getElementById('carteMap');
+  const canvas=document.getElementById('carteCanvas');
+  const tilesBox=document.getElementById('carteTiles');
+  if(!map||!canvas||!tilesBox) return;
+  const ctx=canvas.getContext('2d');
+  const TAU=Math.PI*2, RANGE_M=30;
+  let W=0,H=0,cx=0,cy=0,zoom=1; const MINZ=1,MAXZ=5;
+  let meta=null, basePx=0; // basePx = rayon 30 m en pixels au zoom 1
+  // Aucun nœud simulé : seuls la borne, sa portée et les pings de détresse
+  // RÉELS sont tracés. Les nœuds pairs du maillage (entendus par radio) n'ont
+  // pas de position GPS connue ⇒ ils ne sont pas projetés sur la carte.
+  const nodes=[];
+  const pings=[];
+  const light=()=>document.body.classList.contains('light-mode');
+
+  async function loadTiles(){
+    try{ const r=await fetch('/tiles/meta.json',{cache:'no-store'}); if(!r.ok) throw 0; meta=await r.json(); }
+    catch(_){ meta=null; }
+    document.getElementById('carteAttr').textContent = meta ? '© OpenStreetMap' : '';
+    layoutTiles(); draw();
+  }
+  function layoutTiles(){
+    if(!meta || !W){ tilesBox.innerHTML=''; basePx=0; return; }
+    const z=meta.z, rad=meta.radius, x0=meta.centerX-rad, y0=meta.centerY-rad, span=2*rad+1;
+    const f=ll2tilef(meta.lat, meta.lon, z);
+    const px=(f.x-x0)*256, py=(f.y-y0)*256;
+    let html='<div style="transform:translate('+(W/2-px)+'px,'+(H/2-py)+'px)">';
+    for(let ty=0;ty<span;ty++)for(let tx=0;tx<span;tx++){
+      html+='<img src="/tiles/'+z+'/'+(x0+tx)+'/'+(y0+ty)+'.png" loading=lazy onerror="this.style.display=\'none\'" style="left:'+(tx*256)+'px;top:'+(ty*256)+'px">';
+    }
+    tilesBox.innerHTML=html+'</div>';
+    const mpp=156543.03392*Math.cos(meta.lat*Math.PI/180)/Math.pow(2,z); // mètres/pixel
+    basePx=RANGE_M/mpp;
+  }
+  function applyZoom(){ tilesBox.style.transform='scale('+zoom+')'; }
+  function resize(){
+    const r=map.getBoundingClientRect();
+    if(!r.width || !r.height) return; // carte encore masquée (splash)
+    const dpr=window.devicePixelRatio||1;
+    W=r.width;H=r.height;canvas.width=Math.round(W*dpr);canvas.height=Math.round(H*dpr);
+    ctx.setTransform(dpr,0,0,dpr,0,0);cx=W/2;cy=H/2;
+    layoutTiles();applyZoom();draw();
+  }
+  function draw(){
+    if(!W) return;
+    ctx.clearRect(0,0,W,H);
+    if(!meta){ // repli « radar » si aucune tuile téléchargée
+      ctx.fillStyle=light()?'#e2e8f0':'#0f172a';ctx.fillRect(0,0,W,H);
+      ctx.fillStyle=light()?'rgba(0,0,0,.06)':'rgba(255,255,255,.05)';
+      for(let i=0;i<W;i+=28)for(let j=0;j<H;j+=28){ctx.beginPath();ctx.arc(i,j,1.3,0,TAU);ctx.fill();}
+    }
+    ctx.textAlign='center';
+    const r=(meta?basePx:Math.min(W,H)*.22)*zoom;
+    // Cercle de portée ~30 m autour de la borne (centre).
+    ctx.beginPath();ctx.arc(cx,cy,r,0,TAU);ctx.fillStyle='rgba(239,68,68,.12)';ctx.fill();
+    ctx.strokeStyle='#ef4444';ctx.lineWidth=2;ctx.setLineDash([6,7]);ctx.stroke();ctx.setLineDash([]);
+    ctx.fillStyle='#ef4444';ctx.font='bold 11px system-ui';ctx.fillText('≈ '+RANGE_M+' m',cx,cy-r-5);
+    // Positions des pings projetées autour du centre (suivent le zoom).
+    const sx=fx=>cx+(fx*W-cx)*zoom, sy=fy=>cy+(fy*H-cy)*zoom;
+    nodes.forEach(n=>{const x=sx(n.x),y=sy(n.y),c=n.net==='wifi'?'#3b82f6':(n.net==='lora'?'#22c55e':'#f59e0b');
+      ctx.beginPath();ctx.arc(x,y,6,0,TAU);ctx.fillStyle=c;ctx.fill();ctx.strokeStyle='#fff';ctx.lineWidth=1.5;ctx.stroke();
+      ctx.fillStyle='#fff';ctx.font='10px system-ui';ctx.strokeStyle='rgba(0,0,0,.6)';ctx.lineWidth=3;ctx.strokeText(n.name,x,y-9);ctx.fillText(n.name,x,y-9);});
+    pings.forEach(p=>{const x=sx(p.x),y=sy(p.y);ctx.beginPath();ctx.arc(x,y,10,0,TAU);ctx.fillStyle='#ef4444';ctx.fill();ctx.strokeStyle='#fff';ctx.lineWidth=2;ctx.stroke();
+      ctx.fillStyle='#fff';ctx.font='12px system-ui';ctx.fillText('🆘',x,y+4);});
+    // Borne centrale (toujours au centre, sur la position GPS du nœud).
+    ctx.beginPath();ctx.arc(cx,cy,8,0,TAU);ctx.fillStyle='#ef4444';ctx.fill();ctx.strokeStyle='#fff';ctx.lineWidth=2.5;ctx.stroke();
+    ctx.fillStyle='#fff';ctx.font='bold 12px system-ui';ctx.strokeStyle='rgba(0,0,0,.7)';ctx.lineWidth=3;ctx.strokeText('⛑️ SOS',cx,cy-14);ctx.fillText('⛑️ SOS',cx,cy-14);
+  }
+  // Un SEUL ping de détresse, déclenché UNIQUEMENT par le bouton (au centre du
+  // nœud). Le clic sur la carte n'émet plus de ping.
+  document.getElementById('cartePing').addEventListener('click',()=>{pings.length=0;pings.push({x:.5,y:.5});draw();});
+  document.getElementById('carteZoomIn').addEventListener('click',()=>{zoom=Math.min(MAXZ,zoom+.4);applyZoom();draw();});
+  document.getElementById('carteZoomOut').addEventListener('click',()=>{zoom=Math.max(MINZ,zoom-.4);applyZoom();draw();});
+  // Plein écran (API native, repli sur une classe CSS).
+  document.getElementById('carteFull').addEventListener('click',()=>{
+    if(document.fullscreenElement){ if(document.exitFullscreen) document.exitFullscreen(); }
+    else if(map.requestFullscreen){ map.requestFullscreen().catch(()=>{ map.classList.add('carte-fs'); setTimeout(resize,60); }); }
+    else { map.classList.toggle('carte-fs'); setTimeout(resize,60); }
+  });
+  document.addEventListener('fullscreenchange',()=>setTimeout(resize,80));
+  // Recalcule quand la carte change de taille (entrée depuis le splash, rotation,
+  // plein écran) — couvre le cas « #mainContent display:none » au chargement.
+  let rt=null;
+  new ResizeObserver(()=>{ clearTimeout(rt); rt=setTimeout(resize,50); }).observe(map);
+  // Re-rendu au basculement de thème (la classe de body change).
+  new MutationObserver(draw).observe(document.body,{attributes:true,attributeFilter:['class']});
+  loadTiles();
+})();
+</script>
+<div id=morseBeacon><button type=button class=morse-beacon-close id=morseBeaconClose>✕ Fermer</button></div>
+<script>
+// ======================= OUTIL MORSE (lumière + son, hors-ligne) =======================
+// Émission visuelle (plein écran) + sonore (Web Audio), sans dépendance ni
+// réseau. Complément des outils d'urgence. Timing Morse standard.
+(function(){
+  const input=document.getElementById('morseInput'); if(!input) return;
+  const MAP={A:".-",B:"-...",C:"-.-.",D:"-..",E:".",F:"..-.",G:"--.",H:"....",I:"..",J:".---",K:"-.-",L:".-..",M:"--",N:"-.",O:"---",P:".--.",Q:"--.-",R:".-.",S:"...",T:"-",U:"..-",V:"...-",W:".--",X:"-..-",Y:"-.--",Z:"--..","0":"-----","1":".----","2":"..---","3":"...--","4":"....-","5":".....","6":"-....","7":"--...","8":"---..","9":"----.",".":".-.-.-",",":"--..--","?":"..--..","'":".----.","!":"-.-.--","/":"-..-.","(":"-.--.",")":"-.--.-","&":".-...",":":"---...",";":"-.-.-.","=":"-...-","+":".-.-.","-":"-....-","_":"..--.-",'"':".-..-.","@":".--.-."};
+  const out=document.getElementById('morseOut');
+  const beacon=document.getElementById('morseBeacon');
+  function toMorse(s){return s.toUpperCase().split('').map(c=>c===' '?'/':(MAP[c]||'')).filter(x=>x!=='').join(' ');}
+  function render(){ out.textContent=toMorse(input.value); }
+  input.addEventListener('input',render); render();
+  // Tableau de référence.
+  const table=document.getElementById('morseTable');
+  if(table){ table.innerHTML=Object.keys(MAP).map(k=>'<div class=morse-cell><b>'+(k==='"'?'&quot;':k)+'</b><span>'+MAP[k].replace(/\./g,'·').replace(/-/g,'−')+'</span></div>').join(''); }
+  const UNIT=200; // ms (durée d'un point)
+  let emitting=false, ctx=null, osc=null, gain=null;
+  function ensureCtx(){ try{ if(!ctx) ctx=new (window.AudioContext||window.webkitAudioContext)(); if(ctx.state==='suspended') ctx.resume(); }catch(e){ctx=null;} return ctx; }
+  function signalOn(){ beacon.classList.add('lit'); const c=ensureCtx(); if(!c) return; try{ osc=c.createOscillator(); gain=c.createGain(); osc.frequency.value=620; gain.gain.value=.18; osc.connect(gain); gain.connect(c.destination); osc.start(); }catch(e){} }
+  function signalOff(){ beacon.classList.remove('lit'); try{ if(osc){osc.stop();osc.disconnect();} if(gain) gain.disconnect(); }catch(e){} osc=null;gain=null; }
+  const sleep=ms=>new Promise(r=>setTimeout(r,ms));
+  async function emit(){
+    if(emitting) return; const code=toMorse(input.value); if(!code){return;}
+    emitting=true; beacon.classList.add('show'); document.documentElement.style.overflow='hidden';
+    for(const ch of code){
+      if(!emitting) break;
+      if(ch==='.'){ signalOn(); await sleep(UNIT); signalOff(); await sleep(UNIT); }
+      else if(ch==='-'){ signalOn(); await sleep(UNIT*3); signalOff(); await sleep(UNIT); }
+      else if(ch===' '){ await sleep(UNIT*2); }      // séparation de lettre (1 + 2)
+      else if(ch==='/'){ await sleep(UNIT*4); }      // séparation de mot
+    }
+    stop();
+  }
+  function stop(){ emitting=false; signalOff(); beacon.classList.remove('show'); document.documentElement.style.overflow=''; }
+  document.getElementById('morseEmit').addEventListener('click',emit);
+  document.getElementById('morseStop').addEventListener('click',stop);
+  document.getElementById('morseBeaconClose').addEventListener('click',stop);
+})();
+</script>
+</body>
+</html>

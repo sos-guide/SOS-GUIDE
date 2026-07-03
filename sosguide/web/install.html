@@ -1,0 +1,539 @@
+<!DOCTYPE html>
+<html lang=fr>
+<head>
+<meta charset=UTF-8>
+<meta name=viewport content="width=device-width, initial-scale=1">
+<meta http-equiv=Content-Security-Policy content="default-src 'self';script-src 'self' 'unsafe-inline';style-src 'self' 'unsafe-inline';img-src 'self' data:;connect-src 'self'">
+<meta name=robots content="noindex, nofollow">
+<title>SOS-GUIDE — Installation</title>
+<link rel=stylesheet href=/lib/sos-theme.css>
+<style>
+  *{box-sizing:border-box}
+  body{font-family:system-ui,-apple-system,'Segoe UI',sans-serif;max-width:600px;margin:0 auto;padding:calc(var(--nav-h) + 1.4rem) 1.5rem 2.5rem;background:var(--bg);color:var(--text);min-height:100vh}
+  h1{font-size:1.35rem;margin:.2rem 0 .2rem}
+  p.intro{color:var(--sub);font-size:.88rem;margin-bottom:1.2rem}
+  .progress{display:flex;gap:.4rem;margin-bottom:1.4rem}
+  .progress .seg{flex:1;height:5px;border-radius:4px;background:var(--bg2)}
+  .progress .seg.done{background:var(--accent-strong)}
+  .progress .seg.cur{background:var(--accent)}
+  .steplabel{font-size:.74rem;text-transform:uppercase;letter-spacing:.06em;color:var(--sub);margin-bottom:.9rem}
+  .step{display:none}
+  .step.active{display:block}
+  .step h2{font-size:1.05rem;margin:0 0 .2rem}
+  .step .hint{color:var(--sub);font-size:.84rem;margin:0 0 1rem}
+  label{display:block;font-size:.82rem;color:var(--sub);margin:.7rem 0 .25rem}
+  label.req::after{content:" *";color:var(--red)}
+  input,select{display:block;width:100%;height:2.6rem;padding:.6rem .7rem;background:var(--field);border:1px solid var(--border);border-radius:10px;color:var(--text);font-size:.95rem}
+  input:focus,select:focus{outline:2px solid var(--accent);outline-offset:1px}
+  .row{display:grid;grid-template-columns:1fr 1fr;gap:.6rem}
+  .field{min-width:0}
+  .langgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(135px,1fr));gap:.5rem;margin-top:.4rem}
+  .langcard{display:flex;align-items:center;gap:.55rem;padding:.55rem .7rem;background:var(--card);border:1px solid var(--border);border-radius:12px;cursor:pointer;transition:border-color .12s,background .12s;font-size:.88rem;color:var(--text)}
+  .langcard:hover{border-color:var(--accent)}
+  .langcard.sel{border-color:var(--accent);background:rgba(239,68,68,.1)}
+  .langcard .fl{font-size:1.25rem;line-height:1;flex:none}
+  .map{margin-top:.9rem;border:1px solid var(--border);border-radius:var(--r);background:var(--card);padding:.8rem;text-align:center}
+  .map svg{width:100%;max-width:260px;height:auto}
+  .map .cap{font-size:.76rem;color:var(--sub);margin-top:.5rem}
+  .nav{display:flex;gap:.6rem;margin-top:1.5rem}
+  /* Boutons du wizard (rangées .nav) uniquement — n'affecte PAS la barre de menu
+     partagée (#nav .nav-btn / .hamburger, stylés par sos-theme.css). */
+  .nav button{flex:1;height:2.9rem;border:none;border-radius:12px;font-weight:600;font-size:.98rem;cursor:pointer}
+  .btn-next,.btn-go{background:var(--accent-strong);color:#fff}
+  .btn-prev{background:var(--bg2);color:var(--text);border:1px solid var(--border)}
+  button:disabled{opacity:.5;cursor:default}
+  #msg{margin-top:1rem;padding:.7rem;border-radius:10px;font-size:.9rem;display:none}
+  #msg.ok{display:block;background:rgba(34,197,94,.15);color:var(--green)}
+  #msg.err{display:block;background:rgba(239,68,68,.15);color:var(--red)}
+  [dir=rtl] body{text-align:right}
+  [dir=rtl] .langcard,[dir=rtl] .nav{direction:rtl}
+  /* La barre de menu (#nav, drawer, modale de langue) est partagée via
+     sos-theme.css — STRICTEMENT identique à l'accueil. */
+  /* Toggle « afficher une carte » (étape Position). */
+  .switch-row{display:flex;align-items:center;gap:.6rem;margin:.2rem 0 .4rem;font-size:.9rem;color:var(--text);cursor:pointer}
+  .switch-row input{width:auto;height:auto;margin:0;flex:none;width:1.1rem;height:1.1rem}
+  /* Éditeur d'associations (étape « Associations & numéros d'aide »). */
+  .assoc-row{display:flex;gap:.5rem;align-items:center;margin-bottom:.5rem}
+  .assoc-row input{display:block;height:2.6rem;padding:.6rem .7rem;background:var(--field);border:1px solid var(--border);border-radius:10px;color:var(--text);font-size:.95rem;min-width:0}
+  .assoc-name{flex:2}
+  .assoc-num{flex:1}
+  .assoc-del{flex:none;width:2.6rem;height:2.6rem;border:1px solid var(--border);border-radius:10px;background:var(--bg2);color:var(--red);font-size:1rem;cursor:pointer}
+  .assoc-del:hover{border-color:var(--red)}
+  .assoc-add{height:2.6rem;width:100%;padding:0 1rem;border:1px dashed var(--border-h);border-radius:10px;background:var(--card);color:var(--accent);font-weight:600;font-size:.92rem;cursor:pointer;margin-top:.2rem}
+  .assoc-add:hover{border-color:var(--accent)}
+</style>
+</head>
+<body>
+<script src="/lib/sos-theme.js"></script>
+
+<nav id=nav aria-label="Barre principale">
+  <button class=hamburger id=hamburgerBtn aria-label="Ouvrir le menu de navigation"><span></span><span></span><span></span></button>
+  <div class=nav-logo id=navLogo><div class=nav-logo-badge>⛑️</div><strong>SOS-GUIDE</strong></div>
+  <div class=nav-right>
+    <button class=nav-btn id=a11yMinus aria-label="Réduire la taille du texte">A−</button>
+    <button class=nav-btn id=a11yPlus aria-label="Augmenter la taille du texte">A+</button>
+    <button class=nav-btn id=langBtn aria-label="Choisir la langue">🌐</button>
+    <button class=nav-btn id=themeToggle aria-label="Basculer le thème clair/sombre">🌙</button>
+  </div>
+</nav>
+<div id=drawerOverlay class=drawer-overlay><div class=drawer><div class=drawer-header><span class=drawer-title>Navigation</span><button class=drawer-close id=drawerCloseBtn aria-label="Fermer le menu">✕</button></div><nav class=drawer-nav aria-label="Menu"><a href="/">⛑️ Accueil — Portail</a><a href="/admin">🔧 Administration</a><a href="/privacy.html">🔒 Confidentialité</a></nav><div class=drawer-footer>SOS-GUIDE · Installation</div></div></div>
+<div id=languageModal class=lang-modal-overlay role=dialog aria-modal=true aria-label="Choix de la langue"><div class=lang-modal-container><div class=lang-modal-header><button class=lang-modal-close id=closeModalBtn aria-label="Fermer">✕</button></div><div class=lang-grid id=flagGrid></div></div></div>
+
+<h1 data-i18n="h1">⛑️ Installation du nœud</h1>
+<p class=intro data-i18n="intro">Quelques étapes, une seule fois. Ensuite l'administration prend le relais.</p>
+
+<div class=progress id=progress></div>
+<div class=steplabel id=steplabel></div>
+
+<form id=f autocomplete=off novalidate>
+  <section class=step data-title-key="st_intro">
+    <div class=app-card>
+      <span class=app-card-emoji>⛑️</span>
+      <h2 data-i18n="intro_h2">SOS-GUIDE</h2>
+      <p data-i18n="intro_p">SOS-GUIDE est une borne d'information d'urgence autonome qui fonctionne sans Internet. En se connectant à son WiFi, toute personne accède instantanément aux numéros d'urgence, aux gestes qui sauvent et à des outils de détresse.</p>
+      <ul>
+        <li data-i18n="intro_b1">📶 Sans Internet — tout est servi localement par la borne.</li>
+        <li data-i18n="intro_b2">🌍 29 langues, lecture vocale et consignes vitales.</li>
+        <li data-i18n="intro_b3">🔒 Aucune donnée personnelle collectée (nLPD/RGPD).</li>
+      </ul>
+    </div>
+  </section>
+
+  <section class=step data-title-key="st_lang">
+    <h2 data-i18n="lang_h2">Langue du nœud</h2>
+    <p class=hint data-i18n="lang_hint">Langue affichée par défaut aux citoyens. Le pays se déduit de la langue (numéros d'urgence et sources officielles adaptés). Le portail reste multilingue.</p>
+    <input type=hidden id=lang value=fr>
+    <div class=langgrid id=langGrid></div>
+  </section>
+
+  <section class=step data-title-key="st_place">
+    <h2 data-i18n="place_h2">Le lieu</h2>
+    <p class=hint data-i18n="place_hint">Où ce nœud est-il déployé ?</p>
+    <label class=req for=name data-i18n="name_l">Nom du lieu</label>
+    <input id=name maxlength=200 data-i18n-ph="name_ph" placeholder="Mairie de…">
+    <label for=venueType data-i18n="venue_l">Type de lieu</label>
+    <select id=venueType>
+      <option value=mairie data-i18n="v_mairie">🏛️ Mairie</option>
+      <option value=ecole data-i18n="v_ecole">🏫 École</option>
+      <option value=commerce data-i18n="v_commerce">🏪 Commerce</option>
+      <option value=tabac data-i18n="v_tabac">🚬 Tabac / Presse</option>
+      <option value=dispensaire data-i18n="v_dispensaire">🏥 Dispensaire / Santé</option>
+      <option value=public data-i18n="v_public">📍 Lieu public</option>
+      <option value=autre data-i18n="v_autre">📍 Autre</option>
+    </select>
+    <label for=address data-i18n="address_l">Adresse</label>
+    <input id=address maxlength=200>
+    <label for=sponsor data-i18n="sponsor_l">Sponsor / hébergeur (optionnel, crédité sur l'accueil)</label>
+    <input id=sponsor maxlength=120 data-i18n-ph="sponsor_ph" placeholder="Ex. : Épicerie du village">
+    <div class=row>
+      <div class=field><label for=country data-i18n="country_l">Pays</label><select id=country></select></div>
+      <div class=field><label for=meeting data-i18n="meeting_l">Point de rassemblement</label><input id=meeting maxlength=200></div>
+    </div>
+  </section>
+
+  <section class=step data-title-key="st_pos">
+    <h2 data-i18n="pos_h2">Position &amp; carte</h2>
+    <p class=hint data-i18n="pos_hint">Le nœud SOS-GUIDE est l'émetteur au centre de la carte. Seuls les pings GPS d'alerte y apparaîtront — jamais les clients (tableau de bord humanitaire collectif).</p>
+    <label class=switch-row><input type=checkbox id=mapEnabled checked> <span>Afficher une carte du lieu (facultatif)</span></label>
+    <div id=mapFields>
+    <label for=scope data-i18n="scope_l">Échelle de la carte</label>
+    <select id=scope>
+      <option value=city selected data-i18n="sc_city">Ville (rayon local)</option>
+      <option value=country data-i18n="sc_country">Pays (régional)</option>
+      <option value=world data-i18n="sc_world">Monde (global)</option>
+    </select>
+    <label for=coordPaste data-i18n="coord_l">Coordonnées GPS — colle depuis Google Maps (DMS ou décimal)</label>
+    <input id=coordPaste data-i18n-ph="coord_ph" placeholder="48°39'14.7&quot;N 2°20'56.1&quot;E   ·   ou   48.6541, 2.3489">
+    <div class=row>
+      <div class=field><label for=lat data-i18n="lat_l">Latitude (centre)</label><input id=lat type=number step=any inputmode=decimal placeholder="46.20"></div>
+      <div class=field><label for=lon data-i18n="lon_l">Longitude (centre)</label><input id=lon type=number step=any inputmode=decimal placeholder="6.14"></div>
+    </div>
+    <div class=map id=mapPreview></div>
+    </div>
+  </section>
+
+  <section class=step data-title-key="st_contacts">
+    <h2 data-i18n="contacts_h2">Contacts locaux</h2>
+    <p class=hint data-i18n="contacts_hint">Optionnels — affichés sur le portail.</p>
+    <div class=row>
+      <div class=field><label for=crisis data-i18n="crisis_l">Numéro de crise</label><input id=crisis maxlength=40 inputmode=tel></div>
+      <div class=field><label for=samu data-i18n="samu_l">SAMU local</label><input id=samu maxlength=40 inputmode=tel></div>
+      <div class=field><label for=police data-i18n="police_l">Police</label><input id=police maxlength=40 inputmode=tel></div>
+      <div class=field><label for=pompiers data-i18n="pompiers_l">Pompiers</label><input id=pompiers maxlength=40 inputmode=tel></div>
+      <div class=field><label for=mairie data-i18n="mairie_l">Mairie</label><input id=mairie maxlength=40 inputmode=tel></div>
+      <div class=field><label for=croix data-i18n="croix_l">Croix-Rouge</label><input id=croix maxlength=40 inputmode=tel></div>
+    </div>
+  </section>
+
+  <section class=step data-title-key="st_assos">
+    <h2 data-i18n="assos_h2">Associations &amp; numéros d'aide</h2>
+    <p class=hint data-i18n="assos_hint">Ajoutez les associations et numéros d'aide adaptés à votre pays/région (suivent le déploiement, pas la langue). Ils s'afficheront sur le portail. Laissez vide pour ne rien afficher.</p>
+    <div id=assosList></div>
+    <button type=button id=assosAdd class=assoc-add data-i18n="assos_add">＋ Ajouter une association</button>
+  </section>
+
+  <section class=step data-title-key="st_msg">
+    <h2 data-i18n="msg_h2">Message d'accueil</h2>
+    <p class=hint data-i18n="msg_hint">Le message rassure les personnes connectées. Le WiFi du nœud est ouvert : aucun mot de passe, accès immédiat aux consignes vitales.</p>
+    <label for=reassure data-i18n="reassure_l">Message de réassurance</label>
+    <input id=reassure maxlength=240 data-i18n-ph="reassure_ph" placeholder="Restez calme, les secours sont informés.">
+  </section>
+
+  <section class=step data-title-key="st_admin">
+    <h2 data-i18n="admin_h2">Accès administrateur</h2>
+    <p class=hint data-i18n="admin_hint">Pour modifier la configuration plus tard. À conserver.</p>
+    <label class=req for=admin data-i18n="adminpw_l">Mot de passe administrateur</label>
+    <input id=admin type=password minlength=8 maxlength=128>
+    <label class=req for=admin2 data-i18n="adminpw2_l">Confirmation</label>
+    <input id=admin2 type=password minlength=8 maxlength=128>
+  </section>
+
+  <div class=nav id=navButtons></div>
+  <div id=msg></div>
+</form>
+<div id=done></div>
+
+<script>
+"use strict";
+const $ = id => document.getElementById(id);
+function val(id){ return $(id).value.trim(); }
+function show(kind, text){ const m=$('msg'); m.className=kind; m.textContent=text; }
+function clearMsg(){ $('msg').className=''; $('msg').textContent=''; }
+
+// --- i18n : dictionnaire chargé une fois (data/install-i18n.json), bascule en
+// temps réel au choix de la langue. Repli FR pour toute clé/langue manquante. ---
+let DICT = null;
+let CUR = 'fr';
+const RTL = new Set(['ar','fa','he']);
+function t(key){
+  if(DICT){
+    const L = DICT[CUR];
+    if(L && L[key] != null) return L[key];
+    if(DICT.fr && DICT.fr[key] != null) return DICT.fr[key];
+  }
+  return key;
+}
+// Applique la langue : titre, attributs data-i18n / data-i18n-ph, sens d'écriture,
+// puis re-rendu des parties dynamiques (barre de progression, boutons, carte).
+function applyI18n(lang){
+  CUR = lang;
+  const html = document.documentElement;
+  html.setAttribute('lang', lang);
+  html.setAttribute('dir', RTL.has(lang) ? 'rtl' : 'ltr');
+  if(DICT){
+    document.title = t('doc_title');
+    document.querySelectorAll('[data-i18n]').forEach(el => { el.textContent = t(el.dataset.i18n); });
+    document.querySelectorAll('[data-i18n-ph]').forEach(el => { el.placeholder = t(el.dataset.i18nPh); });
+  }
+  render();
+}
+
+// --- Langue (29) et pays (numéros d'urgence par défaut, 112 partout en repli) ---
+const LANGS = [
+  ['fr','🇫🇷','Français'],['de','🇩🇪','Deutsch'],['it','🇮🇹','Italiano'],['rm','🇨🇭','Rumantsch'],
+  ['en','🇬🇧','English'],['es','🇪🇸','Español'],['pt','🇵🇹','Português'],['nl','🇳🇱','Nederlands'],
+  ['pl','🇵🇱','Polski'],['ro','🇷🇴','Română'],['cs','🇨🇿','Čeština'],['hu','🇭🇺','Magyar'],
+  ['el','🇬🇷','Ελληνικά'],['sv','🇸🇪','Svenska'],['da','🇩🇰','Dansk'],['no','🇳🇴','Norsk'],
+  ['fi','🇫🇮','Suomi'],['uk','🇺🇦','Українська'],['ru','🇷🇺','Русский'],['tr','🇹🇷','Türkçe'],
+  ['ar','🇸🇦','العربية'],['fa','🇮🇷','فارسی'],['he','🇮🇱','עברית'],['hi','🇮🇳','हिन्दी'],
+  ['zh','🇨🇳','中文'],['ja','🇯🇵','日本語'],['ko','🇰🇷','한국어'],['th','🇹🇭','ไทย'],['vi','🇻🇳','Tiếng Việt']
+];
+const COUNTRIES = {
+  FR:{n:'France',f:'🇫🇷',num:{samu:'15',police:'17',pompiers:'18'}},
+  CH:{n:'Suisse',f:'🇨🇭',num:{samu:'144',police:'117',pompiers:'118'}},
+  BE:{n:'Belgique',f:'🇧🇪',num:{samu:'112',police:'101',pompiers:'112'}},
+  LU:{n:'Luxembourg',f:'🇱🇺',num:{samu:'112',police:'113',pompiers:'112'}},
+  DE:{n:'Allemagne',f:'🇩🇪',num:{samu:'112',police:'110',pompiers:'112'}},
+  AT:{n:'Autriche',f:'🇦🇹',num:{samu:'144',police:'133',pompiers:'122'}},
+  IT:{n:'Italie',f:'🇮🇹',num:{samu:'118',police:'113',pompiers:'115'}},
+  CA:{n:'Canada',f:'🇨🇦',num:{samu:'911',police:'911',pompiers:'911'}},
+  GB:{n:'Royaume-Uni',f:'🇬🇧',num:{samu:'999',police:'999',pompiers:'999'}},
+  OT:{n:'Autre',f:'🌍',num:{samu:'112',police:'112',pompiers:'112'}}
+};
+// Pays proposés selon la langue (1er = défaut), puis les autres complètent la liste.
+const LANG_COUNTRIES = {
+  fr:['FR','CH','BE','LU','CA'], de:['CH','DE','AT'], it:['CH','IT'], rm:['CH'],
+  en:['GB','CH'], nl:['BE'], _:['OT']
+};
+
+function buildLangGrid(){
+  $('langGrid').innerHTML = LANGS.map(([c,f,n]) =>
+    '<div class=langcard data-l="'+c+'"><span class=fl>'+f+'</span><span>'+n+'</span></div>').join('');
+  $('langGrid').addEventListener('click', e => {
+    const card = e.target.closest('.langcard'); if(card) selectLang(card.dataset.l);
+  });
+}
+function selectLang(code){
+  $('lang').value = code;
+  document.querySelectorAll('.langcard').forEach(c => c.classList.toggle('sel', c.dataset.l===code));
+  applyI18n(code);     // traduit la page en temps réel (= défaut du portail à l'install)
+  buildCountries(code);
+}
+function buildCountries(lang){
+  const order = LANG_COUNTRIES[lang] || LANG_COUNTRIES._;
+  const seen = new Set();
+  const codes = [...order, ...Object.keys(COUNTRIES)].filter(c => !seen.has(c) && seen.add(c));
+  $('country').innerHTML = codes.map(c =>
+    '<option value="'+c+'">'+COUNTRIES[c].f+' '+COUNTRIES[c].n+'</option>').join('');
+  $('country').value = order[0];
+  applyCountry(order[0]);
+}
+// Adapte l'interface au pays : préremplit les numéros d'urgence non saisis
+// manuellement (marqués `auto`). Un numéro tapé par l'admin n'est jamais écrasé.
+function applyCountry(code){
+  const c = COUNTRIES[code]; if(!c) return;
+  ['samu','police','pompiers'].forEach(id => {
+    if(!val(id) || $(id).dataset.auto){ $(id).value = c.num[id]; $(id).dataset.auto = '1'; }
+  });
+}
+
+// Aperçu carte 100% hors-ligne, sans dépendance : « radar » centré sur le nœud.
+const SCAP = { none:'scap_none', city:'scap_city', country:'scap_country', world:'scap_world' };
+function renderMapPreview(){
+  const scope = $('scope').value;
+  const box = $('mapPreview');
+  if(!box) return;
+  if(scope === 'none'){ box.innerHTML = '<div class=cap>'+t('map_none')+'</div>'; return; }
+  const lat = val('lat'), lon = val('lon');
+  const coord = (lat && lon) ? (lat + ', ' + lon) : t('map_nopos');
+  const cap = t('map_cap').replace('{scope}', t(SCAP[scope])).replace('{coord}', coord);
+  box.innerHTML =
+    '<svg viewBox="0 0 200 200" role=img aria-label="SOS-GUIDE">'+
+    '<circle cx=100 cy=100 r=92 fill=none stroke="var(--border)"/>'+
+    '<circle cx=100 cy=100 r=62 fill=none stroke="var(--border)"/>'+
+    '<circle cx=100 cy=100 r=32 fill=none stroke="var(--border)"/>'+
+    '<line x1=100 y1=8 x2=100 y2=192 stroke="var(--border)"/>'+
+    '<line x1=8 y1=100 x2=192 y2=100 stroke="var(--border)"/>'+
+    '<circle cx=100 cy=100 r=6 fill="var(--accent)"/>'+
+    '<text x=100 y=124 text-anchor=middle font-size=9 fill="var(--sub)">SOS-GUIDE</text>'+
+    '</svg>'+
+    '<div class=cap>'+cap+'<br>'+t('map_pings')+'</div>';
+}
+$('scope').addEventListener('change', renderMapPreview);
+['lat','lon'].forEach(id => $(id).addEventListener('input', renderMapPreview));
+// Toggle « afficher une carte » : masque les champs (la carte devient facultative).
+$('mapEnabled').addEventListener('change', () => {
+  $('mapFields').style.display = $('mapEnabled').checked ? '' : 'none';
+});
+
+// Coordonnées : accepte DMS (48°39'14.7"N 2°20'56.1"E) ou décimal → lat/lon.
+function parseLatLon(text){
+  if(!text) return null;
+  text = text.trim().replace(/,\s*(?=\d)/g, ' ').replace(/\s+/g,' ');
+  const dec = text.match(/^(-?\d{1,3}(?:\.\d+)?)\s+(-?\d{1,3}(?:\.\d+)?)$/);
+  if(dec){ return { lat:+dec[1], lon:+dec[2] }; }
+  const re = /(\d{1,3}(?:\.\d+)?)\s*[°ºd:]\s*(\d{1,2}(?:\.\d+)?)?\s*['’′m:]?\s*(\d{1,2}(?:\.\d+)?)?\s*["”″s]?\s*([NSEWO])/gi;
+  const found = []; let m;
+  while((m = re.exec(text)) !== null){
+    let v = parseFloat(m[1]) + (parseFloat(m[2])||0)/60 + (parseFloat(m[3])||0)/3600;
+    const h = m[4].toUpperCase();
+    if(h==='S' || h==='W' || h==='O') v = -v;
+    found.push({ v, axis: (h==='N'||h==='S') ? 'lat' : 'lon' });
+  }
+  if(found.length === 2){
+    const la = found.find(f=>f.axis==='lat'), lo = found.find(f=>f.axis==='lon');
+    if(la && lo) return { lat: la.v, lon: lo.v };
+    return { lat: found[0].v, lon: found[1].v };
+  }
+  return null;
+}
+function applyCoords(){
+  const p = parseLatLon($('coordPaste').value);
+  if(p && Number.isFinite(p.lat) && Number.isFinite(p.lon)){
+    $('lat').value = Math.round(p.lat*1e6)/1e6;
+    $('lon').value = Math.round(p.lon*1e6)/1e6;
+    $('coordPaste').style.borderColor = 'var(--green,#22c55e)';
+    renderMapPreview();
+  } else if($('coordPaste').value.trim()) {
+    $('coordPaste').style.borderColor = 'var(--red,#ef4444)';
+  } else { $('coordPaste').style.borderColor = ''; }
+}
+$('coordPaste').addEventListener('input', applyCoords);
+$('coordPaste').addEventListener('paste', () => setTimeout(applyCoords, 0));
+$('country').addEventListener('change', () => applyCountry($('country').value));
+// Un numéro saisi à la main n'est plus considéré comme auto-rempli.
+['samu','police','pompiers'].forEach(id => $(id).addEventListener('input', () => { delete $(id).dataset.auto; }));
+
+// --- Associations & numéros d'aide : liste dynamique (nom + numéro), suit le
+// pays du déploiement. Persistées dans la config (`associations`), affichées sur
+// le portail à la place des numéros nationaux par défaut de la langue. ---
+function makeAssocRow(a){
+  a = a || {};
+  const row = document.createElement('div'); row.className = 'assoc-row';
+  const name = document.createElement('input');
+  name.className = 'assoc-name'; name.maxLength = 120; name.placeholder = t('assos_name_ph'); name.value = a.name || a.titre || '';
+  const numb = document.createElement('input');
+  numb.className = 'assoc-num'; numb.maxLength = 40; numb.inputMode = 'tel'; numb.placeholder = t('assos_num_ph'); numb.value = a.number || a.numero || '';
+  const del = document.createElement('button');
+  del.type = 'button'; del.className = 'assoc-del'; del.textContent = '✕'; del.setAttribute('aria-label', t('assos_remove'));
+  del.addEventListener('click', () => { row.remove(); if(!$('assosList').children.length) addAssocRow(); });
+  row.append(name, numb, del);
+  return row;
+}
+function addAssocRow(a){ $('assosList').appendChild(makeAssocRow(a)); }
+function collectAssocs(){
+  return Array.from(document.querySelectorAll('#assosList .assoc-row')).map(r => ({
+    name: r.querySelector('.assoc-name').value.trim(),
+    number: r.querySelector('.assoc-num').value.trim()
+  })).filter(a => a.name || a.number);
+}
+$('assosAdd').addEventListener('click', () => addAssocRow());
+
+const steps = Array.from(document.querySelectorAll('.step'));
+let cur = 0;
+
+function render(){
+  steps.forEach((s,i)=>s.classList.toggle('active', i===cur));
+  $('progress').innerHTML = steps.map((_,i)=>
+    '<div class="seg '+(i<cur?'done':i===cur?'cur':'')+'"></div>').join('');
+  const title = t(steps[cur].dataset.titleKey);
+  $('steplabel').textContent = t('steplabel').replace('{n}', cur+1).replace('{t}', steps.length).replace('{title}', title);
+  const prev = cur>0 ? '<button type=button class=btn-prev id=prevBtn></button>' : '';
+  const last = cur===steps.length-1;
+  const fwd = last
+    ? '<button type=submit class=btn-go id=goBtn></button>'
+    : '<button type=button class=btn-next id=nextBtn></button>';
+  $('navButtons').innerHTML = prev + fwd;
+  if($('prevBtn')){ $('prevBtn').textContent = t('nav_prev'); $('prevBtn').onclick = ()=>{ cur--; clearMsg(); render(); }; }
+  if($('nextBtn')){ $('nextBtn').textContent = t('nav_next'); $('nextBtn').onclick = ()=>{ if(validate(cur)){ cur++; clearMsg(); render(); } }; }
+  if($('goBtn')){ $('goBtn').textContent = t('nav_go'); }
+  if(steps[cur].querySelector('#mapPreview')) renderMapPreview();
+  const focusable = steps[cur].querySelector('input:not([type=hidden]),select');
+  if(focusable) focusable.focus();
+}
+
+// Validation indépendante de l'ordre des étapes (basée sur les champs présents).
+function validate(i){
+  const sec = steps[i];
+  if(sec.querySelector('#name') && !val('name')){ show('err', t('val_name')); return false; }
+  if(sec.querySelector('#admin')){
+    if(val('admin').length < 8){ show('err', t('val_pwmin')); return false; }
+    if(val('admin') !== val('admin2')){ show('err', t('val_pwmismatch')); return false; }
+  }
+  return true;
+}
+
+function num(id){ const v = parseFloat(val(id)); return Number.isFinite(v) ? v : null; }
+
+$('f').addEventListener('submit', async e => {
+  e.preventDefault();
+  for(let i=0;i<steps.length;i++){ if(!validate(i)){ cur=i; render(); return; } }
+  const establishment = {
+    name: val('name'), address: val('address'),
+    country: (COUNTRIES[$('country').value] || {}).n || '',
+    countryCode: $('country').value,
+    localMeetingPoint: val('meeting'), localCrisisNumber: val('crisis'),
+    localSamuNumber: val('samu'), localPoliceNumber: val('police'),
+    localPompiersNumber: val('pompiers'), localMairieNumber: val('mairie'),
+    localCroixRouge: val('croix'), lat: num('lat'), lon: num('lon')
+  };
+  const config = {
+    establishment,
+    venueType: $('venueType').value,
+    sponsor: val('sponsor'),
+    defaultLang: $('lang').value,
+    reassurance: { message: val('reassure') },
+    mapScope: $('mapEnabled').checked ? $('scope').value : 'none',
+    associations: collectAssocs(),
+    wifiChannel: 11, enableLoRa: false, enableEthernet: false
+  };
+  const go = $('goBtn'); if(go) go.disabled = true;
+  try{
+    const r = await fetch('/api/install', {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({ config, adminPassword: val('admin') })
+    });
+    if(r.ok){
+      let ssid='', qr=''; try{ const d=await r.json(); ssid=d.wifiSsid||''; qr=d.wifiQr||''; }catch(_){}
+      clearMsg();
+      document.querySelectorAll('.step').forEach(s=>s.style.display='none');
+      $('navButtons').style.display='none';
+      const netParts = t('done_net').split('{ssid}');
+      $('done').innerHTML =
+        '<div style="background:var(--card);border:1px solid var(--border);border-radius:14px;padding:1.5rem;text-align:center">'+
+        '<h2 style="margin-bottom:.6rem">'+t('done_h2')+'</h2>'+
+        '<p>'+t('done_intro')+'</p>'+
+        '<div id=wifiQr style="width:200px;max-width:60vw;margin:1rem auto;background:#fff;padding:10px;border-radius:10px"></div>'+
+        '<p class=hint style="margin-bottom:.3rem">'+netParts[0]+'<strong id=wifiSsid></strong>'+(netParts[1]||'')+'</p>'+
+        '<p class=hint>'+t('done_note')+'</p>'+
+        '<p id=mapStatus class=hint style="margin-top:.6rem"></p>'+
+        '<div class=nav style="margin-top:1rem"><button type=button id=printBtn></button>'+
+        '<button type=button id=adminBtn></button></div></div>';
+      $('printBtn').textContent = t('done_print'); $('printBtn').onclick = ()=>window.print();
+      $('adminBtn').textContent = t('done_admin'); $('adminBtn').onclick = ()=>location.href='/admin';
+      $('wifiSsid').textContent = ssid;
+      if(qr) $('wifiQr').innerHTML = qr; else $('wifiQr').style.display='none';
+      $('done').scrollIntoView();
+      // Carte du lieu : si un GPS a été saisi, le nœud télécharge les tuiles OSM
+      // (best-effort, non bloquant) pour un affichage hors-ligne sur l'accueil.
+      if($('mapEnabled').checked && val('lat') && val('lon')) downloadMap(val('admin'));
+    }
+    else { show('err','❌ '+(await r.text())); if(go) go.disabled=false; }
+  }catch(err){ show('err', t('err_net')); if(go) go.disabled=false; }
+});
+
+// Déclenche le téléchargement des tuiles OSM par le nœud (auth admin = mot de
+// passe saisi). Best-effort : un échec (hors-ligne) n'empêche rien, la carte
+// reste re-téléchargeable depuis /admin.
+async function downloadMap(pw){
+  const s = $('mapStatus'); if(!s) return;
+  s.textContent = t('map_dl');
+  try{
+    const r = await fetch('/api/admin/map', { method:'POST', headers:{ 'Authorization':'Basic '+btoa('admin:'+pw) } });
+    if(r.ok){ const d = await r.json(); s.textContent = t('map_dl_ok').replace('{n}', d.downloaded||0); }
+    else { s.textContent = t('map_dl_fail'); }
+  }catch(_){ s.textContent = t('map_dl_fail'); }
+}
+
+function initialLang(){
+  const codes = LANGS.map(x => x[0]);
+  let nav = 'fr';
+  try { nav = (navigator.language || 'fr').slice(0,2).toLowerCase(); } catch(e) {}
+  return codes.indexOf(nav) >= 0 ? nav : 'fr';
+}
+
+// --- Barre de menu partagée (identique à l'accueil) : tiroir + modale de langue.
+// A−/A+ et le thème sont câblés automatiquement par /lib/sos-theme.js.
+(function(){
+  const drawerOverlay = $('drawerOverlay');
+  const openDrawer = () => { drawerOverlay.classList.add('active'); document.body.style.overflow = 'hidden'; };
+  const closeDrawer = () => { drawerOverlay.classList.remove('active'); document.body.style.overflow = ''; };
+  $('hamburgerBtn').addEventListener('click', openDrawer);
+  $('drawerCloseBtn').addEventListener('click', closeDrawer);
+  drawerOverlay.addEventListener('click', e => { if(e.target === drawerOverlay) closeDrawer(); });
+
+  const langModal = $('languageModal');
+  const openLangModal = () => {
+    $('flagGrid').innerHTML = LANGS.map(([c,f,n]) =>
+      '<div class=lang-card data-l="'+c+'"><span class=lang-flag>'+f+'</span><span class=lang-name>'+n+'</span></div>').join('');
+    langModal.classList.add('active'); document.body.style.overflow = 'hidden';
+  };
+  const closeLangModal = () => { langModal.classList.remove('active'); document.body.style.overflow = ''; };
+  $('langBtn').addEventListener('click', openLangModal);
+  $('closeModalBtn').addEventListener('click', closeLangModal);
+  langModal.addEventListener('click', e => {
+    if(e.target === langModal){ closeLangModal(); return; }
+    const card = e.target.closest('.lang-card');
+    if(card){ selectLang(card.dataset.l); closeLangModal(); }
+  });
+  document.addEventListener('keydown', e => {
+    if(e.key !== 'Escape') return;
+    if(langModal.classList.contains('active')) closeLangModal();
+    if(drawerOverlay.classList.contains('active')) closeDrawer();
+  });
+  $('navLogo').addEventListener('click', () => { cur = 0; clearMsg(); render(); window.scrollTo(0,0); });
+})();
+
+// Démarrage : charge le dictionnaire (même origine que le portail), puis rend.
+(async function(){
+  try{
+    const r = await fetch('data/install-i18n.json', { cache:'no-store' });
+    if(r.ok) DICT = await r.json();
+  }catch(e){ /* hors-ligne improbable (servi par le nœud) : repli FR du HTML */ }
+  buildLangGrid();
+  selectLang(initialLang());
+  addAssocRow(); // une ligne vide au départ (après chargement du dico = bons libellés)
+})();
+</script>
+</body>
+</html>

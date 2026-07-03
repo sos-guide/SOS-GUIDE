@@ -1,0 +1,21 @@
+[package]
+name = "sos-cli"
+description = "Outils d'administration en ligne de commande."
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+rust-version.workspace = true
+
+[dependencies]
+sos-core.workspace = true
+sos-security.workspace = true
+serde_json.workspace = true
+tracing.workspace = true
+tracing-subscriber.workspace = true
+
+[[bin]]
+name = "sos-cli"
+path = "src/main.rs"
+
+[lints]
+workspace = true

@@ -1,0 +1,214 @@
+/* ═══════════════════════════════════════════════════════════════
+   SOS-GUIDE — Thème partagé (source unique des tokens)
+   Chargé par : index.html, admin.php, lora-portal.php, starter.html
+   Design de référence : sosguide.fr/demo.html
+   Toute nouvelle page DOIT charger ce fichier au lieu de redéfinir :root.
+═══════════════════════════════════════════════════════════════ */
+:root{
+  /* Surfaces */
+  --bg:#060a12;          /* fond de page */
+  --bg1:#0c1120;         /* barres, drawer, modales */
+  --bg2:#111928;         /* éléments imbriqués */
+  --field:#111928;       /* champs de formulaire */
+  --card:#0f1826;        /* cartes */
+  --card-h:#162035;      /* cartes au survol */
+  /* Bordures */
+  --border:rgba(255,255,255,.07);
+  --border-h:rgba(255,255,255,.16);
+  /* Texte — contrastes vérifiés WCAG AA (≥4.5:1 sur --card) */
+  --text:#e8eef8;
+  --sub:#7d90b4;
+  --muted:#7588a8;
+  /* Couleurs fonctionnelles */
+  --accent:#3b82f6;          /* texte, bordures, focus */
+  --accent-strong:#2563eb;   /* fonds de boutons sous texte blanc (AA 5.2:1) */
+  --accent-strong-h:#1d4ed8; /* survol */
+  --blue:#3b82f6;
+  --green:#22c55e;
+  --red:#ef4444;
+  --amber:#f59e0b;
+  --yellow:#eab308;
+  /* Géométrie */
+  --nav-h:58px;
+  --r:14px;
+  --r-lg:18px;
+  --shadow:0 8px 24px rgba(0,0,0,.4);
+}
+body.light-mode{
+  --bg:#f0f4fb;
+  --bg1:#e8eef8;
+  --bg2:#dde4f0;
+  --field:#e8eef8;
+  --card:#fff;
+  --card-h:#eff6ff;
+  --border:rgba(0,0,0,.07);
+  --border-h:rgba(0,0,0,.16);
+  --text:#0f172a;
+  --sub:#475569;
+  --muted:#5d6b82;
+  --shadow:0 8px 24px rgba(0,0,0,.08);
+}
+
+/* Bouton de bascule de thème (commun aux pages hors portail) */
+.theme-btn{
+  position:fixed;top:.9rem;right:.9rem;z-index:500;
+  width:36px;height:36px;border-radius:10px;
+  border:1px solid var(--border);background:var(--card);color:var(--sub);
+  display:flex;align-items:center;justify-content:center;font-size:1rem;
+  cursor:pointer;transition:all .15s;
+}
+.theme-btn:hover{background:var(--card-h);color:var(--text);border-color:var(--border-h)}
+
+/* Contrôle de taille du texte (zoom a11y) — injecté par sos-theme.js, en bas à
+   droite pour ne gêner ni la navigation (haut) ni le bouton de thème. */
+.a11y-zoom{
+  position:fixed;bottom:.9rem;right:.9rem;z-index:500;
+  display:flex;align-items:center;gap:.25rem;
+  background:var(--card);border:1px solid var(--border);border-radius:12px;
+  padding:.25rem .35rem;box-shadow:var(--shadow);
+}
+.a11y-zoom button{
+  width:42px;border-radius:8px;border:1px solid var(--border);
+  background:var(--bg2);color:var(--text);font-weight:800;font-size:.9rem;
+  cursor:pointer;transition:all .15s;
+}
+.a11y-zoom button:hover{background:var(--card-h);border-color:var(--border-h);color:var(--accent)}
+.a11y-zoom-level{min-width:46px;text-align:center;font-size:.72rem;color:var(--sub);font-variant-numeric:tabular-nums}
+@media print{.a11y-zoom{display:none !important}}
+
+/* Animations retirées (demande produit) — interface instantanée et sobre :
+   aucune transition ni animation décorative sur l'ensemble du portail. */
+*,*::before,*::after{animation:none !important;transition:none !important}
+
+/* Accessibilité — WCAG 2.3.3 : désactiver animations et transitions si demandé */
+@media (prefers-reduced-motion: reduce){
+  *,*::before,*::after{
+    animation-duration:.01ms !important;
+    animation-iteration-count:1 !important;
+    transition-duration:.01ms !important;
+    scroll-behavior:auto !important;
+  }
+}
+
+/* Accessibilité — lien d'évitement (masqué jusqu'au focus clavier) */
+.skip-link{
+  position:absolute;left:-9999px;top:0;z-index:20000;
+  padding:.6rem 1rem;background:var(--accent-strong);color:#fff;
+  border-radius:0 0 10px 0;font-weight:600;text-decoration:none;
+}
+.skip-link:focus{left:0}
+
+/* ═══════════════════════════════════════════════════════════════
+   Optimisations « contexte d'urgence » — communes aux 4 pages
+   Objectif : page lisible et actionnable en < 1 s, au pouce, sur
+   un téléphone bas de gamme connecté au WiFi du nœud, sans réseau.
+═══════════════════════════════════════════════════════════════ */
+
+/* Rendu : police système immédiate (aucun téléchargement de font),
+   anti-crénelage et césure pour les longs mots traduits (de/fi/nl). */
+html{
+  -webkit-text-size-adjust:100%;            /* pas de zoom auto iOS qui casse le layout */
+  text-rendering:optimizeLegibility;
+  -webkit-tap-highlight-color:transparent;  /* on gère le retour visuel nous-mêmes */
+}
+body{overflow-wrap:break-word;word-break:break-word}
+
+/* Empêche le « rubber-band » qui masque les numéros d'urgence en haut
+   d'écran quand on scrolle vite, et fige le pull-to-refresh accidentel. */
+html,body{overscroll-behavior-y:none}
+
+/* Cibles tactiles : tout élément interactif fait au moins 44×44 px
+   (WCAG 2.5.5 / recommandation Apple/Google) — atteignable sous stress. */
+a[role=button],button,.btn,.nav-btn,.theme-btn,
+.urgence-card,.card,.lang-card{
+  min-height:44px;
+  touch-action:manipulation;                /* supprime le délai de 300 ms au tap */
+}
+/* Le rail du toggle reste fin, mais reçoit la zone tactile sans grandir. */
+.toggle{touch-action:manipulation}
+
+/* Liens téléphoniques : toujours assez gros et nets, même imbriqués. */
+a[href^="tel:"]{ text-decoration:none; }
+
+/* Performance de peinture : les longues listes (situations, langues,
+   alertes LoRa) ne sont rendues que lorsqu'elles approchent l'écran.
+   Gain net de first-paint sur un Pi/téléphone modeste. */
+.grid-situations,.grid-assos,.lang-grid,#loraAlertsList{
+  content-visibility:auto;
+  contain-intrinsic-size:auto 400px;
+}
+
+/* Focus clavier visible et homogène partout (au-delà des règles par page). */
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+
+/* Mode « contraste élevé » système (Windows/Android) : on respecte les
+   couleurs imposées plutôt que d'imposer nos dégradés illisibles. */
+@media (forced-colors: active){
+  .urgence-card,.card,.btn,.nav-btn{border:1px solid CanvasText}
+  .urgence-number,.urgence-name{forced-color-adjust:none}
+}
+
+/* Impression : un survivant peut imprimer/PDF les numéros d'urgence.
+   On masque la navigation et on force un rendu lisible sur papier. */
+@media print{
+  #nav,.theme-btn,.hamburger,.drawer,.drawer-overlay,
+  .nav-right,.btn-enter,.top-bar nav,.sidebar{display:none !important}
+  body{background:#fff !important;color:#000 !important}
+  .urgence-card{
+    background:#fff !important;color:#000 !important;
+    border:2px solid #000 !important;break-inside:avoid;
+  }
+  .urgence-number,.urgence-name,.urgence-card::after{color:#000 !important;opacity:1 !important}
+  a[href^="tel:"]::after{content:" (" attr(href) ")";font-size:.8em}
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   Barre de navigation & composants partagés (source unique)
+   La page d'accueil porte une copie inline historique de ces règles ;
+   toutes les AUTRES pages (install, admin…) les héritent d'ici pour
+   une barre de menu STRICTEMENT identique à l'accueil.
+═══════════════════════════════════════════════════════════════ */
+#nav{position:fixed;top:0;left:0;right:0;z-index:800;height:var(--nav-h);display:flex;align-items:center;background:rgba(6,10,18,.95);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-bottom:1px solid var(--border);padding:0 1.25rem;gap:.75rem}
+body.light-mode #nav{background:rgba(240,244,251,.95)}
+.nav-logo{flex:1;display:flex;align-items:center;gap:.6rem;font-weight:700;font-size:.95rem;letter-spacing:.02em;cursor:pointer;user-select:none;color:var(--text)}
+.nav-logo-badge{width:28px;height:28px;background:var(--card);border-radius:8px;border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:1.15rem;flex-shrink:0}
+.nav-right{display:flex;align-items:center;gap:.4rem}
+.nav-btn{width:34px;height:34px;border-radius:9px;border:1px solid var(--border);background:var(--card);color:var(--sub);display:flex;align-items:center;justify-content:center;font-size:1rem;cursor:pointer}
+.nav-btn:hover{background:var(--card-h);color:var(--text);border-color:var(--border-h)}
+.nav-btn:active{transform:scale(.92)}
+.hamburger{width:36px;height:36px;display:flex;flex-direction:column;justify-content:center;align-items:center;gap:5px;border-radius:9px;background:transparent;cursor:pointer}
+.hamburger:hover{background:rgba(255,255,255,.07)}
+body.light-mode .hamburger:hover{background:rgba(0,0,0,.06)}
+.hamburger span{display:block;width:20px;height:1.5px;background:var(--text);border-radius:2px}
+.drawer-overlay{position:fixed;inset:0;z-index:900;background:rgba(0,0,0,.65);backdrop-filter:blur(4px);visibility:hidden;opacity:0}
+.drawer-overlay.active{visibility:visible;opacity:1}
+.drawer{position:fixed;top:0;left:0;width:280px;height:100%;background:var(--bg1);border-right:1px solid var(--border);transform:translateX(-100%);z-index:1000;display:flex;flex-direction:column;padding:1.25rem 1rem}
+.drawer-overlay.active .drawer{transform:translateX(0)}
+.drawer-header{display:flex;justify-content:space-between;align-items:center;padding-bottom:1rem;margin-bottom:1rem;border-bottom:1px solid var(--border)}
+.drawer-title{font-weight:700;font-size:.95rem}
+.drawer-close{width:30px;height:30px;border-radius:8px;background:var(--bg2);color:var(--sub);font-size:1rem;display:flex;align-items:center;justify-content:center;cursor:pointer}
+.drawer-close:hover{background:rgba(239,68,68,.15);color:var(--red)}
+.drawer-nav{display:flex;flex-direction:column;gap:.5rem}
+.drawer-nav a{display:block;padding:.7rem 1rem;border-radius:var(--r);background:var(--card);border:1px solid var(--border);font-weight:500;font-size:.9rem;color:var(--text)}
+.drawer-nav a:hover{background:var(--card-h);border-color:var(--border-h);color:var(--accent)}
+.drawer-footer{margin-top:auto;padding-top:1.5rem;text-align:center;font-size:.7rem;color:var(--sub);border-top:1px solid var(--border)}
+.lang-modal-overlay{position:fixed;inset:0;z-index:10001;background:rgba(0,0,0,.8);backdrop-filter:blur(8px);display:flex;align-items:center;justify-content:center;visibility:hidden;opacity:0;padding:1rem}
+.lang-modal-overlay.active{visibility:visible;opacity:1}
+.lang-modal-container{background:var(--bg1);border-radius:20px;width:100%;max-width:720px;max-height:82vh;overflow-y:auto;border:1px solid var(--border);box-shadow:0 32px 64px rgba(0,0,0,.6)}
+.lang-modal-header{display:flex;justify-content:flex-end;align-items:center;padding:1.1rem 1.5rem;border-bottom:1px solid var(--border);position:sticky;top:0;background:var(--bg1)}
+.lang-modal-close{width:30px;height:30px;border-radius:8px;background:var(--bg2);color:var(--sub);font-size:1rem;display:flex;align-items:center;justify-content:center;cursor:pointer}
+.lang-modal-close:hover{background:rgba(239,68,68,.15);color:var(--red)}
+.lang-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:.6rem;padding:1.25rem}
+.lang-card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:.65rem 1rem;display:flex;align-items:center;gap:.65rem;cursor:pointer}
+.lang-card:hover{background:var(--card-h);border-color:var(--accent)}
+.lang-card:active{transform:scale(.96)}
+.lang-flag{font-size:1.5rem}
+.lang-name{font-size:.9rem;font-weight:500;color:var(--text)}
+
+/* Carte de présentation/section réutilisable (pages hors accueil). */
+.app-card{background:var(--card);border:1px solid var(--border);border-radius:var(--r-lg);padding:1.5rem 1.3rem;text-align:center}
+.app-card-emoji{font-size:3rem;display:block;margin-bottom:.6rem}
+.app-card h2{font-size:1.3rem;font-weight:800;margin:0 0 .5rem}
+.app-card p{color:var(--sub);font-size:.9rem;line-height:1.6;margin:0 0 .9rem}
+.app-card ul{list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:.5rem;text-align:left}
+.app-card li{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);padding:.6rem .8rem;font-size:.86rem;color:var(--text)}

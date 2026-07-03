@@ -1,0 +1,28 @@
+# Nœud satellite LoRa — firmware ESP32-C3 (RISC-V), `no_std`.
+# Workspace SÉPARÉ (toolchain et cible différentes du nœud Pi) : la table
+# [workspace] vide le détache du workspace hôte `sosguide/`.
+#
+# Cible choisie : ESP32-C3 (RISC-V, `riscv32imc-unknown-none-elf`) — toolchain
+# Rust standard (pas besoin du fork Xtensa `espup`). Pour un ESP32 classique
+# (Xtensa) ou un C6, changer la feature `esp32c3` et la cible (cf. .cargo/config.toml).
+[workspace]
+
+[package]
+name = "esp32-lora"
+version = "0.1.0"
+edition = "2021"
+description = "Nœud satellite LoRa SOS-GUIDE (ESP32-C3, no_std)."
+
+[dependencies]
+# `unstable` : nécessaire pour `delay`, `gpio`, etc. en esp-hal 1.x.
+esp-hal = { version = "1.1.1", features = ["esp32c3", "unstable"] }
+# Construction de la trame d'alerte sans allocateur (chaînes bornées).
+heapless = "0.8"
+# NOTE : Embassy (async) sera ajouté avec le matériel — la paire
+# esp-hal-embassy/embassy-executor doit être alignée sur la version exacte
+# d'esp-hal (handshake de feature interne) ; à figer lors du flash réel.
+
+[profile.release]
+opt-level = "s"
+lto = "fat"
+codegen-units = 1

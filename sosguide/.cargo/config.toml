@@ -1,0 +1,5 @@
+# Cross-compilation : PC de dev x86_64 → Raspberry Pi (aarch64).
+# Binaire statique musl, linké par rust-lld (aucune toolchain C externe).
+# Le binaire produit est ensuite copié sur le Pi par `just deploy`.
+[target.aarch64-unknown-linux-musl]
+linker = "rust-lld"

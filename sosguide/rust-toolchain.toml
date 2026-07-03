@@ -1,0 +1,5 @@
+# Toolchain épinglée : build reproductible, cible Pi ajoutée automatiquement.
+[toolchain]
+channel = "stable"
+targets = ["aarch64-unknown-linux-musl"]
+components = ["clippy", "rustfmt"]

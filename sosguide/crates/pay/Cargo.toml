@@ -1,0 +1,17 @@
+[package]
+name = "sos-pay"
+description = "Relais best-effort de transactions Bitcoin signées sur le mesh LoRa (store-and-forward vers un nœud-sortie Internet). La borne ne détient aucune clé ni fonds."
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+rust-version.workspace = true
+
+[dependencies]
+sos-core.workspace = true
+serde = { workspace = true }
+serde_json = { workspace = true }
+thiserror.workspace = true
+tracing.workspace = true
+
+[lints]
+workspace = true

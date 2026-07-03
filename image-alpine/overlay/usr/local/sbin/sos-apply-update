@@ -1,0 +1,36 @@
+#!/bin/sh
+# Installe un binaire DÉJÀ VÉRIFIÉ dans le slot OTA de la FAT (modèle A/B), pose
+# le marqueur « à confirmer au prochain boot », puis reboote pour appliquer
+# (OS en RAM : le binaire est rechargé depuis le slot par sos-boot-select).
+#
+# Args : <binaire vérifié> <manifeste vérifié>.
+# Appelé UNIQUEMENT par `sos-cli update` APRÈS vérification signature + empreinte
+# + anti-downgrade — ce helper ne refait pas la vérification (il est privilégié).
+set -eu
+
+NEWBIN="$1"; NEWMAN="$2"
+[ -f "$NEWBIN" ] && [ -f "$NEWMAN" ] || { echo "sos-apply-update: arguments manquants" >&2; exit 2; }
+
+SLOT=$(awk '$3=="vfat"{print $2; exit}' /proc/mounts); SLOT="${SLOT:-/media/mmcblk0p1}"
+BIN="$SLOT/sos-guide.bin";        MAN="$SLOT/manifest.json"
+PREVBIN="$SLOT/sos-guide.bin.prev"; PREVMAN="$SLOT/manifest.json.prev"
+PENDING="$SLOT/update.pending";   FAILED="$SLOT/update.failed"
+
+mount -o remount,rw "$SLOT" || { echo "sos-apply-update: remount rw FAT impossible" >&2; exit 1; }
+trap 'sync; mount -o remount,ro "$SLOT" 2>/dev/null || true' EXIT
+
+# Rotation A/B : la version courante du slot devient .prev (rollback possible).
+[ -f "$BIN" ] && cp "$BIN" "$PREVBIN"
+[ -f "$MAN" ] && cp "$MAN" "$PREVMAN"
+
+# Écriture atomique du nouveau binaire (temp + rename sur le même système de fichiers).
+cp "$NEWBIN" "$BIN.new"; sync; mv "$BIN.new" "$BIN"
+cp "$NEWMAN" "$MAN"
+
+# Marqueur « à confirmer » (effacé par sos-update-confirm si la santé est OK,
+# transformé en update.failed sinon → rollback au boot suivant).
+rm -f "$FAILED"
+date +%s > "$PENDING"
+sync
+echo "sos-apply-update: slot OTA mis à jour — reboot pour appliquer"
+reboot

@@ -1,0 +1,916 @@
+<!DOCTYPE html>
+<html lang=fr>
+<head>
+<meta charset=UTF-8>
+<meta name=viewport content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta http-equiv=Content-Security-Policy content="default-src 'self';script-src 'self' 'unsafe-inline';style-src 'self' 'unsafe-inline';img-src 'self' data:;media-src 'self';connect-src 'self'">
+<meta name=robots content="noindex, nofollow">
+<title>SOS-GUIDE — Administration</title>
+<link rel=stylesheet href=/lib/sos-theme.css>
+<style>
+  *{box-sizing:border-box}
+  body{font-family:system-ui,-apple-system,'Segoe UI',sans-serif;margin:0;background:var(--bg);color:var(--text);min-height:100vh;line-height:1.55}
+  /* ---------- Écran de connexion ---------- */
+  .login{position:fixed;inset:0;z-index:100;display:none;align-items:center;justify-content:center;padding:1.2rem;
+    background:radial-gradient(120% 90% at 50% -10%,rgba(239,68,68,.22),transparent 60%),var(--bg)}
+  .login-card{width:100%;max-width:380px;background:var(--card);border:1px solid var(--border);border-radius:20px;
+    padding:2rem 1.6rem;text-align:center;box-shadow:0 24px 60px rgba(0,0,0,.35)}
+  .login-emblem{font-size:3rem;line-height:1;filter:drop-shadow(0 4px 16px rgba(239,68,68,.4))}
+  .login-card h1{font-size:1.3rem;margin:.7rem 0 .15rem}
+  .login-card .sub{color:var(--sub);font-size:.85rem;margin-bottom:1.4rem}
+  .login-card input{width:100%;padding:.8rem .9rem;background:var(--field);border:1px solid var(--border);border-radius:12px;color:var(--text);font-size:1rem;text-align:center}
+  .login-card input:focus{outline:2px solid var(--accent);outline-offset:1px}
+  .login-card button{width:100%;margin-top:.9rem;padding:.85rem;background:var(--accent-strong);color:#fff;border:none;border-radius:12px;font-weight:700;font-size:1rem;cursor:pointer}
+  .login-card button:active{transform:scale(.98)}
+  #loginErr{color:var(--red);font-size:.85rem;min-height:1.1rem;margin-top:.7rem}
+  .login-foot{margin-top:1.3rem;font-size:.72rem;color:var(--sub);line-height:1.5}
+  /* ---------- Barre supérieure ---------- */
+  .topbar{position:sticky;top:0;z-index:40;display:flex;align-items:center;gap:.7rem;padding:.7rem 1rem;
+    background:rgba(10,14,22,.92);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border-bottom:1px solid var(--border)}
+  body.light-mode .topbar{background:rgba(244,247,252,.92)}
+  .topbar .emblem{font-size:1.4rem;line-height:1}
+  .topbar .tt{font-weight:800;letter-spacing:.01em;font-size:.98rem}
+  .topbar .tt span{color:var(--sub);font-weight:600}
+  .topbar .sp{flex:1}
+  .phasepill{font-size:.68rem;font-weight:800;letter-spacing:.04em;padding:.2rem .6rem;border-radius:40px;text-transform:uppercase;white-space:nowrap}
+  .phasepill.emg{background:rgba(34,197,94,.18);color:var(--green)}
+  .phasepill.prov{background:rgba(245,158,11,.18);color:var(--amber)}
+  .lang-sel{height:32px;width:auto;padding:0 .4rem;background:var(--bg2);color:var(--text);border:1px solid var(--border);border-radius:8px;font-size:.82rem;cursor:pointer}
+  .btn-ico{width:32px;height:32px;min-height:32px;display:inline-flex;align-items:center;justify-content:center;padding:0;background:var(--bg2);color:var(--sub);border:1px solid var(--border);border-radius:8px;font-size:1rem;cursor:pointer}
+  .btn-ico:hover{color:var(--text);border-color:var(--border-h)}
+  .btn-ico .ic{font-size:1rem;line-height:1}
+  #logoutBtn:hover{color:var(--red);border-color:var(--red)}
+  /* ---------- Héro / mission ---------- */
+  .hero{max-width:760px;margin:1.3rem auto 0;padding:0 1.1rem}
+  .hero-inner{position:relative;overflow:hidden;border-radius:var(--r-lg);border:1px solid var(--border);
+    background:linear-gradient(135deg,rgba(127,29,29,.42),rgba(30,41,59,.25));padding:1.5rem 1.4rem}
+  .hero-inner::after{content:"⛑️";position:absolute;right:-.4rem;top:-1.1rem;font-size:7rem;opacity:.12;pointer-events:none}
+  .hero h2{font-size:1.25rem;font-weight:800;margin:0 0 .4rem;letter-spacing:-.01em}
+  .hero p{font-size:.9rem;color:var(--sub);max-width:54ch;margin:0}
+  .hero p strong{color:var(--text)}
+  /* ---------- Conteneur + sections ---------- */
+  main{max-width:760px;margin:0 auto;padding:1.4rem 1.1rem 5rem}
+  .sec{background:var(--card);border:1px solid var(--border);border-radius:var(--r-lg);padding:1.2rem 1.15rem;margin:0 0 1.15rem;scroll-margin-top:4rem}
+  .sec-head{display:flex;align-items:flex-start;gap:.7rem;margin-bottom:.9rem}
+  .sec-head .ic{font-size:1.4rem;line-height:1.1;flex:none}
+  .sec-head h3{font-size:1.02rem;font-weight:800;margin:0;letter-spacing:-.01em}
+  .sec-head .desc{font-size:.78rem;color:var(--sub);margin:.1rem 0 0}
+  .sec.alert{border-color:rgba(239,68,68,.5);background:linear-gradient(180deg,rgba(239,68,68,.06),var(--card))}
+  .sec.alert .sec-head h3{color:var(--red)}
+  .sec.danger{border-color:rgba(239,68,68,.45)}
+  .sec.danger .sec-head h3{color:var(--red)}
+  label{display:block;font-size:.8rem;color:var(--sub);margin:.75rem 0 .25rem;font-weight:600}
+  input,select,textarea{display:block;width:100%;padding:.6rem .7rem;background:var(--field);border:1px solid var(--border);border-radius:10px;color:var(--text);font-size:.95rem}
+  input,select{height:2.6rem}
+  textarea{font-family:inherit;line-height:1.5;resize:vertical;height:auto}
+  input:focus,select:focus,textarea:focus{outline:2px solid var(--accent);outline-offset:1px}
+  button{width:100%;padding:.78rem;background:var(--accent-strong);color:#fff;border:none;border-radius:12px;font-weight:700;font-size:.95rem;cursor:pointer;margin-top:.7rem}
+  button:active{transform:scale(.99)}
+  button.sec-btn{background:var(--bg2);color:var(--text);border:1px solid var(--border)}
+  button.danger-btn{background:linear-gradient(135deg,#b91c1c,#ef4444)}
+  button.mini{width:auto;margin:0;padding:.45rem .8rem;font-size:.8rem;border-radius:9px}
+  .row{display:grid;grid-template-columns:1fr 1fr;gap:.6rem}
+  .field{min-width:0}
+  .field label{margin-top:0}
+  .netrow{display:flex;align-items:center;justify-content:space-between;gap:.6rem;padding:.55rem 0;border-top:1px solid var(--border);font-size:.86rem}
+  .netrow:first-child{border-top:0}
+  .badge-off{font-size:.7rem;font-weight:700;padding:.1rem .55rem;border-radius:40px;background:rgba(245,158,11,.16);color:var(--amber);white-space:nowrap}
+  .badge-on{font-size:.7rem;font-weight:700;padding:.1rem .55rem;border-radius:40px;background:rgba(34,197,94,.16);color:var(--green);white-space:nowrap}
+  .badge-dim{font-size:.7rem;font-weight:700;padding:.1rem .55rem;border-radius:40px;background:rgba(148,163,184,.18);color:var(--sub);white-space:nowrap}
+  .hint{font-size:.76rem;color:var(--sub);margin:.5rem 0 0;line-height:1.5}
+  .empty{color:var(--sub);font-size:.85rem;padding:.3rem 0}
+  .contacts{display:grid;grid-template-columns:repeat(2,1fr);gap:.6rem;margin-top:.3rem}
+  @media (max-width:520px){.contacts{grid-template-columns:1fr}.row{grid-template-columns:1fr}}
+  .contact{display:flex;flex-direction:column;background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:.5rem .75rem;transition:border-color .15s,box-shadow .15s}
+  .contact:focus-within{border-color:var(--accent);box-shadow:0 0 0 3px rgba(239,68,68,.12)}
+  .contact label{display:flex;align-items:center;gap:.4rem;margin:0 0 .15rem;font-size:.76rem;font-weight:700;color:var(--text)}
+  .contact .ico{font-size:1.05rem;line-height:1}
+  .contact input{background:transparent;border:none;height:1.9rem;padding:0;font-size:1rem;font-variant-numeric:tabular-nums}
+  .contact input:focus{outline:none}
+  .chk{display:flex;align-items:center;gap:.5rem;margin-top:.7rem;font-size:.86rem;color:var(--text)}
+  .chk input{width:18px;height:18px;accent-color:var(--accent);flex:none;height:18px}
+  .chk label{margin:0}
+  .nodegrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(132px,1fr));gap:.6rem}
+  .nodecard{background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:.6rem .8rem}
+  .nodecard .nlabel{font-size:.64rem;text-transform:uppercase;letter-spacing:.05em;color:var(--sub)}
+  .nodecard .nval{font-size:1.15rem;font-weight:800;margin-top:.15rem;word-break:break-word}
+  .badge{display:inline-block;padding:.12rem .55rem;border-radius:40px;font-size:.74rem;font-weight:800}
+  .b-prov{background:rgba(245,158,11,.18);color:var(--amber)}
+  .b-emg{background:rgba(34,197,94,.18);color:var(--green)}
+  ul.principes{list-style:none;margin:0;padding:0}
+  ul.principes li{display:flex;gap:.6rem;padding:.6rem 0;border-top:1px solid var(--border);font-size:.85rem}
+  ul.principes li:first-child{border-top:0}
+  ul.principes .ico{flex:none;width:1.4rem;text-align:center}
+  ul.principes b{color:var(--text)}
+  ul.principes span.d{color:var(--sub)}
+  #wifiQrImg{width:170px;max-width:60vw;background:#fff;padding:10px;border-radius:10px}
+  /* ---------- Toast ---------- */
+  #msg{position:fixed;left:50%;bottom:1.1rem;transform:translateX(-50%);max-width:90vw;z-index:60;padding:.7rem 1.1rem;border-radius:12px;font-size:.9rem;font-weight:600;display:none;box-shadow:0 12px 32px rgba(0,0,0,.35)}
+  #msg.ok{display:block;background:#065f46;color:#fff}
+  #msg.err{display:block;background:#7f1d1d;color:#fff}
+  [dir=rtl] .netrow,[dir=rtl] .sec-head{direction:rtl}
+</style>
+</head>
+<body data-no-a11y-zoom>
+<script src="/lib/sos-theme.js"></script>
+
+<!-- ============ CONNEXION ============ -->
+<div id=loginScreen class=login>
+  <div class=login-card>
+    <div class=login-emblem>⛑️</div>
+    <h1>SOS-GUIDE</h1>
+    <div class=sub data-i18n="login_sub">Administration de la borne d'urgence</div>
+    <input id=loginPw type=password autocomplete=current-password data-i18n-ph="login_pw_ph" placeholder="Mot de passe administrateur" autofocus>
+    <button type=button id=loginBtn data-i18n="login_btn">Se connecter</button>
+    <div id=loginErr aria-live=polite></div>
+    <div class=login-foot data-i18n="login_foot">Accès réservé. Toute la donnée reste sur la borne — aucun envoi externe, aucun traceur.</div>
+  </div>
+</div>
+
+<!-- ============ TABLEAU DE BORD ============ -->
+<div id=dash style="display:none">
+  <header class=topbar>
+    <span class=emblem>⛑️</span>
+    <span class=tt>SOS-GUIDE <span data-i18n="top_sub">· Administration</span></span>
+    <span class=sp></span>
+    <span id=phasePill class="phasepill prov">…</span>
+    <select id=adminLang class=lang-sel aria-label="Langue de l'administration"></select>
+    <button type=button id=themeToggle class=btn-ico aria-label="Basculer le thème clair/sombre" title="Thème clair/sombre">🌙</button>
+    <button type=button id=logoutBtn class=btn-ico aria-label="Déconnexion" title="Déconnexion"><span class=ic>🚪</span></button>
+  </header>
+
+  <div class=hero><div class=hero-inner>
+    <h2 data-i18n="hero_h2">Une borne, une mission : ne laisser personne sans information vitale.</h2>
+    <p data-i18n="hero_p">Réseau d'urgence citoyen, hors-ligne et souverain. Vous configurez ici l'alerte, le lieu et la diffusion. Tout reste sur la borne — aucun Internet requis, aucune donnée personnelle.</p>
+  </div></div>
+
+  <main>
+    <!-- GROUPES DE PING -->
+    <section class=sec id=pingSec>
+      <div class=sec-head><span class=ic>🆘</span><div><h3>Groupes de ping</h3><p class=desc>Créez des groupes avec une clé partagée. Les membres envoient un ping privé avec cette clé — vous êtes notifié ici.</p></div></div>
+      <div id=groupList class=empty>Aucun groupe configuré.</div>
+      <div class=row>
+        <div class=field><label for=groupName>Nom du groupe</label><input id=groupName maxlength=80 placeholder="Ex. : Famille, Équipe A…"></div>
+        <div class=field><label for=groupKey>Clé (partagée avec le groupe)</label><input id=groupKey maxlength=32 placeholder="Ex. : ROUGE ou 1234" autocomplete=off spellcheck=false></div>
+        <div class=field><label for=groupColor>Couleur</label>
+          <select id=groupColor>
+            <option value=bleu>🔵 Bleu</option>
+            <option value=rouge>🔴 Rouge</option>
+            <option value=vert>🟢 Vert</option>
+            <option value=orange>🟠 Orange</option>
+            <option value=violet>🟣 Violet</option>
+            <option value=ardoise>⚫ Ardoise</option>
+          </select>
+        </div>
+      </div>
+      <button type=button id=groupBtn>Créer le groupe</button>
+    </section>
+
+    <!-- PINGS REÇUS -->
+    <section class=sec id=pingsSec>
+      <div class=sec-head><span class=ic>📨</span><div><h3>Alertes privées reçues</h3><p class=desc>Pings citoyens en attente de réponse. Rafraîchi toutes les 5 secondes.</p></div></div>
+      <div id=pingsList class=empty>Aucun ping reçu.</div>
+      <button type=button class=sec-btn id=pingsClearBtn style="margin-top:.5rem">Effacer tous les pings</button>
+    </section>
+
+    <!-- ALERTE -->
+    <section class="sec alert" id=alertSec>
+      <div class=sec-head><span class=ic>🚨</span><div><h3 data-i18n="alert_h3">Alerte d'urgence</h3><p class=desc data-i18n="alert_desc">Bascule le portail en page SOS plein écran pour tous les citoyens connectés.</p></div></div>
+      <div id=alertCurrent class=empty data-i18n="alert_loading">Chargement de l'état…</div>
+      <label for=cause data-i18n="cause_l">Cause</label>
+      <select id=cause>
+        <option value=PPMS data-i18n="cause_PPMS">⚠️ Plan Particulier de Mise en Sécurité</option>
+        <option value=ATTENTAT data-i18n="cause_ATTENTAT">🚨 Attentat / Menace armée</option>
+        <option value=NRBC data-i18n="cause_NRBC">☢️ Risque Nucléaire / Radiologique / Biologique / Chimique</option>
+        <option value=INCENDIE data-i18n="cause_INCENDIE">🔥 Incendie</option>
+        <option value=CRUE data-i18n="cause_CRUE">🌊 Inondation / Crue</option>
+        <option value=SEISME data-i18n="cause_SEISME">🌍 Séisme</option>
+        <option value=EVACUATION data-i18n="cause_EVACUATION">🏃 Évacuation immédiate</option>
+        <option value=CUSTOM data-i18n="cause_CUSTOM">📢 Message d'urgence</option>
+      </select>
+      <label for=instructions data-i18n="instr_l">Consignes locales (précises, propres au lieu)</label>
+      <textarea id=instructions rows=4 maxlength=2000 data-i18n-ph="instr_ph" placeholder="Ex. : Évacuez par la sortie est, rejoignez le point de rassemblement de la mairie."></textarea>
+      <button type=button id=alertBtn data-i18n="alert_btn">🚨 Émettre l'alerte (page SOS plein écran)</button>
+      <button type=button class=sec-btn id=alertClearBtn data-i18n="alert_clear_btn">Lever l'alerte — retour à la normale</button>
+    </section>
+
+    <!-- ÉTAT DU NŒUD -->
+    <section class=sec id=nodeState>
+      <div class=sec-head><span class=ic>📟</span><div><h3 data-i18n="node_h3">État du nœud — temps réel</h3><p class=desc data-i18n="node_desc">Identité, phase du cycle de vie et activité, rafraîchies en continu.</p></div></div>
+      <div class=nodegrid id=nodeCards><div class=nodecard><div class=nval data-i18n="node_loading">Chargement…</div></div></div>
+    </section>
+
+    <!-- CONFORMITÉ -->
+    <section class=sec>
+      <div class=sec-head><span class=ic>✅</span><div><h3 data-i18n="conf_h3">Conformité &amp; principes</h3><p class=desc data-i18n="conf_desc">Les engagements tenus par chaque borne.</p></div></div>
+      <ul class=principes>
+        <li><span class=ico>📡</span><div><b data-i18n="p1t">Fonctionne hors-ligne.</b> <span class=d data-i18n="p1d">Réseau local autonome ; aucune connexion Internet requise pour consulter le guide.</span></div></li>
+        <li><span class=ico>🔒</span><div><b data-i18n="p2t">Zéro dépendance externe.</b> <span class=d data-i18n="p2d">Toutes les pages sont servies localement : aucun CDN, aucune police distante, aucun traceur, aucune donnée personnelle.</span></div></li>
+        <li><span class=ico>🎨</span><div><b data-i18n="p3t">CSS pur, animations minimales.</b> <span class=d data-i18n="p3d">Affichage minimaliste, complet et rapide — lisible au pouce, sous stress, sur un téléphone modeste.</span></div></li>
+        <li><span class=ico>⛑️</span><div><b data-i18n="p4t">Normes Croix-Rouge.</b> <span class=d data-i18n="p4d">Gestes et contenus conformes aux référentiels ERC/ILCOR, PSC1 et Croix-Rouge.</span></div></li>
+        <li><span class=ico>🗺️</span><div><b data-i18n="p5t">Cartographie hors-ligne.</b> <span class=d data-i18n="p5d">Plans via tuiles OpenStreetMap locales (configurables ci-dessous), sans appel réseau.</span></div></li>
+        <li><span class=ico>🔑</span><div><b data-i18n="p6t">Souveraineté &amp; sécurité.</b> <span class=d data-i18n="p6d">Identité du nœud Ed25519, configuration sans secret exposé, un seul démon.</span></div></li>
+      </ul>
+    </section>
+
+    <!-- SOURCES OFFICIELLES -->
+    <section class=sec>
+      <div class=sec-head><span class=ic>📰</span><div><h3 data-i18n="off_h3">Sources officielles (cache hors-ligne)</h3><p class=desc data-i18n="off_desc">Bulletins officiels mis en cache, affichés sur la page SOS même sans réseau.</p></div></div>
+      <div class=netrow><span data-i18n="off_autorow">Récupération automatique (Ethernet maintenance · Tor)</span><span class=badge-off data-i18n="off_autobadge">à la connectivité (canal de sortie requis)</span></div>
+      <div id=offList class=empty data-i18n="off_loading">Chargement du cache…</div>
+      <label for=offCategory data-i18n="offcat_l">Catégorie</label>
+      <select id=offCategory>
+        <option value=WEATHER data-i18n="offcat_WEATHER">🌦️ Météo</option>
+        <option value=DISASTER data-i18n="offcat_DISASTER">🌋 Catastrophe naturelle</option>
+        <option value=GOVERNMENT data-i18n="offcat_GOVERNMENT">🏛️ Consigne officielle</option>
+        <option value=HEALTH data-i18n="offcat_HEALTH">🏥 Sanitaire</option>
+        <option value=OTHER data-i18n="offcat_OTHER">📋 Information officielle</option>
+      </select>
+      <div class=row>
+        <div class=field><label for=offSource data-i18n="offsrc_l">Source</label><input id=offSource maxlength=120 data-i18n-ph="offsrc_ph" placeholder="Météo-France, VigiCrues…"></div>
+        <div class=field><label for=offCountry data-i18n="offcountry_l">Pays (vide = global)</label><input id=offCountry maxlength=8 data-i18n-ph="offcountry_ph" placeholder="FR, CH…"></div>
+      </div>
+      <label for=offTitle data-i18n="offtitle_l">Titre</label><input id=offTitle maxlength=200 data-i18n-ph="offtitle_ph" placeholder="Vigilance orange — crues">
+      <label for=offBody data-i18n="offbody_l">Contenu</label>
+      <textarea id=offBody rows=4 maxlength=4000 data-i18n-ph="offbody_ph" placeholder="Texte officiel à diffuser (consignes, zones concernées…)."></textarea>
+      <label for=offLink data-i18n="offlink_l">Lien source (optionnel)</label><input id=offLink maxlength=300 placeholder="https://…">
+      <button type=button id=offBtn data-i18n="off_btn">Mettre en cache le bulletin</button>
+      <button type=button class=sec-btn id=offClearBtn data-i18n="off_clear_btn">Vider le cache des bulletins</button>
+    </section>
+
+    <!-- AUTORITÉS -->
+    <section class=sec>
+      <div class=sec-head><span class=ic>🏛️</span><div><h3 data-i18n="auth_h3">Transmission aux autorités</h3><p class=desc data-i18n="auth_desc">Destinataires institutionnels à prévenir dès qu'un canal de sortie existe.</p></div></div>
+      <div id=authStatus class=netrow><span data-i18n="auth_outrow">Canal de sortie (Ethernet / Tor)</span><span class=badge-off data-i18n="auth_nochan">aucun canal configuré</span></div>
+      <p class=hint data-i18n="auth_hint">L'alerte relayée ne contient jamais de donnée personnelle (cause, consignes et horodatage uniquement).</p>
+      <div id=authList></div>
+      <button type=button class=sec-btn id=authAddBtn data-i18n="auth_add_btn">＋ Ajouter un destinataire</button>
+      <button type=button id=authSaveBtn data-i18n="auth_save_btn">Enregistrer les destinataires</button>
+    </section>
+
+    <!-- ASSOCIATIONS & NUMÉROS D'AIDE (suivent le pays, pas la langue) -->
+    <section class=sec>
+      <div class=sec-head><span class=ic>📞</span><div><h3 data-i18n="assoc_h3">Associations &amp; numéros d'aide</h3><p class=desc data-i18n="assoc_desc">Numéros d'aide adaptés au pays/région du déploiement (suivent le lieu, pas la langue). Affichés sur le portail à la place des numéros nationaux par défaut.</p></div></div>
+      <div id=assocList></div>
+      <button type=button class=sec-btn id=assocAddBtn data-i18n="assoc_add_btn">＋ Ajouter une association</button>
+      <button type=button id=assocSaveBtn data-i18n="assoc_save_btn">Enregistrer les associations</button>
+    </section>
+
+    <form id=cfg autocomplete=off>
+      <!-- LIEU -->
+      <section class=sec>
+        <div class=sec-head><span class=ic>📍</span><div><h3 data-i18n="place_h3">Lieu &amp; accueil</h3><p class=desc data-i18n="place_desc">Identité de la borne, affichée sur la page d'accueil citoyenne.</p></div></div>
+        <label for=name data-i18n="name_l">Nom du lieu</label><input id=name maxlength=200>
+        <label for=venueType data-i18n="venue_l">Type de lieu (adapte la carte d'accueil)</label>
+        <select id=venueType>
+          <option value=mairie data-i18n="v_mairie">🏛️ Mairie</option>
+          <option value=ecole data-i18n="v_ecole">🏫 École</option>
+          <option value=commerce data-i18n="v_commerce">🏪 Commerce</option>
+          <option value=tabac data-i18n="v_tabac">🚬 Tabac / Presse</option>
+          <option value=dispensaire data-i18n="v_dispensaire">🏥 Dispensaire / Santé</option>
+          <option value=public data-i18n="v_public">📍 Lieu public</option>
+          <option value=autre data-i18n="v_autre">📍 Autre</option>
+        </select>
+        <label for=address data-i18n="address_l">Adresse</label><input id=address maxlength=200>
+        <label for=sponsor data-i18n="sponsor_l">Sponsor / hébergeur (optionnel, crédité sur l'accueil)</label><input id=sponsor maxlength=120 data-i18n-ph="sponsor_ph" placeholder="Ex. : Épicerie du village">
+        <label for=reassure data-i18n="reassure_l">Message de réassurance</label><input id=reassure maxlength=240>
+      </section>
+
+      <!-- CONTACTS -->
+      <section class=sec>
+        <div class=sec-head><span class=ic>☎️</span><div><h3 data-i18n="contacts_h3">Contacts d'urgence locaux</h3><p class=desc data-i18n="contacts_desc">Numéros affichés en grand sur l'accueil et la page SOS.</p></div></div>
+        <div class=contacts>
+          <div class=contact><label for=crisis><span class=ico>🆘</span> <span data-i18n="c_crisis">Cellule de crise</span></label><input id=crisis type=tel inputmode=tel maxlength=40 autocomplete=off data-i18n-ph="c_local_ph" placeholder="N° local"></div>
+          <div class=contact><label for=samu><span class=ico>🚑</span> <span data-i18n="c_samu">SAMU</span></label><input id=samu type=tel inputmode=tel maxlength=40 autocomplete=off placeholder="15"></div>
+          <div class=contact><label for=police><span class=ico>👮</span> <span data-i18n="c_police">Police</span></label><input id=police type=tel inputmode=tel maxlength=40 autocomplete=off placeholder="17"></div>
+          <div class=contact><label for=pompiers><span class=ico>🚒</span> <span data-i18n="c_pompiers">Pompiers</span></label><input id=pompiers type=tel inputmode=tel maxlength=40 autocomplete=off placeholder="18"></div>
+          <div class=contact><label for=mairie><span class=ico>🏛️</span> <span data-i18n="c_mairie">Mairie</span></label><input id=mairie type=tel inputmode=tel maxlength=40 autocomplete=off data-i18n-ph="c_local_ph" placeholder="N° local"></div>
+          <div class=contact><label for=croix><span class=ico>➕</span> <span data-i18n="c_croix">Croix-Rouge</span></label><input id=croix type=tel inputmode=tel maxlength=40 autocomplete=off data-i18n-ph="c_local_ph" placeholder="N° local"></div>
+        </div>
+      </section>
+
+      <!-- POSITION & CARTE -->
+      <section class=sec>
+        <div class=sec-head><span class=ic>🗺️</span><div><h3 data-i18n="pos_h3">Position &amp; carte du lieu</h3><p class=desc data-i18n="pos_desc">Centre de la carte et tuiles OpenStreetMap mises en cache hors-ligne.</p></div></div>
+        <label for=scope data-i18n="scope_l">Échelle de la carte (nœud au centre, pings GPS uniquement)</label>
+        <select id=scope>
+          <option value=none data-i18n="sc_none">Aucune carte</option>
+          <option value=city data-i18n="sc_city">Ville (rayon local)</option>
+          <option value=country data-i18n="sc_country">Pays (régional)</option>
+          <option value=world data-i18n="sc_world">Monde (global)</option>
+        </select>
+        <label for=coordPaste data-i18n="coord_l">Coordonnées GPS — colle depuis Google Maps (DMS ou décimal)</label>
+        <input id=coordPaste data-i18n-ph="coord_ph" placeholder="48°39'14.7&quot;N 2°20'56.1&quot;E   ·   ou   48.6541, 2.3489">
+        <div class=row>
+          <div class=field><label for=lat data-i18n="lat_l">Latitude (centre)</label><input id=lat type=number step=any inputmode=decimal></div>
+          <div class=field><label for=lon data-i18n="lon_l">Longitude (centre)</label><input id=lon type=number step=any inputmode=decimal></div>
+        </div>
+        <div class=netrow><span data-i18n="map_row">🗺️ Carte du lieu hors-ligne (tuiles OSM)</span><button type=button id=mapBtn class=mini data-i18n="map_dl_btn">⬇️ Télécharger</button></div>
+        <p class=hint id=mapStatus data-i18n="map_hint">Le nœud télécharge les tuiles autour du GPS (nécessite une connexion sortante, ex. Ethernet de maintenance). Servies ensuite hors-ligne sur l'accueil. Enregistrez d'abord une position ci-dessus.</p>
+      </section>
+
+      <!-- RÉSEAU -->
+      <section class=sec>
+        <div class=sec-head><span class=ic>📡</span><div><h3 data-i18n="net_h3">Réseau du nœud — Tor · WiFi · LoRa</h3><p class=desc data-i18n="net_desc">Statut honnête et QR WiFi de l'affiche du lieu.</p></div></div>
+        <div class=netrow><span data-i18n="net_tor">🧅 Service caché Tor (.onion)</span><span id=torStatus class=badge-off>…</span></div>
+        <div class=netrow><span data-i18n="net_wifi">📶 Point d'accès WiFi (ouvert)</span><span id=wifiStatus class=badge-off>…</span></div>
+        <div class=netrow><span data-i18n="net_qr">📇 QR de l'affiche (scanner = rejoindre le WiFi)</span><button type=button id=qrPrint class=mini data-i18n="net_qr_btn">🖨️ Réimprimer</button></div>
+        <div id=wifiQrBox style="text-align:center;margin:.6rem 0"><img id=wifiQrImg alt="QR WiFi"></div>
+        <p class=hint data-i18n="net_hint">Le WiFi de la borne est toujours ouvert (aucun mot de passe) : aucun obstacle pour un citoyen en détresse. Le QR ci-dessus, imprimé sur l'affiche, permet de rejoindre le réseau d'un scan.</p>
+        <label for=wchan data-i18n="wchan_l">Canal WiFi (1–13)</label><input id=wchan type=number min=1 max=13>
+        <div class=netrow><span data-i18n="net_lora">📡 LoRa mesh</span><span id=loraStatus class=badge-off>…</span></div>
+        <div class=chk><input type=checkbox id=lora><label for=lora data-i18n="lora_chk">Activer LoRa (effectif quand un module radio est connecté)</label></div>
+      </section>
+
+      <button type=submit data-i18n="cfg_save_btn">💾 Enregistrer la configuration</button>
+    </form>
+
+    <!-- NŒUDS DE CONFIANCE -->
+    <section class=sec>
+      <div class=sec-head><span class=ic>🤝</span><div><h3 data-i18n="trust_h3">Nœuds de confiance (maillage LoRa)</h3><p class=desc data-i18n="trust_desc">Clés publiques des bornes pairs dont ce nœud accepte et relaie les alertes. Sans elles, seules les alertes de ce nœud circulent.</p></div></div>
+      <div class=netrow><span data-i18n="trust_known">Nœuds de confiance connus</span><span id=trustedList class=badge-on>…</span></div>
+      <label for=trustedJson data-i18n="trust_reg_l">Registre trusted_nodes.json (remplace l'existant)</label>
+      <textarea id=trustedJson rows=5 placeholder='{"nodes":{"ecole-voisine":{"public_key":"-----BEGIN PUBLIC KEY-----\n…\n-----END PUBLIC KEY-----\n"}}}' style="width:100%;font-family:ui-monospace,monospace;font-size:.8rem"></textarea>
+      <div style="display:flex;gap:.5rem;flex-wrap:wrap;margin-top:.5rem">
+        <button type=button id=trustedSave data-i18n="trust_save_btn">🤝 Remplacer le registre</button>
+        <button type=button id=trustedClear class=mini data-i18n="trust_clear_btn">🗑️ Vider (ce nœud seul)</button>
+      </div>
+      <p class=hint id=trustedMsg></p>
+    </section>
+
+    <!-- SECRETS -->
+    <section class=sec>
+      <div class=sec-head><span class=ic>🔐</span><div><h3 data-i18n="sec_h3">Secrets</h3><p class=desc data-i18n="sec_desc">Laisser vide pour ne rien changer.</p></div></div>
+      <label for=admin data-i18n="newpw_l">Nouveau mot de passe administrateur</label><input id=admin type=password minlength=8 maxlength=128 autocomplete=new-password>
+      <div class=chk><input type=checkbox id=regen><label for=regen data-i18n="regen_chk">Régénérer l'identité de signature du nœud (irréversible)</label></div>
+      <button type=button id=secBtn data-i18n="sec_btn">Appliquer la rotation des secrets</button>
+    </section>
+
+    <!-- ZONE DE DANGER -->
+    <section class="sec danger">
+      <div class=sec-head><span class=ic>⚠️</span><div><h3 data-i18n="danger_h3">Zone de danger</h3><p class=desc data-i18n="danger_desc">Action irréversible — à n'utiliser que pour repartir de zéro.</p></div></div>
+      <p class=hint data-i18n="danger_hint">Le retour aux valeurs d'usine efface la configuration, le mot de passe administrateur, l'alerte en cours, les bulletins et la carte hors-ligne. La borne repasse en mode installation. L'identité cryptographique du nœud est conservée.</p>
+      <button type=button id=resetBtn class=danger-btn data-i18n="reset_btn">♻️ Retour aux valeurs d'usine</button>
+    </section>
+  </main>
+</div>
+
+<div id=msg aria-live=polite></div>
+
+<script>
+"use strict";
+const $ = id => document.getElementById(id);
+function val(id){ return $(id).value.trim(); }
+let _toastTimer = null;
+function show(kind, text){ const m=$('msg'); m.className=kind; m.textContent=text; clearTimeout(_toastTimer); _toastTimer=setTimeout(()=>{m.className='';}, 4200); }
+function esc(s){return String(s==null?'':s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));}
+function num(id){ const v = parseFloat(val(id)); return Number.isFinite(v) ? v : null; }
+
+/* ============ i18n (dictionnaire chargé une fois, bascule temps réel) ============ */
+const LANGS = [
+  ['fr','🇫🇷','Français'],['de','🇩🇪','Deutsch'],['it','🇮🇹','Italiano'],['rm','🇨🇭','Rumantsch'],
+  ['en','🇬🇧','English'],['es','🇪🇸','Español'],['pt','🇵🇹','Português'],['nl','🇳🇱','Nederlands'],
+  ['pl','🇵🇱','Polski'],['ro','🇷🇴','Română'],['cs','🇨🇿','Čeština'],['hu','🇭🇺','Magyar'],
+  ['el','🇬🇷','Ελληνικά'],['sv','🇸🇪','Svenska'],['da','🇩🇰','Dansk'],['no','🇳🇴','Norsk'],
+  ['fi','🇫🇮','Suomi'],['uk','🇺🇦','Українська'],['ru','🇷🇺','Русский'],['tr','🇹🇷','Türkçe'],
+  ['ar','🇸🇦','العربية'],['fa','🇮🇷','فارسی'],['he','🇮🇱','עברית'],['hi','🇮🇳','हिन्दी'],
+  ['zh','🇨🇳','中文'],['ja','🇯🇵','日本語'],['ko','🇰🇷','한국어'],['th','🇹🇭','ไทย'],['vi','🇻🇳','Tiếng Việt']
+];
+const RTL = new Set(['ar','fa','he']);
+let DICT = null;
+let CUR = 'fr';
+function t(key){
+  if(DICT){
+    const L = DICT[CUR];
+    if(L && L[key] != null) return L[key];
+    if(DICT.fr && DICT.fr[key] != null) return DICT.fr[key];
+  }
+  return key;
+}
+function applyI18n(lang){
+  CUR = lang;
+  const html = document.documentElement;
+  html.setAttribute('lang', lang);
+  html.setAttribute('dir', RTL.has(lang) ? 'rtl' : 'ltr');
+  if(DICT){
+    document.title = t('doc_title');
+    document.querySelectorAll('[data-i18n]').forEach(el => { el.textContent = t(el.dataset.i18n); });
+    document.querySelectorAll('[data-i18n-ph]').forEach(el => { el.placeholder = t(el.dataset.i18nPh); });
+  }
+  try{ localStorage.setItem('sos_admin_lang', lang); }catch(e){}
+  const sel = $('adminLang'); if(sel && sel.value !== lang) sel.value = lang;
+  // Re-rendu des parties dynamiques (déjà chargées) avec la nouvelle langue.
+  if(_dashStarted){ loadNodeStatus(); renderAuth(); loadAlert(); loadOfficial(); loadTrusted(); }
+}
+function initialLang(){
+  try{ const s = localStorage.getItem('sos_admin_lang'); if(s) return s; }catch(e){}
+  const codes = LANGS.map(x => x[0]);
+  let nav = 'fr';
+  try { nav = (navigator.language || 'fr').slice(0,2).toLowerCase(); } catch(e) {}
+  return codes.indexOf(nav) >= 0 ? nav : 'fr';
+}
+function buildLangSelect(){
+  const sel = $('adminLang');
+  sel.innerHTML = LANGS.map(([c,f,n]) => '<option value="'+c+'">'+f+' '+n+'</option>').join('');
+  sel.value = CUR;
+  sel.addEventListener('change', () => applyI18n(sel.value));
+}
+
+/* ============ Connexion / session ============ */
+async function doLogin(){
+  const pw = $('loginPw').value;
+  if(!pw){ $('loginErr').textContent=t('js_pwreq'); return; }
+  $('loginErr').textContent='…';
+  try{
+    const r = await fetch('/api/admin/login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({password:pw})});
+    if(r.ok){ $('loginPw').value=''; $('loginErr').textContent=''; startDashboard(); }
+    else { $('loginErr').textContent = r.status===503 ? t('js_notconf') : t('js_wrong'); }
+  }catch(_){ $('loginErr').textContent=t('js_neterr'); }
+}
+$('loginBtn').addEventListener('click', doLogin);
+$('loginPw').addEventListener('keydown', e => { if(e.key==='Enter') doLogin(); });
+$('logoutBtn').addEventListener('click', async () => {
+  try{ await fetch('/api/admin/logout',{method:'POST'}); }catch(_){}
+  location.reload();
+});
+
+let _dashStarted = false;
+function startDashboard(){
+  $('loginScreen').style.display='none';
+  $('dash').style.display='block';
+  if(_dashStarted) return;
+  _dashStarted = true;
+  buildLangSelect();
+  renderAuth(); renderAssoc(); preload(); loadAlert(); loadOfficial(); loadNodeStatus(); loadTrusted(); loadGroups(); loadPings();
+  setInterval(loadNodeStatus, 5000);
+  setInterval(loadPings, 5000);
+}
+async function checkSession(){
+  try{
+    const r = await fetch('/api/admin/session',{cache:'no-store'});
+    if(r.ok){ startDashboard(); return; }
+  }catch(_){}
+  $('loginScreen').style.display='flex';
+  setTimeout(()=>{ try{ $('loginPw').focus(); }catch(e){} }, 50);
+}
+
+/* ============ Chargement config ============ */
+async function preload(){
+  try{
+    const c = await (await fetch('/api/admin/config',{cache:'no-store'})).json();
+    const e = c.establishment || {};
+    $('name').value=e.name||''; $('address').value=e.address||'';
+    $('venueType').value = c.venueType || 'mairie';
+    $('sponsor').value = c.sponsor || '';
+    $('reassure').value=(c.reassurance&&c.reassurance.message)||'';
+    $('crisis').value=e.localCrisisNumber||''; $('samu').value=e.localSamuNumber||'';
+    $('police').value=e.localPoliceNumber||''; $('pompiers').value=e.localPompiersNumber||'';
+    $('mairie').value=e.localMairieNumber||''; $('croix').value=e.localCroixRouge||'';
+    $('scope').value = c.mapScope || 'city';
+    $('lat').value = (e.lat==null?'':e.lat); $('lon').value = (e.lon==null?'':e.lon);
+    $('wchan').value = (c.wifiChannel==null?11:c.wifiChannel);
+    refreshWifiQr();
+    $('lora').checked = !!c.enableLoRa;
+    authorities = Array.isArray(c.authorities) ? c.authorities : [];
+    renderAuth();
+    assocs = Array.isArray(c.associations) ? c.associations : [];
+    renderAssoc();
+    // Sans préférence d'admin enregistrée, suit la langue par défaut du nœud.
+    try{ if(!localStorage.getItem('sos_admin_lang') && c.defaultLang){ applyI18n(c.defaultLang); } }catch(e){}
+  }catch(err){ show('err', t('js_cfg_loadfail')); }
+}
+function refreshWifiQr(){ $('wifiQrImg').src = '/api/admin/wifi-qr?t=' + Date.now(); }
+$('qrPrint').addEventListener('click', () => window.open('/api/admin/wifi-qr', '_blank'));
+
+/* ============ Carte (tuiles OSM) ============ */
+$('mapBtn').addEventListener('click', async () => {
+  const s = $('mapStatus'); const b = $('mapBtn');
+  if(num('lat')===null || num('lon')===null){ s.textContent = t('js_map_needpos'); return; }
+  b.disabled = true;
+  try{
+    // Enregistre d'abord la config (le téléchargement lit le GPS persisté).
+    s.textContent = t('js_map_saving');
+    const sv = await saveConfig();
+    if(!sv.ok){ s.textContent = '⚠️ '+(await sv.text()); b.disabled=false; return; }
+    s.textContent = t('js_map_dling');
+    const r = await fetch('/api/admin/map', { method:'POST' });
+    if(r.ok){ const d = await r.json(); s.textContent = t('js_map_ok').replace('{n}', d.downloaded||0).replace('{z}', d.zoom); }
+    else { s.textContent = '⚠️ '+(await r.text()); }
+  }catch(_){ s.textContent = t('js_map_neterr'); }
+  b.disabled = false;
+});
+
+/* ---- Coordonnées : accepte DMS (48°39'14.7"N 2°20'56.1"E) ou décimal ---- */
+function parseLatLon(text){
+  if(!text) return null;
+  text = text.trim().replace(/,\s*(?=\d)/g, ' ').replace(/\s+/g,' ');
+  // Décimal : "48.6541 2.3489"
+  const dec = text.match(/^(-?\d{1,3}(?:\.\d+)?)\s+(-?\d{1,3}(?:\.\d+)?)$/);
+  if(dec){ return { lat:+dec[1], lon:+dec[2] }; }
+  // DMS : deux groupes deg/min/sec + hémisphère
+  const re = /(\d{1,3}(?:\.\d+)?)\s*[°ºd:]\s*(\d{1,2}(?:\.\d+)?)?\s*['’′m:]?\s*(\d{1,2}(?:\.\d+)?)?\s*["”″s]?\s*([NSEWO])/gi;
+  const found = []; let m;
+  while((m = re.exec(text)) !== null){
+    let v = parseFloat(m[1]) + (parseFloat(m[2])||0)/60 + (parseFloat(m[3])||0)/3600;
+    const h = m[4].toUpperCase();
+    if(h==='S' || h==='W' || h==='O') v = -v;
+    found.push({ v, axis: (h==='N'||h==='S') ? 'lat' : 'lon' });
+  }
+  if(found.length === 2){
+    const la = found.find(f=>f.axis==='lat'), lo = found.find(f=>f.axis==='lon');
+    if(la && lo) return { lat: la.v, lon: lo.v };
+    return { lat: found[0].v, lon: found[1].v };
+  }
+  return null;
+}
+function applyCoords(){
+  const p = parseLatLon($('coordPaste').value);
+  if(p && Number.isFinite(p.lat) && Number.isFinite(p.lon)){
+    $('lat').value = Math.round(p.lat*1e6)/1e6;
+    $('lon').value = Math.round(p.lon*1e6)/1e6;
+    $('coordPaste').style.borderColor = 'var(--green)';
+  } else if(val('coordPaste')) {
+    $('coordPaste').style.borderColor = 'var(--red)';
+  } else {
+    $('coordPaste').style.borderColor = '';
+  }
+}
+$('coordPaste').addEventListener('input', applyCoords);
+$('coordPaste').addEventListener('paste', () => setTimeout(applyCoords, 0));
+
+/* ============ Enregistrer la configuration ============ */
+function buildConfig(){
+  const establishment = {
+    name: val('name'), address: val('address'),
+    localCrisisNumber: val('crisis'), localSamuNumber: val('samu'),
+    localPoliceNumber: val('police'), localPompiersNumber: val('pompiers'),
+    localMairieNumber: val('mairie'), localCroixRouge: val('croix'),
+    lat: num('lat'), lon: num('lon')
+  };
+  const wchan = parseInt(val('wchan'),10);
+  return {
+    establishment,
+    venueType: $('venueType').value,
+    sponsor: val('sponsor'),
+    reassurance: { message: val('reassure') },
+    mapScope: $('scope').value,
+    wifiChannel: (wchan>=1 && wchan<=13) ? wchan : 11,
+    enableLoRa: $('lora').checked
+  };
+}
+async function saveConfig(){
+  const r = await fetch('/api/admin/config',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({config:buildConfig()})});
+  return r;
+}
+$('cfg').addEventListener('submit', async e => {
+  e.preventDefault();
+  try{
+    const r = await saveConfig();
+    show(r.ok?'ok':'err', r.ok?t('js_cfg_saved'):'❌ '+(await r.text()));
+  }catch(err){ show('err', t('js_neterr')); }
+});
+
+/* ============ Alerte d'urgence ============ */
+async function loadAlert(){
+  try{
+    const a = await (await fetch('/api/alert',{cache:'no-store'})).json();
+    if(a && a.active){
+      $('alertCurrent').className='';
+      $('alertCurrent').innerHTML = '🔴 <strong>'+esc(t('js_alert_active'))+esc(a.label)+'</strong>'+(a.instructions?(' — '+esc(a.instructions)):'');
+      if(a.cause) $('cause').value = a.cause;
+      const n = (collectAuth().length || (authorities||[]).length);
+      if(n) $('authStatus').innerHTML = '<span>'+esc(t('auth_outrow'))+'</span><span class=badge-off>'+t('js_recipients').replace('{n}', n)+'</span>';
+    } else {
+      $('alertCurrent').className='empty';
+      $('alertCurrent').textContent='🟢 '+t('js_alert_none');
+    }
+  }catch(err){ $('alertCurrent').className='empty'; $('alertCurrent').textContent=t('js_alert_unavail'); }
+}
+$('alertBtn').addEventListener('click', async () => {
+  const body = { cause: $('cause').value, instructions: val('instructions') };
+  try{
+    const r = await fetch('/api/admin/alert',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
+    show(r.ok?'ok':'err', r.ok?t('js_alert_emitted'):'❌ '+(await r.text())); loadAlert();
+  }catch(err){ show('err', t('js_neterr')); }
+});
+$('alertClearBtn').addEventListener('click', async () => {
+  if(!confirm(t('js_alert_confirmclear'))) return;
+  try{
+    const r = await fetch('/api/admin/alert',{method:'DELETE'});
+    show(r.ok?'ok':'err', r.ok?t('js_alert_cleared'):'❌ '+(await r.text())); loadAlert();
+  }catch(err){ show('err', t('js_neterr')); }
+});
+
+/* ============ Sources officielles ============ */
+async function loadOfficial(){
+  try{
+    const d = await (await fetch('/api/official',{cache:'no-store'})).json();
+    const list = (d && d.bulletins) || [];
+    if(!list.length){ $('offList').className='empty'; $('offList').textContent=t('js_off_none'); return; }
+    $('offList').className='';
+    $('offList').innerHTML = list.map(b =>
+      '<div class=netrow><span>'+esc(b.categoryLabel||'')+' · <strong>'+esc(b.source||'')+'</strong> — '+esc(b.title||'')+(b.country?(' ('+esc(b.country)+')'):'')+'</span></div>'
+    ).join('');
+  }catch(err){ $('offList').className='empty'; $('offList').textContent=t('js_off_unavail'); }
+}
+$('offBtn').addEventListener('click', async () => {
+  if(!val('offSource') || !val('offTitle')){ show('err', t('js_off_reqd')); return; }
+  const body = {
+    source: val('offSource'), category: $('offCategory').value,
+    country: val('offCountry'), title: val('offTitle'), body: val('offBody'),
+    link: val('offLink') || null
+  };
+  try{
+    const r = await fetch('/api/admin/official',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
+    if(r.ok){ show('ok', t('js_off_cached')); $('offTitle').value=''; $('offBody').value=''; $('offLink').value=''; loadOfficial(); }
+    else show('err','❌ '+(await r.text()));
+  }catch(err){ show('err', t('js_neterr')); }
+});
+$('offClearBtn').addEventListener('click', async () => {
+  if(!confirm(t('js_off_confirmclear'))) return;
+  try{
+    const r = await fetch('/api/admin/official',{method:'DELETE'});
+    show(r.ok?'ok':'err', r.ok?t('js_off_cleared'):'❌ '+(await r.text())); loadOfficial();
+  }catch(err){ show('err', t('js_neterr')); }
+});
+
+/* ============ Nœuds de confiance (maillage) ============ */
+async function loadTrusted(){
+  try{
+    const d = await (await fetch('/api/admin/trusted',{cache:'no-store'})).json();
+    const nodes = (d && d.nodes) || [];
+    $('trustedList').className='badge-on';
+    $('trustedList').textContent = nodes.length + ' : ' + nodes.join(', ');
+  }catch(e){ $('trustedList').className='badge-dim'; $('trustedList').textContent=t('js_trust_unavail'); }
+}
+$('trustedSave').addEventListener('click', async () => {
+  const raw = $('trustedJson').value.trim();
+  if(!raw){ $('trustedMsg').textContent=t('js_trust_paste'); return; }
+  let body;
+  try{ body = JSON.parse(raw); }catch(e){ $('trustedMsg').textContent=t('js_trust_badjson'); return; }
+  try{
+    const r = await fetch('/api/admin/trusted',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
+    if(r.ok){ const j=await r.json(); $('trustedMsg').textContent=t('js_trust_replaced').replace('{n}', j.loaded||0); $('trustedJson').value=''; loadTrusted(); }
+    else $('trustedMsg').textContent='❌ '+(await r.text());
+  }catch(e){ $('trustedMsg').textContent=t('js_neterr'); }
+});
+$('trustedClear').addEventListener('click', async () => {
+  if(!confirm(t('js_trust_confirmclear'))) return;
+  try{
+    const r = await fetch('/api/admin/trusted',{method:'DELETE'});
+    $('trustedMsg').textContent = r.ok ? t('js_trust_cleared') : '❌ '+(await r.text()); loadTrusted();
+  }catch(e){ $('trustedMsg').textContent=t('js_neterr'); }
+});
+
+/* ============ Transmission aux autorités ============ */
+let authorities = [];
+function authRow(a, i){
+  a = a || {};
+  return '<div class=row style="margin-bottom:.5rem" data-auth='+i+'>'
+    +'<div class=field><input class=auth-name placeholder="'+esc(t('js_auth_name_ph'))+'" maxlength=120 value="'+esc(a.name||'')+'"></div>'
+    +'<div class=field><select class=auth-channel><option value=ethernet'+(a.channel==='ethernet'?' selected':'')+'>'+esc(t('js_auth_eth'))+'</option><option value=tor'+(a.channel==='tor'?' selected':'')+'>'+esc(t('js_auth_tor'))+'</option></select></div>'
+    +'<div class=field><input class=auth-address placeholder="'+esc(t('js_auth_addr_ph'))+'" maxlength=200 value="'+esc(a.address||'')+'"></div>'
+    +'<div class=field><input class=auth-country placeholder="'+esc(t('js_auth_country_ph'))+'" maxlength=8 value="'+esc(a.country||'')+'"></div>'
+    +'</div>';
+}
+function renderAuth(){
+  $('authList').innerHTML = authorities.length ? authorities.map(authRow).join('')
+    : '<div class=empty>'+t('js_auth_none')+'</div>';
+}
+function collectAuth(){
+  return Array.from(document.querySelectorAll('#authList [data-auth]')).map(r => ({
+    name: r.querySelector('.auth-name').value.trim(),
+    channel: r.querySelector('.auth-channel').value,
+    address: r.querySelector('.auth-address').value.trim(),
+    country: r.querySelector('.auth-country').value.trim()
+  })).filter(a => a.name || a.address);
+}
+$('authAddBtn').addEventListener('click', () => { authorities = collectAuth(); authorities.push({channel:'ethernet'}); renderAuth(); });
+
+/* ============ Associations & numéros d'aide (suivent le pays) ============ */
+let assocs = [];
+function assocRow(a, i){
+  a = a || {};
+  return '<div class=row style="margin-bottom:.5rem" data-assoc='+i+'>'
+    +'<div class=field><input class=assoc-name placeholder="'+esc(t('js_assoc_name_ph'))+'" maxlength=120 value="'+esc(a.name||a.titre||'')+'"></div>'
+    +'<div class=field><input class=assoc-num placeholder="'+esc(t('js_assoc_num_ph'))+'" maxlength=40 inputmode=tel value="'+esc(a.number||a.numero||'')+'"></div>'
+    +'</div>';
+}
+function renderAssoc(){
+  $('assocList').innerHTML = assocs.length ? assocs.map(assocRow).join('')
+    : '<div class=empty>'+t('js_assoc_none')+'</div>';
+}
+function collectAssoc(){
+  return Array.from(document.querySelectorAll('#assocList [data-assoc]')).map(r => ({
+    name: r.querySelector('.assoc-name').value.trim(),
+    number: r.querySelector('.assoc-num').value.trim()
+  })).filter(a => a.name || a.number);
+}
+$('assocAddBtn').addEventListener('click', () => { assocs = collectAssoc(); assocs.push({}); renderAssoc(); });
+$('assocSaveBtn').addEventListener('click', async () => {
+  assocs = collectAssoc();
+  try{
+    const r = await fetch('/api/admin/config',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({config:{associations:assocs}})});
+    show(r.ok?'ok':'err', r.ok?t('js_assoc_saved'):'❌ '+(await r.text()));
+  }catch(err){ show('err', t('js_neterr')); }
+});
+$('authSaveBtn').addEventListener('click', async () => {
+  authorities = collectAuth();
+  try{
+    const r = await fetch('/api/admin/config',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({config:{authorities}})});
+    show(r.ok?'ok':'err', r.ok?t('js_auth_saved'):'❌ '+(await r.text()));
+  }catch(err){ show('err', t('js_neterr')); }
+});
+
+/* ============ Secrets ============ */
+$('secBtn').addEventListener('click', async () => {
+  const body = {};
+  if(val('admin')){ if(val('admin').length<8){ show('err', t('js_sec_pwmin')); return; } body.adminPassword = val('admin'); }
+  if($('regen').checked) body.regenerateNodeKey = true;
+  if(!Object.keys(body).length){ show('err', t('js_sec_atleast')); return; }
+  if(body.regenerateNodeKey && !confirm(t('js_sec_confirmnode'))) return;
+  try{
+    const r = await fetch('/api/admin/secrets',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
+    if(r.ok){ const d=await r.json(); show('ok', t('js_sec_rotated')+(d.rotated||[]).join(', ')); $('admin').value=''; $('regen').checked=false; }
+    else show('err','❌ '+(await r.text()));
+  }catch(err){ show('err', t('js_neterr')); }
+});
+
+/* ============ Retour aux valeurs d'usine ============ */
+$('resetBtn').addEventListener('click', async () => {
+  if(!confirm(t('js_reset_confirm'))) return;
+  const phrase = prompt(t('js_reset_prompt'));
+  if(phrase !== 'REINITIALISER'){ show('err', t('js_reset_cancel')); return; }
+  try{
+    const r = await fetch('/api/admin/reset',{method:'POST'});
+    if(r.ok){ alert(t('js_reset_done')); location.href='/install'; }
+    else show('err','❌ '+(await r.text()));
+  }catch(_){ show('err', t('js_neterr')); }
+});
+
+/* ============ État du nœud (temps réel) ============ */
+function phaseBadge(p){
+  const emg = p === 'STATE_EMERGENCY';
+  return '<span class="badge '+(emg?'b-emg':'b-prov')+'">'+(emg?t('js_badge_emg'):t('js_badge_prov'))+'</span>';
+}
+async function loadNodeStatus(){
+  try{
+    const s = await (await fetch('/api/status',{cache:'no-store'})).json();
+    const emg = s.phase === 'STATE_EMERGENCY';
+    const pill = $('phasePill'); pill.className = 'phasepill ' + (emg?'emg':'prov'); pill.textContent = emg?t('js_phase_emg'):t('js_phase_prov');
+    $('nodeCards').innerHTML =
+      '<div class=nodecard><div class=nlabel>'+esc(t('js_n_id'))+'</div><div class=nval>'+esc(s.node_id)+'</div></div>'+
+      '<div class=nodecard><div class=nlabel>'+esc(t('js_n_phase'))+'</div><div class=nval>'+phaseBadge(s.phase)+'</div></div>'+
+      '<div class=nodecard><div class=nlabel>'+esc(t('js_n_version'))+'</div><div class=nval>'+esc(s.version)+'</div></div>'+
+      '<div class=nodecard><div class=nlabel>'+esc(t('js_n_installed'))+'</div><div class=nval>'+(s.installed?t('js_yes'):t('js_no'))+'</div></div>'+
+      '<div class=nodecard><div class=nlabel>'+esc(t('js_n_alertsmem'))+'</div><div class=nval>'+(Number(s.alerts)||0)+'</div></div>'+
+      '<div class=nodecard><div class=nlabel>'+esc(t('js_n_active'))+'</div><div class=nval>'+(Number(s.activeNodes)||0)+'</div></div>';
+    const sub = s.subsystems||{};
+    setSub('wifiStatus', sub.network);
+    setSub('loraStatus', sub.radio);
+    setSub('torStatus', sub.gateway);
+    loadVitals();
+  }catch(e){
+    $('nodeCards').innerHTML='<div class=nodecard><div class=nval>'+t('js_unreachable')+'</div></div>';
+  }
+}
+/* Statut honnête d'un sous-système selon son mode (off/simulate/live). */
+function setSub(id, mode){
+  const el = $(id); if(!el) return;
+  const m = (mode||'off').toLowerCase();
+  if(m==='live'){ el.className='badge-on'; el.textContent=t('js_sub_on'); }
+  else if(m==='simulate'){ el.className='badge-off'; el.textContent=t('js_sub_sim'); }
+  else { el.className='badge-dim'; el.textContent=t('js_sub_off'); }
+}
+/* Vitaux matériels (température, RAM, charge, disque) — supervision. */
+async function loadVitals(){
+  try{
+    const v = await (await fetch('/api/admin/vitals',{cache:'no-store'})).json();
+    const cards=[];
+    if(v.tempC!=null) cards.push([t('js_vit_temp'), v.tempC.toFixed(1)+' °C']);
+    if(v.memUsedPct!=null) cards.push([t('js_vit_mem'), v.memUsedPct+' %']);
+    if(v.diskUsedPct!=null) cards.push([t('js_vit_disk'), v.diskUsedPct+' %']);
+    if(v.load1!=null) cards.push([t('js_vit_load'), v.load1.toFixed(2)]);
+    if(!cards.length) return;
+    $('nodeCards').insertAdjacentHTML('beforeend',
+      cards.map(c=>'<div class=nodecard><div class=nlabel>'+esc(c[0])+'</div><div class=nval>'+esc(c[1])+'</div></div>').join(''));
+  }catch(e){ /* vitaux indisponibles : on n'altère pas l'état du nœud */ }
+}
+
+/* Démarrage : charge le dictionnaire i18n (même origine), applique la langue, puis vérifie la session. */
+(async function(){
+  try{
+    const r = await fetch('/data/admin-i18n.json', { cache:'no-store' });
+    if(r.ok) DICT = await r.json();
+  }catch(e){ /* repli FR du HTML */ }
+  applyI18n(initialLang());
+  checkSession();
+})();
+</script>
+<script>
+// ======================= GROUPES DE PING =======================
+async function loadGroups() {
+  try {
+    const r = await fetch('/api/admin/groups', {cache:'no-store'});
+    if (!r.ok) return;
+    const groups = await r.json();
+    const el = document.getElementById('groupList');
+    if (!groups.length) { el.textContent = 'Aucun groupe configuré.'; el.className = 'empty'; return; }
+    el.className = '';
+    const colors = {bleu:'#1d4ed8',rouge:'#b91c1c',vert:'#047857',orange:'#c2410c',violet:'#5b21b6',ardoise:'#334155'};
+    el.innerHTML = groups.map(g => `
+      <div style="display:flex;align-items:center;gap:.7rem;padding:.55rem .8rem;background:var(--card);border:1px solid var(--border);border-radius:10px;margin-bottom:.45rem">
+        <span style="width:10px;height:10px;border-radius:50%;background:${colors[g.color]||'#1d4ed8'};flex-shrink:0"></span>
+        <span style="flex:1;font-weight:600;font-size:.92rem">${esc(g.name)}</span>
+        <span style="font-size:.72rem;color:var(--sub)">id: ${esc(g.id)}</span>
+        <button type=button class=sec-btn style="padding:.3rem .7rem;font-size:.78rem" onclick="deleteGroup('${esc(g.id)}')">Supprimer</button>
+      </div>`).join('');
+  } catch(_) {}
+}
+
+async function deleteGroup(id) {
+  if (!confirm('Supprimer ce groupe ?')) return;
+  try {
+    await fetch('/api/admin/groups/' + encodeURIComponent(id), { method: 'DELETE' });
+    loadGroups();
+  } catch(_) {}
+}
+
+document.getElementById('groupBtn')?.addEventListener('click', async () => {
+  const name = document.getElementById('groupName').value.trim();
+  const key  = document.getElementById('groupKey').value.trim();
+  const color = document.getElementById('groupColor').value;
+  if (!name || !key) { alert('Nom et clé requis.'); return; }
+  try {
+    const r = await fetch('/api/admin/groups', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({name, key, color})
+    });
+    if (r.ok) {
+      document.getElementById('groupName').value = '';
+      document.getElementById('groupKey').value = '';
+      loadGroups();
+    } else {
+      alert('Erreur : ' + (await r.text()));
+    }
+  } catch(_) {}
+});
+
+// ======================= PINGS REÇUS =======================
+let _lastPingTs = 0;
+
+async function loadPings() {
+  try {
+    const r = await fetch('/api/admin/pings', {cache:'no-store'});
+    if (!r.ok) return;
+    const pings = await r.json();
+    const el = document.getElementById('pingsList');
+    if (!Array.isArray(pings) || !pings.length) {
+      el.textContent = 'Aucun ping reçu.'; el.className = 'empty';
+      _lastPingTs = 0;
+      return;
+    }
+    el.className = '';
+    const maxTs = Math.max(...pings.map(p => p.ts || 0));
+    if (_lastPingTs > 0 && maxTs > _lastPingTs) { _notifyNewPing(); }
+    _lastPingTs = maxTs;
+    el.innerHTML = [...pings].reverse().map(p => {
+      const dt = p.ts ? new Date(p.ts * 1000).toLocaleString() : '';
+      return `<div style="display:flex;align-items:flex-start;gap:.7rem;padding:.7rem .85rem;background:var(--card);border:1px solid rgba(239,68,68,.35);border-left:4px solid var(--red,#ef4444);border-radius:10px;margin-bottom:.5rem">
+        <div style="flex:1">
+          <div style="font-weight:700;font-size:.92rem">🆘 ${esc(p.sender)}</div>
+          <div style="font-size:.78rem;color:var(--sub);margin:.15rem 0">${esc(p.group_name)} · ${esc(dt)}</div>
+          ${p.message ? `<div style="font-size:.85rem;margin-top:.25rem">${esc(p.message)}</div>` : ''}
+        </div>
+      </div>`;
+    }).join('');
+  } catch(_) {}
+}
+
+function _notifyNewPing() {
+  try {
+    const ctx = new (window.AudioContext || window.webkitAudioContext)();
+    [440, 550, 660].forEach((freq, i) => {
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.connect(gain); gain.connect(ctx.destination);
+      osc.frequency.value = freq;
+      gain.gain.setValueAtTime(0.3, ctx.currentTime + i * 0.18);
+      gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + i * 0.18 + 0.3);
+      osc.start(ctx.currentTime + i * 0.18);
+      osc.stop(ctx.currentTime + i * 0.18 + 0.3);
+    });
+  } catch(_) {}
+}
+
+document.getElementById('pingsClearBtn')?.addEventListener('click', async () => {
+  if (!confirm('Effacer tous les pings ?')) return;
+  try {
+    await fetch('/api/admin/pings', { method: 'DELETE' });
+    loadPings();
+  } catch(_) {}
+});
+</script>
+</body>
+</html>

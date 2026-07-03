@@ -1,0 +1,23 @@
+#!/bin/sh
+# Instantané durable du Redb sur SOSDATA (montée ro le reste du temps).
+# Argv : <base_de_travail_tmpfs> <instantané_durable_SOSDATA>
+# Fenêtre rw en millisecondes ; re-verrouillage ro garanti (trap) ; marqueur posé
+# pour que le garde-fou périodique ne coupe jamais une copie en cours.
+set -eu
+WORK="$1"; DST="$2"; MP=/var/lib/sosguide; TMP="$DST.tmp"; MARK=/run/sos-rw.active
+exec 9>/run/sos-commit-db.lock
+# busybox flock n'a pas -w (timeout) : on émule une attente bornée (~5 s) via -n.
+i=0
+while ! flock -n 9; do
+    i=$((i+1)); [ "$i" -ge 5 ] && { echo "verrou occupé" >&2; exit 1; }
+    sleep 1
+done
+trap 'rm -f "$MARK"; sync; mount -o remount,ro "$MP" 2>/dev/null || true' EXIT
+mount -o remount,rw "$MP"
+date +%s > "$MARK"
+mkdir -p "$(dirname "$DST")"
+cp "$WORK" "$TMP"
+sync
+mv -f "$TMP" "$DST"
+sync
+# le trap retire le marqueur et re-verrouille SOSDATA en ro

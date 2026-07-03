@@ -1,0 +1,18 @@
+[package]
+name = "sos-gateway"
+description = "Passerelle entre le réseau local et les liens longue distance (LoRa, Tor)."
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+rust-version.workspace = true
+
+[dependencies]
+sos-core.workspace = true
+axum.workspace = true
+tokio.workspace = true
+tracing.workspace = true
+thiserror.workspace = true
+serde_json.workspace = true
+
+[lints]
+workspace = true
