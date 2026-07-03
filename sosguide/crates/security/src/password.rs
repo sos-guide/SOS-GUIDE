@@ -1,11 +1,18 @@
-//! Mot de passe administrateur : sel aléatoire + renforcement par itérations
-//! de SHA-256, comparaison à temps constant.
+//! Mot de passe administrateur : sel aléatoire + renforcement **type PBKDF2**
+//! (SHA-256, mot de passe ré-injecté à chaque itération), comparaison à temps
+//! constant.
 //!
-//! L'administration est locale et hors-Internet (un seul admin sur l'AP du
-//! nœud), mais le mot de passe ne doit jamais être stocké en clair ni comparé
-//! de façon naïve. Pas de KDF dédié (Argon2) pour rester sans dépendance C et
-//! léger sur Pi ; le renforcement par itérations relève le coût d'une attaque
-//! par force brute hors-ligne sur la base Redb.
+//! L'administration est locale et hors-Internet (un seul admin sur l'AP du nœud),
+//! mais le mot de passe ne doit jamais être stocké en clair ni comparé de façon
+//! naïve. Le renforcement par itérations relève le coût d'une attaque par force
+//! brute hors-ligne sur la base Redb.
+//!
+//! *Argon2 (mémoire-dur ; `argon2` RustCrypto = pur Rust, sans dépendance C) serait
+//! plus résistant au GPU/ASIC. Il n'est volontairement pas employé ici car
+//! [`verify_password`] sert aussi le chemin **chaud** `/api/ping` (clés de groupe
+//! testées une par une) : on garde un coût **CPU pur**, sans amplification mémoire
+//! exploitable en déni de service. Un chemin Argon2 dédié au seul mot de passe
+//! admin reste envisageable.*
 
 use rand_core::{OsRng, RngCore};
 use sha2::{Digest, Sha256};
@@ -50,14 +57,24 @@ pub fn verify_password(password: &str, salt_hex: &str, hash_hex: &str) -> bool {
     constant_time_eq(&digest, &expected)
 }
 
-/// Renforcement : `SHA-256(salt || password)` puis `ITERATIONS` re-hachages.
+/// Renforcement **type PBKDF2** : à chaque itération, on hache
+/// `SHA-256(digest précédent || salt || password)`. Le mot de passe **et** le sel
+/// restent injectés du début à la fin (corrige la construction naïve où le mot de
+/// passe n'entrait qu'une fois, puis où l'on ne re-hachait que le digest — la
+/// force brute pouvait alors travailler sur une simple chaîne de hachage).
 fn stretch(password: &[u8], salt: &[u8]) -> [u8; 32] {
-    let mut hasher = Sha256::new();
-    hasher.update(salt);
-    hasher.update(password);
-    let mut digest: [u8; 32] = hasher.finalize().into();
+    let mut digest: [u8; 32] = {
+        let mut hasher = Sha256::new();
+        hasher.update(salt);
+        hasher.update(password);
+        hasher.finalize().into()
+    };
     for _ in 1..ITERATIONS {
-        digest = Sha256::digest(digest).into();
+        let mut hasher = Sha256::new();
+        hasher.update(digest);
+        hasher.update(salt);
+        hasher.update(password);
+        digest = hasher.finalize().into();
     }
     digest
 }

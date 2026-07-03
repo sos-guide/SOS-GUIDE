@@ -288,11 +288,25 @@ fn run_rw(cmd: &str, action: &str) {
         return;
     };
     let args: Vec<&str> = parts.collect();
-    match std::process::Command::new(prog)
-        .args(&args)
-        .arg(action)
-        .status()
-    {
+    // Sous-processus **bloquant** (remontage rw + copie atomique). `RwWindow` est
+    // un garde RAII synchrone (son `Drop` ne peut pas être `async`). Pour ne pas
+    // figer un worker Tokio pendant l'appel, on le cède via `block_in_place` —
+    // mais uniquement sur un runtime **multi-thread** (la prod) : hors runtime ou
+    // en current-thread (tests synchrones), `block_in_place` paniquerait, donc on
+    // exécute directement.
+    let run = || {
+        std::process::Command::new(prog)
+            .args(&args)
+            .arg(action)
+            .status()
+    };
+    let status = match tokio::runtime::Handle::try_current() {
+        Ok(h) if matches!(h.runtime_flavor(), tokio::runtime::RuntimeFlavor::MultiThread) => {
+            tokio::task::block_in_place(run)
+        }
+        _ => run(),
+    };
+    match status {
         Ok(s) if s.success() => {}
         Ok(s) => tracing::warn!(cmd, action, code = ?s.code(), "fenêtre rw : échec"),
         Err(err) => tracing::warn!(cmd, action, %err, "fenêtre rw : commande injoignable"),
@@ -1580,7 +1594,10 @@ async fn install_node(
             .into_response();
     }
 
-    let node = state.node.read().await;
+    // Verrou **exclusif** pour toute la séquence check-and-set : ferme la fenêtre
+    // TOCTOU où deux requêtes d'install concurrentes passaient toutes deux le
+    // premier contrôle `is_installed` (read-txn) avant la première écriture.
+    let node = state.node.write().await;
     let Some(store) = &node.store else {
         return (
             StatusCode::SERVICE_UNAVAILABLE,
@@ -1588,6 +1605,10 @@ async fn install_node(
         )
             .into_response();
     };
+    // Re-vérification **sous le verrou** : la seconde install voit `installed`.
+    if store.config_installed().unwrap_or(false) {
+        return (StatusCode::CONFLICT, "le nœud est déjà installé\n").into_response();
+    }
     let creds = hash_password(&req.admin_password);
     if let Err(err) = store.save_config(&serialized) {
         tracing::error!(%err, "écriture de la configuration impossible");
@@ -2406,6 +2427,9 @@ async fn create_group(
     headers: HeaderMap,
     Json(req): Json<CreateGroupRequest>,
 ) -> Response {
+    if !origin_allowed(&headers) {
+        return forbidden_csrf();
+    }
     if let Err(resp) = require_admin(&state, &headers).await {
         return resp;
     }
@@ -2471,6 +2495,9 @@ async fn delete_group(
     headers: HeaderMap,
     AxumPath(id): AxumPath<String>,
 ) -> Response {
+    if !origin_allowed(&headers) {
+        return forbidden_csrf();
+    }
     if let Err(resp) = require_admin(&state, &headers).await {
         return resp;
     }
@@ -2601,6 +2628,9 @@ async fn list_pings(State(state): State<SharedState>, headers: HeaderMap) -> Res
 
 /// Efface tous les pings (admin).
 async fn clear_admin_pings(State(state): State<SharedState>, headers: HeaderMap) -> Response {
+    if !origin_allowed(&headers) {
+        return forbidden_csrf();
+    }
     if let Err(resp) = require_admin(&state, &headers).await {
         return resp;
     }
