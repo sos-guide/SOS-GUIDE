@@ -1,4 +1,0 @@
-# SOSGUIDE v2 — SOSDATA en LECTURE SEULE (modèle diskless durci).
-# Repassée rw ponctuellement par /usr/local/sbin/sos-commit-db lors d'une
-# écriture admin (instantané du Redb), puis re-verrouillée en ro.
-/dev/mmcblk0p2  /var/lib/sosguide  ext4  ro,noatime,nodev,nosuid  0  2

@@ -70,8 +70,6 @@ s'active à la demande.
 | [`apps/sos-guide`](sosguide/apps/sos-guide) | Application | Binaire principal : assemble et supervise | **mûr** |
 | [`firmware/esp32-lora`](sosguide/firmware/esp32-lora) | Embarqué | Nœud satellite `no_std` (ESP32-C3) | initialisé |
 
-Spécification d'ingénierie complète : [`CLAUDE.md`](CLAUDE.md) · journal de décisions : [`ASK.md`](ASK.md).
-
 ---
 
 ## 📡 Modèle d'accès réseau
@@ -108,29 +106,27 @@ priment toujours** — jusqu'à un **nœud-sortie** encore connecté qui la diff
 
 ---
 
-## 🧱 Build & image
+## 💿 Image prête à l'emploi
 
-Le produit final est une **image `.img` Alpine Linux *diskless* reproductible**.
+Téléchargez la dernière image dans les **[Releases](../../releases)**
+(`sosguide-*.img.xz`, Alpine Linux *diskless* pour Raspberry Pi 4), puis flashez-la.
 
+**Avec Raspberry Pi Imager** — « Utiliser une image personnalisée » → sélectionner le `.img.xz`.
+
+**En ligne de commande :**
 ```bash
-# 1) Compiler les binaires statiques aarch64-musl (portail + CLI)
-cd sosguide
-cargo build --release --target aarch64-unknown-linux-musl -p sos-guide -p sos-cli
-
-# 2) Assembler l'image (reproductible, rootless, en conteneur alpine:3.21)
-cd ../image-alpine
-./assemble.sh          # produit out/sosguide-<ver>.img (+ .sha256)
-
-# 3) Flasher
-xz -dc out/sosguide-*.img.xz | sudo dd of=/dev/sdX bs=4M status=progress conv=fsync
+xz -dc sosguide-*.img.xz | sudo dd of=/dev/sdX bs=4M status=progress conv=fsync
 ```
 
 Au premier démarrage, la borne s'ouvre en mode **provisioning** : rejoignez le
 WiFi ouvert **`SOS-GUIDE`**, la page `/install` apparaît.
 
-**Qualité** : `cargo fmt` + `cargo clippy -D warnings` propres, tests inclus.
+## 🧱 Construire depuis les sources
+
 ```bash
-cargo test --workspace     # depuis sosguide/
+cd sosguide
+cargo build --release --target aarch64-unknown-linux-musl -p sos-guide -p sos-cli
+cargo test --workspace     # qualité : fmt + clippy -D warnings propres
 ```
 
 ---
@@ -149,15 +145,6 @@ cargo test --workspace     # depuis sosguide/
 > Les modules gatés sont **codés et testés** (en simulation) ; leur mode `live`
 > attend le **matériel** (module LoRa SX1276/Meshtastic, démon Tor) pour être
 > écrit et validé.
-
----
-
-## 📚 Documentation
-
-- [`CLAUDE.md`](CLAUDE.md) — spécification & blueprint d'ingénierie (3 niveaux de zoom).
-- [`ASK.md`](ASK.md) — dialogue d'évolution & journal des décisions.
-- [`docs/ROADMAP.md`](docs/ROADMAP.md) — jalons + journal daté.
-- [`docs/CHANGELOG.md`](docs/CHANGELOG.md) — versions (SemVer).
 
 ---
 

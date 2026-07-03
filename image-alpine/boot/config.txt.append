@@ -1,7 +1,0 @@
-
-# --- SOSGUIDE (ajouts) ---
-# DEBUG : splash arc-en-ciel CONSERVÉ (= signal visuel que le firmware GPU a chargé).
-boot_delay=0
-dtoverlay=disable-bt
-# NB : PAS de gpu_mem=16 — forcerait start4cd.elf (absent du tarball Alpine) → 4 flashs.
-enable_uart=1

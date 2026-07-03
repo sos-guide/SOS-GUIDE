@@ -1,8 +1,0 @@
-#!/bin/sh
-# Vérification périodique de mise à jour OTA (déclenchée par crond). Verrou
-# anti-recouvrement (busybox flock : -n uniquement) + journalisation. Toute la
-# logique (conf, téléchargement, vérification, anti-downgrade, apply) vit dans
-# `sos-cli update` ; ce wrapper n'est que l'ordonnanceur.
-exec 9>/run/sos-update.lock
-flock -n 9 || exit 0     # une vérification est déjà en cours
-exec sos-cli update >> /var/log/sos-update.log 2>&1
