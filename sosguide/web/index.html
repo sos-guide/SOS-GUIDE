@@ -37,7 +37,11 @@ body.bb-on #a11yZoom{bottom:calc(78px + env(safe-area-inset-bottom) + .5rem);z-i
 .bb-tab{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;
   min-height:60px;padding:.45rem .15rem;color:var(--sub);background:transparent;
   font-size:.62rem;font-weight:700;letter-spacing:.02em;cursor:pointer;
-  transition:color .15s,background .15s;touch-action:manipulation}
+  transition:color .15s,background .15s;touch-action:manipulation;
+  /* Barre TOUJOURS de dimension identique : libellé sur une seule ligne (jamais
+     de retour à la ligne selon la langue), tronqué proprement si trop long. */
+  overflow:hidden;white-space:nowrap;text-overflow:ellipsis;text-align:center;
+  min-width:0;max-width:100%}
 .bb-tab .bb-ic{font-size:1.35rem;line-height:1}
 .bb-tab:hover{color:var(--text)}
 .bb-tab:active{color:var(--accent);background:var(--card-h)}
