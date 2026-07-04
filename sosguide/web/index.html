@@ -446,10 +446,10 @@ function applyAll() {
   }
   buildInfoTable(document.getElementById('urgencesSection'), 'section-urgences', langData.sections.urgencesMedicales, langData.urgences_medicales, false);
   buildInfoTable(document.getElementById('situationsSection'), 'section-situations', langData.sections.situationsCollectives, langData.situations_collectives, false);
-  // Associations & numéros d'aide : SOURCE = configuration du nœud (saisie par
-  // l'admin à l'install / dans /admin), qui suit le PAYS du déploiement — pas la
-  // langue. Repli sur la liste de la langue UNIQUEMENT si rien n'a été configuré
-  // (rétro-compatibilité : un nœud FR sans saisie garde ses numéros nationaux).
+  // Associations & numéros d'aide : SOURCE UNIQUE = configuration du nœud (saisie
+  // par l'admin à l'install / dans /admin), qui suit le PAYS du déploiement — pas
+  // la langue. AUCUNE valeur par défaut : si rien n'est configuré, la section est
+  // masquée (« laissez vide pour ne rien afficher »).
   const cfgAssos = (configData && Array.isArray(configData.associations)) ? configData.associations : null;
   const assosItems = (cfgAssos && cfgAssos.length)
     ? cfgAssos
@@ -460,8 +460,13 @@ function applyAll() {
           contenu: { steps: [a.desc || a.description || (a.number || a.numero ? ((langData.local&&langData.local.numberLabel)||'Numéro') + ' : ' + (a.number || a.numero) : '')].filter(Boolean) }
         }))
         .filter(a => a.titre || a.numero)
-    : (langData.associations || []);
-  buildInfoTable(document.getElementById('assosSection'), 'section-assos', langData.sections.associations, assosItems, true);
+    : [];
+  const assosSection = document.getElementById('assosSection');
+  if (assosItems.length) {
+    buildInfoTable(assosSection, 'section-assos', langData.sections.associations, assosItems, true);
+  } else {
+    assosSection.innerHTML = '';
+  }
   
   // Traductions des modales outils
   document.getElementById('metroTitle').innerHTML = langData.tools.metronome.title;
