@@ -21,7 +21,10 @@
   grid-template-columns:repeat(4,1fr);
   background:rgba(6,10,18,.96);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
   border-top:1px solid var(--border);
-  padding-bottom:env(safe-area-inset-bottom)}
+  /* Hauteur CONSTANTE : aucune safe-area dans la barre — `env()` fluctue au scroll
+     sur mobile (barre du navigateur qui apparaît/disparaît) et faisait varier la
+     hauteur de la barre. On la fige donc à 62px, quel que soit l'appareil/scroll. */
+  padding-bottom:0}
 body.light-mode #bottomBar{background:rgba(240,244,251,.96)}
 #bottomBar.show{display:grid}
 /* Stabilité d'affichage sur mobile (évite le « fantôme » de la barre fixe). */
@@ -29,7 +32,7 @@ body.light-mode #bottomBar{background:rgba(240,244,251,.96)}
 /* Zoom de texte : masqué sur le splash, remonté au-dessus de la barre en page
    principale (sinon caché derrière). */
 body:not(.bb-on) #a11yZoom{display:none}
-body.bb-on #a11yZoom{bottom:calc(78px + env(safe-area-inset-bottom) + .5rem);z-index:802}
+body.bb-on #a11yZoom{bottom:calc(62px + .5rem);z-index:802}
 /* Bouton de lecture vocale de l'alerte (page SOS, fond clair). */
 .sos-tts{display:inline-flex;align-items:center;gap:.5rem;margin:0 auto 1.3rem;padding:.7rem 1.3rem;border-radius:40px;border:none;background:#2563eb;color:#fff;font-weight:700;font-size:.95rem;cursor:pointer}
 .sos-tts:active{transform:scale(.97)}
@@ -92,7 +95,7 @@ body.bb-on .main{padding-bottom:calc(78px + env(safe-area-inset-bottom))}
 #pingFeedback.ok{color:var(--green,#10b981)}
 #pingFeedback.err{color:var(--red)}
 /* Barre du bas : HAUTEUR FIXE (ne grandit plus au scroll), 4 onglets. */
-#bottomBar{height:calc(62px + env(safe-area-inset-bottom));align-items:start}
+#bottomBar{height:62px;align-items:center}
 .bb-tab{height:62px;min-height:62px}
 body.bb-on .main{padding-bottom:calc(62px + env(safe-area-inset-bottom) + 1rem)}
 </style>
