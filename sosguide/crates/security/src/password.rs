@@ -17,8 +17,15 @@
 use rand_core::{OsRng, RngCore};
 use sha2::{Digest, Sha256};
 
-/// Nombre d'itérations de renforcement (coût volontaire à la vérification).
+/// Itérations pour le **mot de passe administrateur** : élevé (secret de haute
+/// valeur, vérifié rarement, au login).
 const ITERATIONS: u32 = 100_000;
+/// Itérations pour les **clés de groupe de ping** : bien plus faibles. Ces clés
+/// sont de **faible sensibilité** (émettre un ping anonyme dans un groupe) et sont
+/// vérifiées sur le **chemin chaud** `/api/ping` (une par groupe) : un coût élevé
+/// y créerait une amplification CPU exploitable en déni de service. Défense
+/// proportionnée à la valeur du secret + tenable sur le chemin chaud.
+const GROUP_ITERATIONS: u32 = 1_000;
 /// Longueur du sel aléatoire, en octets.
 const SALT_LEN: usize = 16;
 
@@ -31,29 +38,50 @@ pub struct PasswordHash {
     pub hash_hex: String,
 }
 
-/// Calcule l'empreinte d'un mot de passe avec un sel neuf.
+/// Calcule l'empreinte du **mot de passe administrateur** (renforcement fort).
 #[must_use]
 pub fn hash_password(password: &str) -> PasswordHash {
+    hash_with(password, ITERATIONS)
+}
+
+/// Vérifie le **mot de passe administrateur** (temps constant ; entrée malformée → `false`).
+#[must_use]
+pub fn verify_password(password: &str, salt_hex: &str, hash_hex: &str) -> bool {
+    verify_with(password, salt_hex, hash_hex, ITERATIONS)
+}
+
+/// Calcule l'empreinte d'une **clé de groupe de ping** (renforcement léger).
+#[must_use]
+pub fn hash_group_key(key: &str) -> PasswordHash {
+    hash_with(key, GROUP_ITERATIONS)
+}
+
+/// Vérifie une **clé de groupe de ping** (temps constant, coût faible pour `/api/ping`).
+#[must_use]
+pub fn verify_group_key(key: &str, salt_hex: &str, hash_hex: &str) -> bool {
+    verify_with(key, salt_hex, hash_hex, GROUP_ITERATIONS)
+}
+
+/// Hachage salé avec un nombre d'itérations paramétré.
+fn hash_with(secret: &str, iterations: u32) -> PasswordHash {
     let mut salt = [0u8; SALT_LEN];
     OsRng.fill_bytes(&mut salt);
-    let digest = stretch(password.as_bytes(), &salt);
+    let digest = stretch(secret.as_bytes(), &salt, iterations);
     PasswordHash {
         salt_hex: to_hex(&salt),
         hash_hex: to_hex(&digest),
     }
 }
 
-/// Vérifie un mot de passe contre un sel et une empreinte stockés (hex).
-/// Comparaison à temps constant ; toute entrée malformée renvoie `false`.
-#[must_use]
-pub fn verify_password(password: &str, salt_hex: &str, hash_hex: &str) -> bool {
+/// Vérification à temps constant avec itérations paramétrées ; entrée malformée → `false`.
+fn verify_with(secret: &str, salt_hex: &str, hash_hex: &str, iterations: u32) -> bool {
     let Some(salt) = from_hex(salt_hex) else {
         return false;
     };
     let Some(expected) = from_hex(hash_hex) else {
         return false;
     };
-    let digest = stretch(password.as_bytes(), &salt);
+    let digest = stretch(secret.as_bytes(), &salt, iterations);
     constant_time_eq(&digest, &expected)
 }
 
@@ -62,14 +90,14 @@ pub fn verify_password(password: &str, salt_hex: &str, hash_hex: &str) -> bool {
 /// restent injectés du début à la fin (corrige la construction naïve où le mot de
 /// passe n'entrait qu'une fois, puis où l'on ne re-hachait que le digest — la
 /// force brute pouvait alors travailler sur une simple chaîne de hachage).
-fn stretch(password: &[u8], salt: &[u8]) -> [u8; 32] {
+fn stretch(password: &[u8], salt: &[u8], iterations: u32) -> [u8; 32] {
     let mut digest: [u8; 32] = {
         let mut hasher = Sha256::new();
         hasher.update(salt);
         hasher.update(password);
         hasher.finalize().into()
     };
-    for _ in 1..ITERATIONS {
+    for _ in 1..iterations {
         let mut hasher = Sha256::new();
         hasher.update(digest);
         hasher.update(salt);
@@ -118,6 +146,21 @@ fn from_hex(hex: &str) -> Option<Vec<u8>> {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn group_key_roundtrip_and_wrong_key_rejected() {
+        // Clé de groupe : hachage léger dédié, même contrat (round-trip + rejet).
+        let h = hash_group_key("clé-de-groupe");
+        assert!(verify_group_key("clé-de-groupe", &h.salt_hex, &h.hash_hex));
+        assert!(!verify_group_key("mauvaise", &h.salt_hex, &h.hash_hex));
+        // Un hachage admin (itérations différentes) ne valide PAS comme clé de groupe.
+        let admin = hash_password("clé-de-groupe");
+        assert!(!verify_group_key(
+            "clé-de-groupe",
+            &admin.salt_hex,
+            &admin.hash_hex
+        ));
+    }
 
     #[test]
     fn hash_then_verify_roundtrip() {

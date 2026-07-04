@@ -12,12 +12,12 @@
 //! de bugs « route présente dans install.sh mais pas dans dev-setup-pi.sh ».
 
 use std::collections::HashMap;
-use std::net::SocketAddr;
+use std::net::{IpAddr, SocketAddr};
 use std::path::{Path, PathBuf};
 use std::sync::Arc;
 use std::time::{Duration, Instant, SystemTime, UNIX_EPOCH};
 
-use axum::extract::{Path as AxumPath, State};
+use axum::extract::{ConnectInfo, Path as AxumPath, State};
 use axum::handler::HandlerWithoutStateExt;
 use axum::http::{header, HeaderMap, HeaderValue, StatusCode};
 use axum::middleware::{self, Next};
@@ -32,7 +32,10 @@ use sos_core::{
     OfficialCache, OfficialCategory, RuntimeSignal, WIFI_SSID,
 };
 use sos_pay::{queue::QueueError, tx::TxStatus, PayError, Relay};
-use sos_security::{hash_password, random_token, validate_text, verify_password, KeyRing};
+use sos_security::{
+    hash_group_key, hash_password, random_token, validate_text, verify_group_key, verify_password,
+    KeyRing,
+};
 use sos_storage::Store;
 use tokio::sync::{mpsc, watch, Mutex, RwLock};
 use tower_http::services::ServeDir;
@@ -195,8 +198,10 @@ struct AppState {
     /// Sérialise les écritures de tuiles (un seul écrivain dans la fenêtre rw)
     /// pour qu'aucune fenêtre ne re-verrouille SOSDATA pendant qu'une autre écrit.
     tiles_lock: Mutex<()>,
-    /// Rate-limit global des pings citoyens.
-    last_ping: Mutex<Option<Instant>>,
+    /// Rate-limit des pings citoyens **par adresse IP** (borné : les entrées
+    /// expirées sont purgées à chaque ping). Un client abusif ne peut plus, à lui
+    /// seul, bloquer le service `/api/ping` pour tous les autres.
+    ping_limiter: Mutex<HashMap<IpAddr, Instant>>,
 }
 
 type SharedState = Arc<AppState>;
@@ -326,7 +331,7 @@ pub fn router(config: &PortalConfig, node: NodeState) -> Router {
         sessions: Mutex::new(HashMap::new()),
         rw_cmd: config.rw_cmd.clone(),
         tiles_lock: Mutex::new(()),
-        last_ping: Mutex::new(None),
+        ping_limiter: Mutex::new(HashMap::new()),
     });
 
     // Capture totale : tout chemin inconnu (fichier absent du webroot) est
@@ -417,9 +422,14 @@ pub async fn serve(config: PortalConfig, node: NodeState) -> Result<(), PortalEr
             source,
         })?;
     tracing::info!(addr = %config.listen, webroot = %config.webroot.display(), "portail démarré");
-    axum::serve(listener, app)
-        .with_graceful_shutdown(shutdown_signal())
-        .await?;
+    // `into_make_service_with_connect_info` fournit l'adresse du pair (IP client)
+    // aux handlers via `ConnectInfo` — nécessaire au rate-limit par IP de `/api/ping`.
+    axum::serve(
+        listener,
+        app.into_make_service_with_connect_info::<SocketAddr>(),
+    )
+    .with_graceful_shutdown(shutdown_signal())
+    .await?;
     Ok(())
 }
 
@@ -2447,7 +2457,7 @@ async fn create_group(
         "rouge" | "bleu" | "vert" | "violet" | "orange" | "ardoise" => req.color.clone(),
         _ => "bleu".to_owned(),
     };
-    let ph = hash_password(&req.key);
+    let ph = hash_group_key(&req.key);
     let id = random_token(8);
     let new_group = serde_json::json!({
         "id": id,
@@ -2526,19 +2536,27 @@ async fn delete_group(
 }
 
 /// Soumet un ping citoyen (public, rate-limité).
-async fn submit_ping(State(state): State<SharedState>, Json(req): Json<PingRequest>) -> Response {
+async fn submit_ping(
+    State(state): State<SharedState>,
+    ConnectInfo(peer): ConnectInfo<SocketAddr>,
+    Json(req): Json<PingRequest>,
+) -> Response {
+    // Rate-limit **par IP** : purge d'abord les entrées expirées (borne mémoire),
+    // puis refuse si cette IP a déjà pingé dans l'intervalle. Un client abusif ne
+    // bloque plus tout le monde ; il devrait au moins changer d'IP (bail DHCP).
     {
-        let mut last = state.last_ping.lock().await;
-        if let Some(t) = *last {
-            if t.elapsed() < PING_MIN_INTERVAL {
-                return (
-                    StatusCode::TOO_MANY_REQUESTS,
-                    "merci d'attendre quelques secondes\n",
-                )
-                    .into_response();
-            }
+        let ip = peer.ip();
+        let now = Instant::now();
+        let mut lim = state.ping_limiter.lock().await;
+        lim.retain(|_, t| now.duration_since(*t) < PING_MIN_INTERVAL);
+        if lim.contains_key(&ip) {
+            return (
+                StatusCode::TOO_MANY_REQUESTS,
+                "merci d'attendre quelques secondes\n",
+            )
+                .into_response();
         }
-        *last = Some(Instant::now());
+        lim.insert(ip, now);
     }
     if let Err(err) = validate_text(&req.sender, MAX_PING_STRING) {
         return reject_text("sender", err);
@@ -2561,7 +2579,8 @@ async fn submit_ping(State(state): State<SharedState>, Json(req): Json<PingReque
     let matched = groups.iter().find(|g| {
         let salt = g.get("key_salt").and_then(|v| v.as_str()).unwrap_or("");
         let hash = g.get("key_hash").and_then(|v| v.as_str()).unwrap_or("");
-        verify_password(&req.key, salt, hash)
+        // Hachage léger dédié aux clés de groupe (chemin chaud, pas d'amplification).
+        verify_group_key(&req.key, salt, hash)
     });
     let Some(group) = matched else {
         return (StatusCode::UNAUTHORIZED, "clé non reconnue\n").into_response();

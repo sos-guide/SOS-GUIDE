@@ -7,7 +7,9 @@ pub mod token;
 pub mod validate;
 
 pub use keyring::{KeyError, KeyRing, VerifyError};
-pub use password::{hash_password, verify_password, PasswordHash};
+pub use password::{
+    hash_group_key, hash_password, verify_group_key, verify_password, PasswordHash,
+};
 pub use release::{sign_detached, verify_detached};
 pub use token::random_token;
 pub use validate::{validate_secret, validate_text, TextError};
