@@ -55,19 +55,34 @@ body.bb-on .main{padding-bottom:calc(2rem + env(safe-area-inset-bottom))}
 .it-chev{color:var(--sub);font-size:1.1rem;text-align:right;width:1rem;padding-left:0}
 [dir=rtl] .it-num,[dir=rtl] .it-chev{text-align:left}
 [dir=rtl] .it-chev{transform:scaleX(-1)}
-/* ───────── Formulaire de ping citoyen (splash) ───────── */
-#pingForm{width:100%;max-width:460px;background:var(--card);border:1px solid var(--border-h);border-radius:var(--r-lg);padding:1.25rem 1.25rem 1rem;margin:0 auto 1.5rem;text-align:left}
-#pingForm .ping-title{font-size:.78rem;font-weight:700;text-transform:uppercase;letter-spacing:.09em;color:var(--sub);margin-bottom:.85rem;display:flex;align-items:center;gap:.4rem}
-#pingForm .ping-field{margin-bottom:.75rem}
-#pingForm label{display:block;font-size:.78rem;font-weight:600;color:var(--sub);margin-bottom:.3rem}
-#pingForm input{width:100%;padding:.65rem .85rem;border:1px solid var(--border);border-radius:10px;background:var(--bg2);color:var(--text);font-size:.95rem;font-family:inherit}
-#pingForm input:focus{outline:2px solid var(--accent);border-color:var(--accent)}
-#pingSubmit{width:100%;padding:.9rem;border-radius:12px;background:linear-gradient(135deg,#b91c1c,#ef4444);color:#fff;font-weight:800;font-size:1rem;border:none;cursor:pointer;letter-spacing:.02em}
-#pingSubmit:active{transform:scale(.97)}
-#pingSubmit:disabled{opacity:.6;cursor:default}
-#pingFeedback{margin-top:.7rem;font-size:.85rem;font-weight:600;text-align:center;min-height:1.4em}
-#pingFeedback.ok{color:var(--green,#10b981)}
-#pingFeedback.err{color:var(--red)}
+/* ───────── Formulaires du splash (ping citoyen + relais bitcoin) ─────────
+   Masqués par défaut : chaque formulaire s'ouvre par son bouton (un seul à la
+   fois), le splash reste centré sur les numéros d'urgence. */
+#pingForm,#payForm{display:none;width:100%;max-width:460px;background:var(--card);border:1px solid var(--border-h);border-radius:var(--r-lg);padding:1.25rem 1.25rem 1rem;margin:0 auto 1.5rem;text-align:left}
+#pingForm.open,#payForm.open{display:block}
+#pingForm .ping-title,#payForm .ping-title{font-size:.78rem;font-weight:700;text-transform:uppercase;letter-spacing:.09em;color:var(--sub);margin-bottom:.85rem;display:flex;align-items:center;gap:.4rem}
+#pingForm .ping-field,#payForm .ping-field{margin-bottom:.75rem}
+#pingForm label,#payForm label{display:block;font-size:.78rem;font-weight:600;color:var(--sub);margin-bottom:.3rem}
+#pingForm input,#payForm textarea{width:100%;padding:.65rem .85rem;border:1px solid var(--border);border-radius:10px;background:var(--bg2);color:var(--text);font-size:.95rem;font-family:inherit}
+#payForm textarea{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.82rem;resize:vertical;min-height:5.5em;word-break:break-all}
+#pingForm input:focus,#payForm textarea:focus{outline:2px solid var(--accent);border-color:var(--accent)}
+#payForm .pay-hint{font-size:.78rem;color:var(--sub);line-height:1.5;margin-bottom:.85rem}
+#pingSubmit,#paySubmit{width:100%;padding:.9rem;border-radius:12px;color:#fff;font-weight:800;font-size:1rem;border:none;cursor:pointer;letter-spacing:.02em}
+#pingSubmit{background:linear-gradient(135deg,#b91c1c,#ef4444)}
+#paySubmit{background:linear-gradient(135deg,#b45309,#f59e0b)}
+#pingSubmit:active,#paySubmit:active{transform:scale(.97)}
+#pingSubmit:disabled,#paySubmit:disabled{opacity:.6;cursor:default}
+#pingFeedback,#payFeedback{margin-top:.7rem;font-size:.85rem;font-weight:600;text-align:center;min-height:1.4em}
+#pingFeedback.ok,#payFeedback.ok{color:var(--green,#10b981)}
+#pingFeedback.err,#payFeedback.err{color:var(--red)}
+.splash-actions{display:flex;gap:.6rem;width:100%;max-width:460px;margin:0 auto 1rem}
+.splash-action{flex:1;display:flex;align-items:center;justify-content:center;gap:.5rem;padding:.85rem .6rem;background:var(--card);border:1px solid var(--border-h);border-radius:var(--r-lg);font-weight:700;font-size:.88rem;color:var(--text);cursor:pointer;transition:all .15s}
+.splash-action:hover{background:var(--card-h)}
+.splash-action:active{transform:scale(.97)}
+.splash-action[aria-expanded=true]{border-color:var(--accent);color:var(--accent)}
+.splash-action.sa-ping:hover,.splash-action.sa-ping[aria-expanded=true]{border-color:#ef4444;color:#ef4444}
+.splash-action.sa-pay:hover,.splash-action.sa-pay[aria-expanded=true]{border-color:#f59e0b;color:#f59e0b}
+.splash-action:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
 </style>
 </head>
 <body>
@@ -78,7 +93,7 @@ body.bb-on .main{padding-bottom:calc(2rem + env(safe-area-inset-bottom))}
 <nav id=nav aria-label="Barre principale"><button class=hamburger id=hamburgerBtn aria-label="Ouvrir le menu de navigation"><span></span><span></span><span></span></button><div class=nav-logo id=navLogo><div class=nav-logo-badge>⛑️</div><strong id=appTitle>SOS-GUIDE</strong></div><div class=nav-right><button class=nav-btn id=a11yMinus aria-label="Réduire la taille du texte">A−</button><button class=nav-btn id=a11yPlus aria-label="Augmenter la taille du texte">A+</button><button class=nav-btn id=langBtn aria-label="Choisir la langue">🌐</button><button class=nav-btn id=themeToggle aria-label="Basculer le thème clair/sombre">🌙</button></div></nav>
 <div id=drawerOverlay class=drawer-overlay><div class=drawer><div class=drawer-header><span class=drawer-title id=drawerTitle>Navigation</span><button class=drawer-close id=drawerCloseBtn aria-label="Fermer le menu">✕</button></div><nav class=drawer-nav id=drawerNav aria-label="Menu"></nav><div class=drawer-footer id=drawerFooter><div class=drawer-privacy>🔒 Aucune donnée personnelle collectée<br><a href="/privacy.html" style="color:var(--accent)">Politique de confidentialité</a></div><div id=drawerFooterText style="margin-top:.5rem">SOS-GUIDE · version 1.0</div></div></div></div>
 <div id=languageModal class=lang-modal-overlay role=dialog aria-modal=true aria-label="Choix de la langue"><div class=lang-modal-container><div class=lang-modal-header><button class=lang-modal-close id=closeModalBtn aria-label="Fermer">✕</button></div><div class=lang-grid id=flagGrid></div></div></div>
-<div id=splashScreen><div class=splash-header><span class=splash-emoji>⛑️</span><h1 class=splash-title>SOS-GUIDE</h1><p class=splash-sub></p></div><form id=pingForm novalidate><div class="ping-title">🆘 Envoyer une alerte privée</div><div class=ping-field><label for=pingSender>Votre nom</label><input id=pingSender type=text maxlength=80 placeholder="Prénom ou nom" autocomplete=name></div><div class=ping-field><label for=pingKey>Clé du groupe (donnée par votre responsable)</label><input id=pingKey type=text maxlength=32 placeholder="Ex. : ROUGE" autocomplete=off spellcheck=false></div><button type=submit id=pingSubmit>🆘 ENVOYER L'ALERTE</button><div id=pingFeedback></div></form><ul class=urgence-grid id=urgenceGrid aria-label="Numéros d'urgence"></ul><button class=btn-enter id=enterBtn><svg viewBox="0 0 24 24"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg><span id=enterBtnText>Accéder au guide</span></button></div>
+<div id=splashScreen><div class=splash-header><span class=splash-emoji>⛑️</span><h1 class=splash-title>SOS-GUIDE</h1><p class=splash-sub></p></div><div class=splash-actions><button type=button class="splash-action sa-ping" id=togglePing aria-expanded=false aria-controls=pingForm>🆘 Alerte privée</button><button type=button class="splash-action sa-pay" id=togglePay aria-expanded=false aria-controls=payForm>₿ Envoyer bitcoin</button></div><form id=pingForm novalidate><div class="ping-title">🆘 Envoyer une alerte privée</div><div class=ping-field><label for=pingSender>Votre nom</label><input id=pingSender type=text maxlength=80 placeholder="Prénom ou nom" autocomplete=name></div><div class=ping-field><label for=pingKey>Clé du groupe (donnée par votre responsable)</label><input id=pingKey type=text maxlength=32 placeholder="Ex. : ROUGE" autocomplete=off spellcheck=false></div><button type=submit id=pingSubmit>🆘 ENVOYER L'ALERTE</button><div id=pingFeedback></div></form><form id=payForm novalidate><div class="ping-title">₿ Relayer une transaction bitcoin</div><p class=pay-hint>La borne <strong>transporte</strong> votre transaction <strong>déjà signée</strong> vers le réseau (mesh LoRa → nœud-sortie). Elle ne détient ni clé ni fonds — signez hors-ligne depuis votre portefeuille, collez l'hex ici.</p><div class=ping-field><label for=payTx>Transaction signée (hex)</label><textarea id=payTx rows=4 placeholder="02000000…" autocomplete=off spellcheck=false></textarea></div><button type=submit id=paySubmit>₿ METTRE EN FILE</button><div id=payFeedback></div></form><ul class=urgence-grid id=urgenceGrid aria-label="Numéros d'urgence"></ul><button class=btn-enter id=enterBtn><svg viewBox="0 0 24 24"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg><span id=enterBtnText>Accéder au guide</span></button></div>
 <div id=mainContent><main class=main><div class=main-welcome><h1 id=welcomeTitle>SOS-GUIDE</h1><p id=welcomeText></p><div id=carteSection><div class=carte-wrap><div class=carte-map id=carteMap><div class=carte-tiles id=carteTiles></div><canvas id=carteCanvas></canvas><button class=carte-full id=carteFull type=button aria-label="Plein écran" title="Plein écran">⛶</button><div class=carte-attr id=carteAttr></div></div><div class=carte-tools><button class=carte-btn id=carteZoomOut type=button aria-label="Dézoomer">➖</button><button class=carte-ping id=cartePing type=button>📍 Envoyer un ping de détresse</button><button class=carte-btn id=carteZoomIn type=button aria-label="Zoomer">➕</button></div></div></div><div id=localInfoContainer class=local-info></div></div><div id=principesSection></div><div id=outilsSection></div><div id=urgencesSection></div><div id=situationsSection></div><div id=loraSection><div class=section-title>📡 LoRa</div><div id=loraAlertsList></div><a class=lora-link href="/lora">📨 Messagerie LoRa →</a></div><div id=assosSection></div></main></div>
 <div id=genericModal class=modal-overlay role=dialog aria-modal=true><div class=modal-container><div class=modal-header><h2 id=genericModalTitle>Information</h2><div style="display:flex;gap:.45rem;align-items:center"><button class=tts-btn id=ttsBtn aria-label="Écouter à voix haute" title="Écouter">🔊</button><button class=modal-close id=closeGenericModal aria-label="Fermer">✕</button></div></div><div class=modal-body id=genericModalBody></div></div></div>
 <div id=metronomeModal class=tool-modal-overlay><div class=tool-modal-container><div class=tool-modal-header><h2 id=metroTitle>❤️ Métronome 110 BPM</h2><button class="tool-modal-close close-metronome">✕</button></div><div class=tool-modal-body><div class=tool-status id=metroBpmDisplay>110 BPM</div><button id=metroStartStop class=tool-button>Démarrer</button></div></div></div>
@@ -898,6 +913,28 @@ loadConfig().then(() => {
   try { if (localStorage.getItem('sos_guide_entered') === '1') goToMain(); } catch(e) {}
 });
 
+// ============== BASCULE DES FORMULAIRES DU SPLASH (un seul ouvert) ==============
+(function(){
+  const pairs = [
+    { btn: document.getElementById('togglePing'), form: document.getElementById('pingForm') },
+    { btn: document.getElementById('togglePay'),  form: document.getElementById('payForm')  },
+  ];
+  pairs.forEach(({ btn, form }) => {
+    if (!btn || !form) return;
+    btn.addEventListener('click', () => {
+      const willOpen = !form.classList.contains('open');
+      pairs.forEach(p => { if (p.form) p.form.classList.remove('open'); if (p.btn) p.btn.setAttribute('aria-expanded', 'false'); });
+      if (willOpen) {
+        form.classList.add('open');
+        btn.setAttribute('aria-expanded', 'true');
+        form.dispatchEvent(new CustomEvent('splash-form-open'));
+        const first = form.querySelector('input,textarea');
+        if (first) first.focus();
+      }
+    });
+  });
+})();
+
 // ======================= FORMULAIRE DE PING =======================
 (function(){
   const form = document.getElementById('pingForm');
@@ -944,6 +981,77 @@ loadConfig().then(() => {
     submitBtn.disabled = false;
   });
 
+})();
+
+// ================= FORMULAIRE DE RELAIS BITCOIN (/api/pay) =================
+// La borne est un transporteur de tx signées (sos-pay) : jamais de clé ni de
+// fonds. Statut honnête : si SOS_PAY_MODE=off, le formulaire l'annonce et se
+// verrouille au lieu de laisser échouer l'envoi.
+(function(){
+  const form = document.getElementById('payForm');
+  const txInput = document.getElementById('payTx');
+  const submitBtn = document.getElementById('paySubmit');
+  const feedback = document.getElementById('payFeedback');
+  if (!form) return;
+
+  form.addEventListener('splash-form-open', async () => {
+    feedback.textContent = '';
+    feedback.className = '';
+    try {
+      const res = await fetch('/api/pay', { cache: 'no-store' });
+      const st = await res.json();
+      if (!st.enabled) {
+        submitBtn.disabled = true;
+        feedback.textContent = 'ℹ️ Relais de paiement désactivé sur cette borne.';
+        return;
+      }
+      submitBtn.disabled = false;
+      if (st.pending > 0) feedback.textContent = '📡 ' + st.pending + ' transaction(s) en attente de relais.';
+    } catch(_) {
+      // Hors-ligne du nœud (ex. démo statique) : on laisse le formulaire actif,
+      // l'envoi rendra le verdict.
+      submitBtn.disabled = false;
+    }
+  });
+
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const tx = (txInput.value || '').replace(/\s+/g, '');
+    if (!tx) { feedback.textContent = '⚠️ Collez la transaction signée (hex).'; feedback.className='err'; return; }
+    if (!/^[0-9a-fA-F]+$/.test(tx)) { feedback.textContent = '⚠️ Format invalide — hexadécimal attendu.'; feedback.className='err'; return; }
+    submitBtn.disabled = true;
+    feedback.textContent = '⏳ Mise en file…';
+    feedback.className = '';
+    try {
+      const res = await fetch('/api/pay', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ tx }),
+      });
+      if (res.status === 202) {
+        const j = await res.json();
+        feedback.textContent = '✅ En file (' + j.id.slice(0, 8) + '…) — relais dès que le mesh est joignable.';
+        feedback.className = 'ok';
+        txInput.value = '';
+      } else if (res.status === 200) {
+        feedback.textContent = 'ℹ️ Transaction déjà en file.';
+        feedback.className = 'ok';
+      } else if (res.status === 422) {
+        feedback.textContent = '❌ Transaction refusée — vérifiez l\'hex signé.';
+        feedback.className = 'err';
+      } else if (res.status === 503) {
+        feedback.textContent = 'ℹ️ Relais de paiement désactivé sur cette borne.';
+        feedback.className = 'err';
+      } else {
+        feedback.textContent = '❌ Erreur — réessayez dans un moment.';
+        feedback.className = 'err';
+      }
+    } catch(_) {
+      feedback.textContent = '❌ Connexion impossible — assurez-vous d\'être connecté à SOS-GUIDE.';
+      feedback.className = 'err';
+    }
+    submitBtn.disabled = false;
+  });
 })();
 </script>
 <script>
