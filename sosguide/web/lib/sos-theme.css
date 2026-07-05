@@ -20,9 +20,9 @@
   --sub:#7d90b4;
   --muted:#7588a8;
   /* Couleurs fonctionnelles */
-  --accent:#3b82f6;          /* texte, bordures, focus */
-  --accent-strong:#2563eb;   /* fonds de boutons sous texte blanc (AA 5.2:1) */
-  --accent-strong-h:#1d4ed8; /* survol */
+  --accent:#e63329;          /* texte, bordures, focus — rouge de marque (aligné vitrine) */
+  --accent-strong:#c31e14;   /* fonds de boutons sous texte blanc (AA sur blanc) */
+  --accent-strong-h:#a81810; /* survol */
   --blue:#3b82f6;
   --green:#22c55e;
   --red:#ef4444;
