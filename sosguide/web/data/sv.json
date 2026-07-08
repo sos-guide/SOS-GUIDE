@@ -469,5 +469,20 @@
       }
     }
   ],
-  "associations": []
+  "associations": [],
+  "vital": {
+    "home": "Nödsituationer — Start",
+    "hero": "Nödnummer — Europa · gratissamtal",
+    "listen": "Lyssna",
+    "around": "I din närhet",
+    "help": "Hjälpnummer",
+    "local": "Lokal kontakt",
+    "sms": "Via sms",
+    "samuDesc": "Medicinsk nödsituation",
+    "policeDesc": "Fara, överfall",
+    "fireDesc": "Brand, olycka",
+    "deafDesc": "Döva och hörselskadade",
+    "offline": "Offline · inga personuppgifter samlas in",
+    "privacy": "integritet"
+  }
 }

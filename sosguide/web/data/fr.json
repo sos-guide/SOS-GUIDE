@@ -535,5 +535,20 @@
       }
     }
   ],
-  "associations": []
+  "associations": [],
+  "vital": {
+    "home": "Urgences — Accueil",
+    "hero": "Urgences — Europe · appel gratuit",
+    "listen": "Écouter",
+    "around": "Autour de vous",
+    "help": "Numéros d'aide",
+    "local": "Contact local",
+    "sms": "Par SMS",
+    "samuDesc": "Urgence médicale",
+    "policeDesc": "Danger, agression",
+    "fireDesc": "Feu, accident",
+    "deafDesc": "Sourds et malentendants",
+    "offline": "Hors-ligne · aucune donnée personnelle collectée",
+    "privacy": "confidentialité"
+  }
 }

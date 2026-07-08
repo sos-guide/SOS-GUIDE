@@ -469,5 +469,20 @@
       }
     }
   ],
-  "associations": []
+  "associations": [],
+  "vital": {
+    "home": "Noodgevallen — Start",
+    "hero": "Noodnummer — Europa · gratis oproep",
+    "listen": "Beluisteren",
+    "around": "In uw omgeving",
+    "help": "Hulpnummers",
+    "local": "Lokaal contact",
+    "sms": "Per sms",
+    "samuDesc": "Medisch noodgeval",
+    "policeDesc": "Gevaar, geweld",
+    "fireDesc": "Brand, ongeval",
+    "deafDesc": "Doven en slechthorenden",
+    "offline": "Offline · geen persoonsgegevens verzameld",
+    "privacy": "privacy"
+  }
 }

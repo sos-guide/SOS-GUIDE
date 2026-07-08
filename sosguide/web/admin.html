@@ -175,7 +175,7 @@
 
     <!-- ALERTE -->
     <section class="sec alert" id=alertSec>
-      <div class=sec-head><span class=ic>🚨</span><div><h3 data-i18n="alert_h3">Alerte d'urgence</h3><p class=desc data-i18n="alert_desc">Bascule le portail en page SOS plein écran pour tous les citoyens connectés.</p></div></div>
+      <div class=sec-head><span class=ic>🚨</span><div><h3 data-i18n="alert_h3">Alerte d'urgence</h3><p class=desc data-i18n="alert_desc">Affiche la carte d'urgence en tête du portail pour tous les citoyens connectés (page SOS plein écran dans le guide).</p></div></div>
       <div id=alertCurrent class=empty data-i18n="alert_loading">Chargement de l'état…</div>
       <label for=cause data-i18n="cause_l">Cause</label>
       <select id=cause>
@@ -190,7 +190,7 @@
       </select>
       <label for=instructions data-i18n="instr_l">Consignes locales (précises, propres au lieu)</label>
       <textarea id=instructions rows=4 maxlength=2000 data-i18n-ph="instr_ph" placeholder="Ex. : Évacuez par la sortie est, rejoignez le point de rassemblement de la mairie."></textarea>
-      <button type=button id=alertBtn data-i18n="alert_btn">🚨 Émettre l'alerte (page SOS plein écran)</button>
+      <button type=button id=alertBtn data-i18n="alert_btn">🚨 Émettre l'alerte (carte d'urgence sur le portail)</button>
       <button type=button class=sec-btn id=alertClearBtn data-i18n="alert_clear_btn">Lever l'alerte — retour à la normale</button>
     </section>
 
@@ -272,6 +272,7 @@
           <option value=autre data-i18n="v_autre">📍 Autre</option>
         </select>
         <label for=address data-i18n="address_l">Adresse</label><input id=address maxlength=200>
+        <label for=meeting data-i18n="meeting_l">Point de rassemblement (affiché sur la carte d'alerte)</label><input id=meeting maxlength=200>
         <label for=sponsor data-i18n="sponsor_l">Sponsor / hébergeur (optionnel, crédité sur l'accueil)</label><input id=sponsor maxlength=120 data-i18n-ph="sponsor_ph" placeholder="Ex. : Épicerie du village">
         <label for=reassure data-i18n="reassure_l">Message de réassurance</label><input id=reassure maxlength=240>
       </section>
@@ -455,11 +456,18 @@ async function checkSession(){
 }
 
 /* ============ Chargement config ============ */
+/* La fusion serveur de /api/admin/config est superficielle (clé de premier
+   niveau remplacée entière) : on repart de l'`establishment` chargé pour ne
+   jamais perdre les champs non édités ici (countryCode, country — fixés par le
+   wizard /install et sources des numéros d'urgence de l'accueil). */
+let _estLoaded = {};
 async function preload(){
   try{
     const c = await (await fetch('/api/admin/config',{cache:'no-store'})).json();
     const e = c.establishment || {};
+    _estLoaded = e;
     $('name').value=e.name||''; $('address').value=e.address||'';
+    $('meeting').value=e.localMeetingPoint||'';
     $('venueType').value = c.venueType || 'mairie';
     $('sponsor').value = c.sponsor || '';
     $('reassure').value=(c.reassurance&&c.reassurance.message)||'';
@@ -540,13 +548,14 @@ $('coordPaste').addEventListener('paste', () => setTimeout(applyCoords, 0));
 
 /* ============ Enregistrer la configuration ============ */
 function buildConfig(){
-  const establishment = {
+  const establishment = Object.assign({}, _estLoaded, {
     name: val('name'), address: val('address'),
+    localMeetingPoint: val('meeting'),
     localCrisisNumber: val('crisis'), localSamuNumber: val('samu'),
     localPoliceNumber: val('police'), localPompiersNumber: val('pompiers'),
     localMairieNumber: val('mairie'), localCroixRouge: val('croix'),
     lat: num('lat'), lon: num('lon')
-  };
+  });
   const wchan = parseInt(val('wchan'),10);
   return {
     establishment,

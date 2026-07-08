@@ -469,5 +469,20 @@
       }
     }
   ],
-  "associations": []
+  "associations": [],
+  "vital": {
+    "home": "Tísňové linky — Úvod",
+    "hero": "Tíseň — Evropa · volání zdarma",
+    "listen": "Poslechnout",
+    "around": "Ve vašem okolí",
+    "help": "Linky pomoci",
+    "local": "Místní kontakt",
+    "sms": "Přes SMS",
+    "samuDesc": "Zdravotní nouze",
+    "policeDesc": "Nebezpečí, napadení",
+    "fireDesc": "Požár, nehoda",
+    "deafDesc": "Neslyšící a nedoslýchaví",
+    "offline": "Offline · žádná osobní data se nesbírají",
+    "privacy": "soukromí"
+  }
 }

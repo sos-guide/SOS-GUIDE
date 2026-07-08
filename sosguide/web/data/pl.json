@@ -469,5 +469,20 @@
       }
     }
   ],
-  "associations": []
+  "associations": [],
+  "vital": {
+    "home": "Numery alarmowe — Start",
+    "hero": "Numer alarmowy — Europa · połączenie bezpłatne",
+    "listen": "Odsłuchaj",
+    "around": "W pobliżu",
+    "help": "Numery pomocowe",
+    "local": "Kontakt lokalny",
+    "sms": "SMS-em",
+    "samuDesc": "Nagły wypadek medyczny",
+    "policeDesc": "Niebezpieczeństwo, napaść",
+    "fireDesc": "Pożar, wypadek",
+    "deafDesc": "Osoby niesłyszące i słabosłyszące",
+    "offline": "Offline · nie zbieramy danych osobowych",
+    "privacy": "prywatność"
+  }
 }

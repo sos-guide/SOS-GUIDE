@@ -469,5 +469,20 @@
       }
     }
   ],
-  "associations": []
+  "associations": [],
+  "vital": {
+    "home": "緊急 — ホーム",
+    "hero": "緊急通報 — 欧州 · 通話無料",
+    "listen": "読み上げ",
+    "around": "周辺情報",
+    "help": "相談窓口",
+    "local": "地域の連絡先",
+    "sms": "SMSで",
+    "samuDesc": "医療の緊急事態",
+    "policeDesc": "危険・暴力",
+    "fireDesc": "火災・事故",
+    "deafDesc": "聴覚障害のある方",
+    "offline": "オフライン · 個人データは収集しません",
+    "privacy": "プライバシー"
+  }
 }

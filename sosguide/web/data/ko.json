@@ -469,5 +469,20 @@
       }
     }
   ],
-  "associations": []
+  "associations": [],
+  "vital": {
+    "home": "긴급 — 홈",
+    "hero": "긴급 전화 — 유럽 · 무료 통화",
+    "listen": "듣기",
+    "around": "주변 정보",
+    "help": "도움 전화",
+    "local": "지역 연락처",
+    "sms": "문자로",
+    "samuDesc": "의료 응급",
+    "policeDesc": "위험, 폭력",
+    "fireDesc": "화재, 사고",
+    "deafDesc": "청각 장애인",
+    "offline": "오프라인 · 개인정보를 수집하지 않음",
+    "privacy": "개인정보"
+  }
 }

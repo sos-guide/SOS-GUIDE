@@ -47,6 +47,10 @@ mod tests {
         // Trop tôt après la précédente : refusée.
         assert!(!may_send_payment(false, Some(100), 105));
         // Après l'intervalle : autorisée.
-        assert!(may_send_payment(false, Some(100), 100 + MIN_SEND_INTERVAL_SECS));
+        assert!(may_send_payment(
+            false,
+            Some(100),
+            100 + MIN_SEND_INTERVAL_SECS
+        ));
     }
 }

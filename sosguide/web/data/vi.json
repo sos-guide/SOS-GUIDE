@@ -469,5 +469,20 @@
       }
     }
   ],
-  "associations": []
+  "associations": [],
+  "vital": {
+    "home": "Khẩn cấp — Trang chủ",
+    "hero": "Gọi khẩn cấp — Châu Âu · cuộc gọi miễn phí",
+    "listen": "Nghe",
+    "around": "Xung quanh bạn",
+    "help": "Đường dây trợ giúp",
+    "local": "Liên hệ địa phương",
+    "sms": "Qua SMS",
+    "samuDesc": "Cấp cứu y tế",
+    "policeDesc": "Nguy hiểm, hành hung",
+    "fireDesc": "Hỏa hoạn, tai nạn",
+    "deafDesc": "Người khiếm thính",
+    "offline": "Ngoại tuyến · không thu thập dữ liệu cá nhân",
+    "privacy": "quyền riêng tư"
+  }
 }

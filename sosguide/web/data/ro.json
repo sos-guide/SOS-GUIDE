@@ -469,5 +469,20 @@
       }
     }
   ],
-  "associations": []
+  "associations": [],
+  "vital": {
+    "home": "Urgențe — Acasă",
+    "hero": "Urgențe — Europa · apel gratuit",
+    "listen": "Ascultă",
+    "around": "În jurul dvs.",
+    "help": "Numere de ajutor",
+    "local": "Contact local",
+    "sms": "Prin SMS",
+    "samuDesc": "Urgență medicală",
+    "policeDesc": "Pericol, agresiune",
+    "fireDesc": "Incendiu, accident",
+    "deafDesc": "Persoane surde și cu deficiențe de auz",
+    "offline": "Offline · nu se colectează date personale",
+    "privacy": "confidențialitate"
+  }
 }

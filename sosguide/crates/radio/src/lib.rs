@@ -347,7 +347,8 @@ mod tests {
 
         inject.send(frame)?; // injecte la trame entrante
         let inbox_probe = Arc::clone(&inbox);
-        let handle = tokio::spawn(async move { run_with(link, cfg, kr, inbox, rx, no_pay()).await });
+        let handle =
+            tokio::spawn(async move { run_with(link, cfg, kr, inbox, rx, no_pay()).await });
         // La trame relayée (hop=1) doit apparaître côté émission.
         let relayed = sent.recv().await.ok_or("aucune trame relayée")?;
         assert_eq!(AlertPacket::from_frame(&relayed)?.hop, 1);

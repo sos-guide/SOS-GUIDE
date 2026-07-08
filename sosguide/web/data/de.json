@@ -469,5 +469,20 @@
       }
     }
   ],
-  "associations": []
+  "associations": [],
+  "vital": {
+    "home": "Notfälle — Startseite",
+    "hero": "Notruf — Europa · gebührenfrei",
+    "listen": "Anhören",
+    "around": "In Ihrer Nähe",
+    "help": "Hilfsnummern",
+    "local": "Lokaler Kontakt",
+    "sms": "Per SMS",
+    "samuDesc": "Medizinischer Notfall",
+    "policeDesc": "Gefahr, Angriff",
+    "fireDesc": "Feuer, Unfall",
+    "deafDesc": "Gehörlose und Schwerhörige",
+    "offline": "Offline · keine persönlichen Daten erhoben",
+    "privacy": "Datenschutz"
+  }
 }

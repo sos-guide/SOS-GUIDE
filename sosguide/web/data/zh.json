@@ -469,5 +469,20 @@
       }
     }
   ],
-  "associations": []
+  "associations": [],
+  "vital": {
+    "home": "紧急服务 — 首页",
+    "hero": "紧急呼叫 — 欧洲 · 免费通话",
+    "listen": "朗读",
+    "around": "您的周围",
+    "help": "求助电话",
+    "local": "本地联系人",
+    "sms": "短信",
+    "samuDesc": "医疗急救",
+    "policeDesc": "危险、袭击",
+    "fireDesc": "火灾、事故",
+    "deafDesc": "聋人及听障人士",
+    "offline": "离线 · 不收集任何个人数据",
+    "privacy": "隐私"
+  }
 }

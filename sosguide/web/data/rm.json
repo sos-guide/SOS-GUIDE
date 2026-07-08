@@ -469,5 +469,20 @@
       }
     }
   ],
-  "associations": []
+  "associations": [],
+  "vital": {
+    "home": "Urgenzas — Pagina principala",
+    "hero": "Urgenzas — Europa · clom gratuit",
+    "listen": "Tadlar",
+    "around": "En voss conturn",
+    "help": "Numers d'agid",
+    "local": "Contact local",
+    "sms": "Per SMS",
+    "samuDesc": "Urgenza medicinala",
+    "policeDesc": "Privel, attatga",
+    "fireDesc": "Fieu, accident",
+    "deafDesc": "Surds e persunas cun problems d'udida",
+    "offline": "Offline · naginas datas persunalas ramassadas",
+    "privacy": "protecziun da datas"
+  }
 }

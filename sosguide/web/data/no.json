@@ -469,5 +469,20 @@
       }
     }
   ],
-  "associations": []
+  "associations": [],
+  "vital": {
+    "home": "Nødsituasjoner — Start",
+    "hero": "Nødnummer — Europa · gratis anrop",
+    "listen": "Lytt",
+    "around": "I nærheten",
+    "help": "Hjelpenumre",
+    "local": "Lokal kontakt",
+    "sms": "Via SMS",
+    "samuDesc": "Medisinsk nødsituasjon",
+    "policeDesc": "Fare, overfall",
+    "fireDesc": "Brann, ulykke",
+    "deafDesc": "Døve og hørselshemmede",
+    "offline": "Frakoblet · ingen persondata samles inn",
+    "privacy": "personvern"
+  }
 }

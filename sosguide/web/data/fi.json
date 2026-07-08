@@ -469,5 +469,20 @@
       }
     }
   ],
-  "associations": []
+  "associations": [],
+  "vital": {
+    "home": "Hätätilanteet — Etusivu",
+    "hero": "Hätänumero — Eurooppa · maksuton puhelu",
+    "listen": "Kuuntele",
+    "around": "Lähistöllä",
+    "help": "Auttavat numerot",
+    "local": "Paikallinen yhteystieto",
+    "sms": "Tekstiviestillä",
+    "samuDesc": "Lääketieteellinen hätätilanne",
+    "policeDesc": "Vaara, väkivalta",
+    "fireDesc": "Tulipalo, onnettomuus",
+    "deafDesc": "Kuurot ja huonokuuloiset",
+    "offline": "Offline · henkilötietoja ei kerätä",
+    "privacy": "tietosuoja"
+  }
 }

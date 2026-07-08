@@ -469,5 +469,20 @@
       }
     }
   ],
-  "associations": []
+  "associations": [],
+  "vital": {
+    "home": "Acil — Ana sayfa",
+    "hero": "Acil çağrı — Avrupa · ücretsiz arama",
+    "listen": "Dinle",
+    "around": "Çevrenizde",
+    "help": "Yardım hatları",
+    "local": "Yerel iletişim",
+    "sms": "SMS ile",
+    "samuDesc": "Tıbbi acil durum",
+    "policeDesc": "Tehlike, saldırı",
+    "fireDesc": "Yangın, kaza",
+    "deafDesc": "Sağır ve işitme engelliler",
+    "offline": "Çevrimdışı · kişisel veri toplanmaz",
+    "privacy": "gizlilik"
+  }
 }

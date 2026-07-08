@@ -306,7 +306,12 @@ fn run_rw(cmd: &str, action: &str) {
             .status()
     };
     let status = match tokio::runtime::Handle::try_current() {
-        Ok(h) if matches!(h.runtime_flavor(), tokio::runtime::RuntimeFlavor::MultiThread) => {
+        Ok(h)
+            if matches!(
+                h.runtime_flavor(),
+                tokio::runtime::RuntimeFlavor::MultiThread
+            ) =>
+        {
             tokio::task::block_in_place(run)
         }
         _ => run(),

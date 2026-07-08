@@ -458,8 +458,10 @@ $('f').addEventListener('submit', async e => {
         '<p class=hint>'+t('done_note')+'</p>'+
         '<p id=mapStatus class=hint style="margin-top:.6rem"></p>'+
         '<div class=nav style="margin-top:1rem"><button type=button id=printBtn></button>'+
+        '<button type=button id=portalBtn></button>'+
         '<button type=button id=adminBtn></button></div></div>';
       $('printBtn').textContent = t('done_print'); $('printBtn').onclick = ()=>window.print();
+      $('portalBtn').textContent = t('done_portal'); $('portalBtn').onclick = ()=>location.href='/';
       $('adminBtn').textContent = t('done_admin'); $('adminBtn').onclick = ()=>location.href='/admin';
       $('wifiSsid').textContent = ssid;
       if(qr) $('wifiQr').innerHTML = qr; else $('wifiQr').style.display='none';

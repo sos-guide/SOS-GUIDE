@@ -59,7 +59,9 @@ impl TxQueue {
 
     /// Transactions restant à diffuser (statut ≠ [`TxStatus::Broadcast`]).
     pub fn pending(&self) -> impl Iterator<Item = &PayTx> {
-        self.txs.iter().filter(|t| t.status() != TxStatus::Broadcast)
+        self.txs
+            .iter()
+            .filter(|t| t.status() != TxStatus::Broadcast)
     }
 
     /// Toutes les transactions (tous statuts confondus).

@@ -394,8 +394,14 @@ fn run() -> Result<(), Box<dyn std::error::Error>> {
         let radio_keyring = Arc::clone(&keyring);
         let radio_inbox = Arc::clone(&inbox);
         tokio::spawn(async move {
-            if let Err(err) =
-                sos_radio::run(radio_cfg, radio_keyring, radio_inbox, radio_rx, pay_channels).await
+            if let Err(err) = sos_radio::run(
+                radio_cfg,
+                radio_keyring,
+                radio_inbox,
+                radio_rx,
+                pay_channels,
+            )
+            .await
             {
                 tracing::error!(%err, "radio: orchestrateur arrêté");
             }

@@ -469,5 +469,20 @@
       }
     }
   ],
-  "associations": []
+  "associations": [],
+  "vital": {
+    "home": "Segélyhívás — Kezdőlap",
+    "hero": "Segélyhívó — Európa · ingyenes hívás",
+    "listen": "Meghallgatás",
+    "around": "Ön körül",
+    "help": "Segélyvonalak",
+    "local": "Helyi kapcsolat",
+    "sms": "SMS-ben",
+    "samuDesc": "Orvosi vészhelyzet",
+    "policeDesc": "Veszély, támadás",
+    "fireDesc": "Tűz, baleset",
+    "deafDesc": "Siketek és nagyothallók",
+    "offline": "Offline · nem gyűjtünk személyes adatot",
+    "privacy": "adatvédelem"
+  }
 }

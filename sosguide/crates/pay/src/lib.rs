@@ -211,11 +211,17 @@ mod tests {
             }
         }
         // La tx reconstruite est identique à l'originale.
-        assert_eq!(reassembled.map(|r| tx::hex_encode(&r)), Some(raw_hex.clone()));
+        assert_eq!(
+            reassembled.map(|r| tx::hex_encode(&r)),
+            Some(raw_hex.clone())
+        );
 
         // 4) Le nœud-sortie diffuse : commande curl vers l'API publique.
         let argv = relay.broadcast_command(&id)?;
-        assert_eq!(argv.last().map(String::as_str), Some("https://mempool.space/api/tx"));
+        assert_eq!(
+            argv.last().map(String::as_str),
+            Some("https://mempool.space/api/tx")
+        );
         assert!(argv.contains(&raw_hex));
 
         // La file n'a plus rien en attente (tx diffusée).

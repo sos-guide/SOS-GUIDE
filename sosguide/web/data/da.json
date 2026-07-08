@@ -469,5 +469,20 @@
       }
     }
   ],
-  "associations": []
+  "associations": [],
+  "vital": {
+    "home": "Nødsituationer — Start",
+    "hero": "Alarm — Europa · gratis opkald",
+    "listen": "Lyt",
+    "around": "I nærheden",
+    "help": "Hjælpenumre",
+    "local": "Lokal kontakt",
+    "sms": "Via sms",
+    "samuDesc": "Medicinsk nødsituation",
+    "policeDesc": "Fare, overfald",
+    "fireDesc": "Brand, ulykke",
+    "deafDesc": "Døve og hørehæmmede",
+    "offline": "Offline · ingen persondata indsamles",
+    "privacy": "privatliv"
+  }
 }
